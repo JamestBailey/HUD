@@ -206,9 +206,9 @@ const PATHS={
 };
 
 /* ============ file access (vault folder, or test server) ============ */
-let ROOT=null; const Q=new URLSearchParams(location.search), TEST=Q.get("test");
+let ROOT=null, GH_MEM=""; const Q=new URLSearchParams(location.search), TEST=Q.get("test");
 const GH={api:Q.get("api")||"https://api.github.com",repo:"JamestBailey/Second-Brain",branch:"main",
-  token(){return ls.get("hud_gh_token","")},
+  token(){return ls.get("hud_gh_token","")||GH_MEM},
   url(path,ref=true){return `${GH.api}/repos/${GH.repo}/contents/${path.split("/").filter(Boolean).map(encodeURIComponent).join("/")}${ref?"?ref="+GH.branch:""}`},
   async req(path,{method="GET",body=null,accept="application/vnd.github+json"}={}){
     const r=await fetch(GH.url(path,method==="GET"),{method,body,cache:"no-store",headers:{Authorization:"Bearer "+GH.token(),Accept:accept,"X-GitHub-Api-Version":"2022-11-28",...(body?{"Content-Type":"application/json"}:{})}});
@@ -424,8 +424,8 @@ $("pickBtn").onclick=connect;
 if(!window.showDirectoryPicker)$("folderOpt").style.display="none";
 $("ghBtn").onclick=async()=>{const t=$("ghTok").value.trim();$("connErr").textContent="";
   if(!/^(github_pat_|ghp_)/.test(t)){$("connErr").textContent="That doesn't look like a GitHub token — it should start with github_pat_";return}
-  const old=ls.get("hud_gh_token","");ls.set("hud_gh_token",t);USE_GH=true;$("ghBtn").textContent="Checking…";
-  try{await FS.list(PATHS.coaching);$("ghTok").value="";$("connect").classList.remove("show");refresh();toast("Connected to GitHub")}
+  const old=ls.get("hud_gh_token","");ls.set("hud_gh_token",t);if(ls.get("hud_gh_token","")!==t){$("connErr").textContent="This browser won't save your token, so you'd have to paste it every time. iPhone: Settings → Apps → Safari → turn off Block All Cookies, and don't use a Private tab.";}USE_GH=true;$("ghBtn").textContent="Checking…";
+  try{await FS.list(PATHS.coaching);$("ghTok").value="";const kept=ls.get("hud_gh_token","")===t;if(kept)$("connect").classList.remove("show");else{GH_MEM=t;$("connect").classList.remove("show")}refresh();toast(kept?"Connected to GitHub":"Connected for now — this browser won't remember it")}
   catch(e){ls.set("hud_gh_token",old);USE_GH=!!old;$("connErr").textContent=e.message}
   finally{$("ghBtn").textContent="Connect"}};
 $("tokBtn").onclick=()=>{$("settings").classList.remove("show");$("connect").classList.add("show");$("ghTok").focus()};
