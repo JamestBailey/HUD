@@ -79,6 +79,7 @@ h1{font-family:var(--serif);font-weight:600;font-size:34px;letter-spacing:-.01em
 .days2{font-family:var(--serif);font-size:44px;font-weight:600;line-height:1}
 .phase{display:inline-block;margin-top:10px;padding:3px 10px;border-radius:20px;font-size:12px;border:1px solid var(--line2);background:var(--panel2)}
 .tgt{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin:-4px 0 12px}
+.wk{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
 /* calendar */
 .ev{display:grid;grid-template-columns:64px 1fr;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
 .ev:first-child{border-top:none}
@@ -419,14 +420,24 @@ function renderWhoop(w){
 }
 
 /* ============ TODAY'S PLAN + FOCUS (written each morning by Claude) ============ */
-async function loadPlan(){try{return JSON.parse(await FS.text(PATHS.plan))}catch(e){if(e.name==="NotFoundError"||/not found|missing|could not be found/i.test(e.message))return null;throw e}}
-function renderPlan(p){
-  const t=ymd(new Date());const today=p&&p.date===t;
-  $("focus").innerHTML=`<span class="fl">Focus</span><span class="ft">${p&&p.focus?esc(p.focus):'<span class="faint">No focus set yet. Claude sets it each morning.</span>'}</span>`;
-  if(!today){$("plMeta").textContent="";$("plan").innerHTML=`<div class="empty">${p?`No plan for today yet (last one was ${fmtDay(new Date(p.date))}).`:"No plan yet."}</div><div class="note">Claude builds today's plan each morning from your readiness, calendar, coaching and practice. Say <i>"plan my day"</i> to run it now.</div>`;return}
-  $("plMeta").textContent=p.generated?"built "+p.generated.slice(11,16):"";
-  $("plan").innerHTML=(p.blocks||[]).map(b=>`<div class="pb ${b.fixed?"fixed":""}"><div class="t">${esc(b.start||"")}${b.end?"–"+esc(b.end):""}</div><div><div class="n">${esc(b.title)}</div>${b.why?`<div class="w">${esc(b.why)}</div>`:""}</div></div>`).join("")||'<div class="empty">Rest day.</div>'
-    +(p.note?`<div class="note">${esc(p.note)}</div>`:"");
+async function loadPlan(){let j;try{j=JSON.parse(await FS.text(PATHS.plan))}catch(e){if(e.name==="NotFoundError"||/not found|missing|could not be found/i.test(e.message))return null;throw e}
+  return Array.isArray(j.days)?j.days:(j.date?[j]:[])}
+function planRows(p){return (p.blocks||[]).map(b=>`<div class="pb ${b.fixed?"fixed":""}"><div class="t">${esc(b.start||"")}${b.end?"–"+esc(b.end):""}</div><div><div class="n">${esc(b.title)}</div>${b.why?`<div class="w">${esc(b.why)}</div>`:""}</div></div>`).join("")}
+function renderPlan(days){
+  days=days||[];const t=ymd(new Date()),tm=ymd(new Date(Date.now()+864e5));
+  const p=days.find(x=>x.date===t),n=days.find(x=>x.date===tm);
+  const latest=days.slice().sort((a,b)=>a.date<b.date?-1:1).at(-1);
+  const f=(p&&p.focus)||(n&&n.focus)||(latest&&latest.focus);
+  $("focus").innerHTML=`<span class="fl">Focus</span><span class="ft">${f?esc(f):'<span class="faint">No focus set yet. Claude sets it with each plan.</span>'}</span>`;
+  const evening=new Date().getHours()>=17;
+  let html="";
+  if(p){
+    $("plMeta").innerHTML=p.provisional?'<span class="warn">provisional · checked at 07:45</span>':(p.checked?"checked "+esc(p.checked.slice(11,16)):"");
+    html+=(planRows(p)||'<div class="empty">Rest day.</div>')+(p.note?`<div class="note">${esc(p.note)}</div>`:"");
+  }else{$("plMeta").textContent="";html+='<div class="empty">No plan for today.</div><div class="note">Claude plans tomorrow each evening at 20:30 and checks it against your recovery at 07:45. Say <i>"plan my day"</i> to run it now.</div>'}
+  if(n){html+=`<div class="next" style="margin-top:${p?14:10}px"><div class="wk" style="margin-bottom:6px">Tomorrow · ${fmtDay(new Date(n.date))}</div>${planRows(n)||'<div class="empty">Rest day.</div>'}</div>`}
+  else if(evening&&p){html+='<div class="note">Tomorrow\'s plan arrives at 20:30.</div>'}
+  $("plan").innerHTML=html;
 }
 
 /* ============ COMPETITION COUNTDOWN ============ */
