@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f1012">
+<link rel="icon" href="icon.png">
+<title>Connect Whoop · HUD</title>
+<style>
+:root{--bg:#0f1012;--panel:#16181b;--panel2:#1b1e22;--line:#2a2d32;--line2:#34383e;--text:#e6e3dc;--muted:#9a978f;--faint:#6b6963;--gold:#c8a96a;--gold2:#e0c48a;--green:#6fbf8a;--red:#e0705c}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font:15px/1.55 "Inter","Segoe UI",system-ui,sans-serif;padding:calc(28px + env(safe-area-inset-top)) 18px 40px}
+.w{max-width:560px;margin:0 auto}
+.eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:600}
+h1{font-family:Georgia,serif;font-size:28px;margin:6px 0 10px}
+p,li{color:var(--muted)} b{color:var(--text)}
+ol{padding-left:20px;margin:10px 0 18px} li{margin:6px 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;margin-top:18px}
+input{width:100%;background:var(--bg);border:1px solid var(--line2);border-radius:10px;color:var(--text);font:inherit;font-size:16px;padding:12px 14px;margin:8px 0 12px}
+.btn{display:inline-block;background:var(--gold);color:#17140e;border:none;font:inherit;font-weight:600;padding:11px 16px;border-radius:9px;cursor:pointer;text-decoration:none}
+.code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14px;word-break:break-all;background:var(--bg);border:1px solid var(--gold);border-radius:10px;padding:14px;margin:10px 0 12px;color:var(--gold2)}
+.err{color:var(--red)} .ok{color:var(--green)}
+a{color:var(--gold2)}
+</style>
+</head>
+<body><div class="w" id="app"></div>
+<script>
+"use strict";
+const REDIRECT="https://jamestbailey.github.io/HUD/whoop.html";
+const SCOPES="offline read:recovery read:sleep read:cycles";
+const Q=new URLSearchParams(location.search),app=document.getElementById("app");
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+if(Q.get("code")){
+  app.innerHTML=`<div class="eyebrow">Whoop · step 2 of 2</div><h1>Approved. Copy this code</h1>
+  <div class="code" id="c">${esc(Q.get("code"))}</div>
+  <button class="btn" id="cp">Copy code</button> <span id="st"></span>
+  <div class="card"><p>Now, within about 10 minutes (the code expires):</p><ol>
+  <li>Open <a href="https://github.com/JamestBailey/second-brain/actions/workflows/whoop-sync.yml" target="_blank">Whoop sync on GitHub</a>.</li>
+  <li>Tap <b>Run workflow</b>, paste the code into the box, then <b>Run workflow</b> again.</li>
+  <li>When it goes green (about a minute), refresh your HUD. The Readiness card fills in, and it keeps updating every morning by itself.</li></ol></div>`;
+  document.getElementById("cp").onclick=async()=>{try{await navigator.clipboard.writeText(Q.get("code"));document.getElementById("st").innerHTML='<span class="ok">Copied</span>'}catch(e){document.getElementById("st").textContent="Long-press the code to copy it"}};
+}else if(Q.get("error")){
+  app.innerHTML=`<div class="eyebrow">Whoop</div><h1>Not connected</h1><p class="err">${esc(Q.get("error_description")||Q.get("error"))}</p><p style="margin-top:12px"><a href="whoop.html">Try again</a></p>`;
+}else{
+  app.innerHTML=`<div class="eyebrow">Whoop · step 1 of 2</div><h1>Connect Whoop to your HUD</h1>
+  <p>Paste the <b>Client ID</b> of the app you made on the WHOOP developer dashboard (steps: <i>90 System → Whoop Sync</i> in your vault). You'll be sent to WHOOP to approve, then back here.</p>
+  <div class="card"><input id="cid" placeholder="Client ID" autocomplete="off" autocapitalize="off" spellcheck="false">
+  <button class="btn" id="go">Continue to WHOOP</button> <span class="err" id="e"></span></div>`;
+  document.getElementById("go").onclick=()=>{const id=document.getElementById("cid").value.trim();if(!id){document.getElementById("e").textContent="Paste your Client ID first";return}
+    const state=Array.from(crypto.getRandomValues(new Uint8Array(8)),b=>b.toString(16).padStart(2,"0")).join("");
+    location.href="https://api.prod.whoop.com/oauth/oauth2/auth?"+new URLSearchParams({client_id:id,redirect_uri:REDIRECT,response_type:"code",scope:SCOPES,state})};
+}
+</script>
+</body>
+</html>

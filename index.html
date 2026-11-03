@@ -37,8 +37,8 @@ h1{font-family:var(--serif);font-weight:600;font-size:34px;letter-spacing:-.01em
 .dot.ok{background:var(--green)} .dot.warn{background:var(--amber)}
 .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:20px}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px 24px;min-width:0}
-.c4{grid-column:span 4}.c5{grid-column:span 5}.c6{grid-column:span 6}.c7{grid-column:span 7}
-@media(max-width:1100px){.c4,.c5,.c6,.c7{grid-column:span 12}}
+.c3{grid-column:span 3}.c4{grid-column:span 4}.c5{grid-column:span 5}.c6{grid-column:span 6}.c7{grid-column:span 7}.c8{grid-column:span 8}
+@media(max-width:1100px){.c3,.c4,.c5,.c6,.c7,.c8{grid-column:span 12}}
 .ch{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px}
 .ct{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600}
 .cm{font-size:12px;color:var(--faint)}
@@ -53,6 +53,32 @@ h1{font-family:var(--serif);font-weight:600;font-size:34px;letter-spacing:-.01em
 .pill{display:inline-block;padding:3px 10px;border-radius:20px;background:var(--panel2);border:1px solid var(--line2);font-size:12px;color:var(--text);margin:3px 6px 3px 0}
 .empty{color:var(--faint);font-size:13px;padding:6px 0}
 .note{font-size:12px;color:var(--faint);margin-top:12px}
+/* focus line */
+.focus{display:flex;align-items:baseline;gap:14px;background:linear-gradient(90deg,#221f18,var(--panel));border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:12px;padding:14px 20px;margin-bottom:20px}
+.focus .fl{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:600;flex:none}
+.focus .ft{font-family:var(--serif);font-size:19px;line-height:1.35}
+/* readiness */
+.rd{display:flex;align-items:center;gap:18px}
+.ring{--p:0;--c:var(--faint);width:92px;height:92px;border-radius:50%;flex:none;display:grid;place-items:center;background:conic-gradient(var(--c) calc(var(--p)*1%),var(--panel2) 0)}
+.ring>div{width:76px;height:76px;border-radius:50%;background:var(--panel);display:flex;align-items:center;justify-content:center;gap:1px;font-size:26px;font-weight:600;font-variant-numeric:tabular-nums}
+.ring small{font-size:13px;color:var(--muted);font-weight:400}
+.rk{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;font-size:13px;flex:1}
+.rk span{color:var(--faint);font-size:11px;display:block;letter-spacing:.04em}
+.rk b{font-weight:600;font-variant-numeric:tabular-nums}
+.adv{margin-top:14px;padding:10px 12px;border-radius:9px;background:var(--panel2);border:1px solid var(--line);font-size:13px}
+.adv.g{border-color:rgba(111,191,138,.45)}.adv.a{border-color:rgba(224,163,92,.45)}.adv.r{border-color:rgba(224,112,92,.45)}
+.r7{display:flex;gap:4px;align-items:flex-end;height:30px;margin-top:12px}
+.r7 i{flex:1;border-radius:3px 3px 0 0;min-height:3px;opacity:.85}
+/* plan */
+.pb{display:grid;grid-template-columns:92px 1fr;gap:12px;padding:9px 0;border-top:1px solid var(--line)}
+.pb:first-child{border-top:none}
+.pb .t{color:var(--gold);font-variant-numeric:tabular-nums;font-size:13px}
+.pb .n{font-weight:500}.pb .w{color:var(--faint);font-size:12px;margin-top:1px}
+.pb.fixed .n{color:var(--muted)}
+/* event */
+.days2{font-family:var(--serif);font-size:44px;font-weight:600;line-height:1}
+.phase{display:inline-block;margin-top:10px;padding:3px 10px;border-radius:20px;font-size:12px;border:1px solid var(--line2);background:var(--panel2)}
+.tgt{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin:-4px 0 12px}
 /* calendar */
 .ev{display:grid;grid-template-columns:64px 1fr;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
 .ev:first-child{border-top:none}
@@ -87,7 +113,7 @@ h1{font-family:var(--serif);font-weight:600;font-size:34px;letter-spacing:-.01em
 .work li{position:relative;padding:3px 0 3px 16px;font-size:13px;line-height:1.45}
 .work li::before{content:"";position:absolute;left:2px;top:11px;width:5px;height:5px;border-radius:50%;background:var(--gold)}.coach a:hover .who{color:var(--gold2)}
 /* trend */
-.bands{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.bands{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 @media(max-width:700px){.bands{grid-template-columns:repeat(2,1fr)}}
 .band{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:14px}
 .band .bn{font-size:12px;color:var(--muted)}
@@ -149,12 +175,16 @@ textarea:focus,input:focus{border-color:var(--gold)}
     </div>
   </header>
 
+  <div class="focus" id="focus"><span class="fl">Focus</span><span class="ft faint">Loading…</span></div>
   <div class="grid">
-    <section class="card c4"><div class="ch"><span class="ct">Today</span><span class="cm" id="calMeta"></span></div><div id="cal"></div></section>
-    <section class="card c4"><div class="ch"><span class="ct">Spending · this pay cycle</span><span class="cm" id="spMeta"></span></div><div id="spend"></div></section>
+    <section class="card c4"><div class="ch"><span class="ct">Readiness · Whoop</span><span class="cm" id="rdMeta"></span></div><div id="ready"></div></section>
+    <section class="card c5"><div class="ch"><span class="ct">Today's plan</span><span class="cm" id="plMeta"></span></div><div id="plan"></div></section>
+    <section class="card c3"><div class="ch"><span class="ct">Next event</span><span class="cm" id="evMeta"></span></div><div id="event"></div></section>
     <section class="card c4"><div class="ch"><span class="ct">This week's practice</span><span class="cm" id="prMeta"></span></div><div id="practice"></div></section>
-    <section class="card c6"><div class="ch"><span class="ct">Coaching focus</span><span class="cm">latest per coach</span></div><div id="coaching"></div></section>
+    <section class="card c8"><div class="ch"><span class="ct">Coaching focus</span><span class="cm">latest per coach</span></div><div id="coaching"></div></section>
+    <section class="card c3"><div class="ch"><span class="ct">Calendar</span><span class="cm" id="calMeta"></span></div><div id="cal"></div></section>
     <section class="card c6"><div class="ch"><span class="ct">Strokes gained · yardage book</span><span class="cm" id="trMeta"></span></div><div id="trend"></div></section>
+    <section class="card c3"><div class="ch"><span class="ct">Spending</span><span class="cm" id="spMeta"></span></div><div id="spend"></div></section>
   </div>
 </div>
 
@@ -188,6 +218,9 @@ textarea:focus,input:focus{border-color:var(--gold)}
   <h2>Google Calendar</h2>
   <p>Paste your calendar link (set-up steps: <i>90 System → HUD Calendar Script</i>). Leave blank to hide events.</p>
   <input type="text" id="calUrl" placeholder="https://script.google.com/macros/s/…/exec?key=…">
+  <h2 style="margin-top:20px">Weekly practice target</h2>
+  <p>How many sessions (ticks) a week counts as a good week.</p>
+  <input type="text" id="tgtIn" inputmode="numeric" placeholder="25">
   <div class="mrow"><button class="btn" id="tokBtn">Change GitHub token</button><button class="btn" id="relinkBtn">Re-link vault folder</button><button class="btn" id="sCancel">Close</button><button class="btn primary" id="sSave">Save</button></div>
 </div></div>
 
@@ -213,6 +246,9 @@ const PATHS={
   drills:"10 Golf/Planning/Winter Plan 2026/Drill Spreadsheet (Fill it in).xlsx",
   coaching:"10 Golf/Coaching",
   gym:"20 Gym",
+  whoop:"90 System/Data/whoop.json",
+  plan:"90 System/Data/plan.json",
+  comps:"10 Golf/Competitions/Schedule.md",
   inbox:"00 Inbox"
 };
 
@@ -297,17 +333,13 @@ async function loadSpending(){
 }
 function renderSpending(s){
   const pct=Math.max(0,Math.min(1,s.spent/s.allowance)),pace=Math.min(1,s.elapsed/s.total);
-  const ahead=s.spent-(s.allowance*pace);
-  const top=Object.entries(s.cat).sort((a,b)=>b[1]-a[1]).slice(0,3);
-  const stale=s.last?dayDiff(new Date(),s.last):null;
-  $("spMeta").textContent=`${fmtDay(s.start)} – ${fmtDay(s.end)}`;
-  $("spend").innerHTML=`
-    <div class="big ${s.remaining<0?"bad":""}">${gbp(s.remaining)}</div>
-    <div class="muted">left of ${gbp(s.allowance)} · <b class="gold">${gbp(Math.max(0,s.perDay))}/day</b> for ${s.daysLeft} days</div>
+  const ahead=s.spent-(s.allowance*pace);const stale=s.last?dayDiff(new Date(),s.last):null;
+  $("spMeta").textContent=`${s.daysLeft} days left`;
+  $("spend").innerHTML=`<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
+      <div class="big ${s.remaining<0?"bad":""}" style="font-size:30px">${gbp(s.remaining)}</div>
+      <div class="gold" style="font-weight:600">${gbp(Math.max(0,s.perDay))}/day</div></div>
     <div class="bar" title="Spent vs cycle elapsed"><i style="width:${pct*100}%"></i><b style="left:${pace*100}%"></b></div>
-    <div class="cm" style="margin-bottom:12px">${ahead>0?`<span class="warn">${gbp(ahead)} ahead of pace</span>`:`<span class="ok">${gbp(-ahead)} under pace</span>`} · marker = where you'd be at an even pace</div>
-    ${top.length?top.map(([k,v])=>`<div class="rowkv"><span class="muted">${esc(k)}</span><span>${gbp(v)}</span></div>`).join(""):'<div class="empty">Nothing logged this cycle yet.</div>'}
-    <div class="note">${s.last?`Last logged ${fmtDay(s.last)}${stale>1?` · <span class="warn">${stale} days ago</span>`:""}`:"No expenses logged yet"}</div>`;
+    <div class="cm">${ahead>0?`<span class="warn">${gbp(ahead)} ahead of pace</span>`:`<span class="ok">${gbp(-ahead)} under pace</span>`}${stale>1?` · <span class="warn">last logged ${stale} days ago</span>`:""}</div>`;
 }
 
 /* ============ PRACTICE (Daily To Do) ============ */
@@ -344,19 +376,74 @@ async function loadWorkouts(){const out=[];
 function renderPractice(p){
   if(!p){$("practice").innerHTML='<div class="empty">No tab for this month in Daily To Do.</div>';return}
   const t=day0(new Date());
-  const pctv=p.tasks&&p.days.length?Math.round(p.total/(p.tasks*p.days.length)*100):0;
-  $("prMeta").textContent=`${p.total} tick${p.total===1?"":"s"} · ${pctv}% of plan`;
+  const target=+ls.get("hud_target","25")||25;
+  $("prMeta").textContent=`${p.total} / ${target} sessions`;
   const all=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
   const line=d=>{const g={};d.done.forEach(x=>(g[x.area]=g[x.area]||[]).push(x));
     return Object.entries(g).map(([a,xs])=>`<div class="wl"><span class="da">${esc(a)}</span> ${xs.map(x=>esc(x.task)+(x.band?` <small>(${esc(x.band)})</small>`:"")+(x.ticked===false?` <small class="warn">· not ticked</small>`:"")).join(", ")}</div>`).join("")};
   const shown=p.days.filter(d=>d.date<=t);
-  $("practice").innerHTML=`<div class="days">${all.map(l=>{const d=p.days.find(x=>x.label===l);
+  $("practice").innerHTML=`<div class="bar" style="margin-top:0"><i style="width:${Math.min(100,p.total/target*100)}%"></i></div>
+    <div class="tgt"><span>${p.total>=target?'<span class="ok">Weekly target hit</span>':`${target-p.total} to go this week`}</span><span>target ${target}</span></div>
+    <div class="days">${all.map(l=>{const d=p.days.find(x=>x.label===l);
       if(!d)return `<div class="day off"><div class="d">${l}</div><div class="v z">–</div></div>`;
       const fut=d.date>t,today=+d.date===+t;
       return `<div class="day ${today?"today":""}"><div class="d">${l}</div><div class="v ${d.n?"":"z"}">${fut?"·":d.n}</div></div>`}).join("")}</div>
     <div class="week">${shown.map(d=>{const today=+d.date===+t;
       return `<div class="wd ${today?"now":""}"><div class="wh"><span>${today?"Today":fmtDay(d.date)}</span><span class="faint">${d.n||""}</span></div>
         ${d.done.length?line(d):`<div class="faint">${today?"Nothing yet — say what you practised and Claude ticks it.":"Nothing logged"}</div>`}</div>`}).reverse().join("")}</div>`;
+}
+
+/* ============ READINESS (Whoop, synced into the vault) ============ */
+async function loadWhoop(){try{return JSON.parse(await FS.text(PATHS.whoop))}catch(e){if(e.name==="NotFoundError"||/not found|missing|could not be found/i.test(e.message))return null;throw e}}
+function zone(r){return r>=67?"g":r>=34?"a":"r"}
+const ZC={g:"var(--green)",a:"var(--amber)",r:"var(--red)"};
+function renderWhoop(w){
+  const el=$("ready");
+  if(!w||!w.days||!w.days.length){$("rdMeta").textContent="";el.innerHTML='<div class="empty">Whoop not connected yet.</div><div class="note">Set-up steps: <i>90 System → Whoop Sync</i>. Once connected, recovery, HRV and sleep land here every morning.</div>';return}
+  const days=w.days.slice().sort((a,b)=>a.date<b.date?-1:1);const d=days.at(-1);const t=ymd(new Date());
+  const z=d.recovery!=null?zone(d.recovery):null;
+  $("rdMeta").innerHTML=d.date===t?"today":`<span class="warn">from ${fmtDay(new Date(d.date))}</span>`;
+  const avg=k=>{const v=days.slice(-8,-1).map(x=>x[k]).filter(x=>x!=null);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null};
+  const hrvAvg=avg("hrv");const hrvD=d.hrv!=null&&hrvAvg?d.hrv-hrvAvg:null;
+  const ADV={g:"<b class='ok'>Green.</b> Good day for high-intensity work: speed, gym strength, long range sessions.",
+    a:"<b class='warn'>Amber.</b> Train as normal but keep the gym moderate. Prioritise quality over volume.",
+    r:"<b class='bad'>Red.</b> Keep strain low: technical work, short game and putting. Skip heavy gym."};
+  el.innerHTML=`<div class="rd"><div class="ring" style="--p:${d.recovery??0};--c:${z?ZC[z]:"var(--faint)"}"><div>${d.recovery??"–"}<small>${d.recovery!=null?"%":""}</small></div></div>
+    <div class="rk"><div><span>HRV</span><b>${d.hrv!=null?Math.round(d.hrv)+" ms":"–"}</b> ${hrvD!=null?`<small class="${hrvD>=0?"ok":"warn"}">${hrvD>=0?"▲":"▼"}${Math.abs(Math.round(hrvD))}</small>`:""}</div>
+      <div><span>Resting HR</span><b>${d.rhr??"–"}</b></div>
+      <div><span>Sleep</span><b>${d.sleep_hours!=null?d.sleep_hours.toFixed(1)+" h":"–"}</b></div>
+      <div><span>Sleep perf.</span><b>${d.sleep_perf!=null?d.sleep_perf+"%":"–"}</b></div>
+      <div><span>Yesterday's strain</span><b>${(days.at(-2)||{}).strain!=null?days.at(-2).strain.toFixed(1):"–"}</b></div></div></div>
+    ${z?`<div class="adv ${z}">${ADV[z]}</div>`:""}
+    <div class="r7" title="Recovery, last 7 days">${days.slice(-7).map(x=>`<i title="${x.date}: ${x.recovery??"–"}%" style="height:${Math.max(8,(x.recovery||0))}%;background:${x.recovery!=null?ZC[zone(x.recovery)]:"var(--line)"}"></i>`).join("")}</div>`;
+}
+
+/* ============ TODAY'S PLAN + FOCUS (written each morning by Claude) ============ */
+async function loadPlan(){try{return JSON.parse(await FS.text(PATHS.plan))}catch(e){if(e.name==="NotFoundError"||/not found|missing|could not be found/i.test(e.message))return null;throw e}}
+function renderPlan(p){
+  const t=ymd(new Date());const today=p&&p.date===t;
+  $("focus").innerHTML=`<span class="fl">Focus</span><span class="ft">${p&&p.focus?esc(p.focus):'<span class="faint">No focus set yet. Claude sets it each morning.</span>'}</span>`;
+  if(!today){$("plMeta").textContent="";$("plan").innerHTML=`<div class="empty">${p?`No plan for today yet (last one was ${fmtDay(new Date(p.date))}).`:"No plan yet."}</div><div class="note">Claude builds today's plan each morning from your readiness, calendar, coaching and practice. Say <i>"plan my day"</i> to run it now.</div>`;return}
+  $("plMeta").textContent=p.generated?"built "+p.generated.slice(11,16):"";
+  $("plan").innerHTML=(p.blocks||[]).map(b=>`<div class="pb ${b.fixed?"fixed":""}"><div class="t">${esc(b.start||"")}${b.end?"–"+esc(b.end):""}</div><div><div class="n">${esc(b.title)}</div>${b.why?`<div class="w">${esc(b.why)}</div>`:""}</div></div>`).join("")||'<div class="empty">Rest day.</div>'
+    +(p.note?`<div class="note">${esc(p.note)}</div>`:"");
+}
+
+/* ============ COMPETITION COUNTDOWN ============ */
+async function loadComps(){let t;try{t=await FS.text(PATHS.comps)}catch(e){return []}
+  const out=[];for(const l of t.split(/\r?\n/)){const c=l.split("|").map(x=>x.trim());if(c.length<5)continue;
+    const st=c[1],en=c[2];if(!/^\d{4}-\d{2}-\d{2}$/.test(st))continue;out.push({start:st,end:/^\d{4}-\d{2}-\d{2}$/.test(en)?en:st,name:c[3],venue:c[4]||"",tour:c[5]||""})}
+  return out.sort((a,b)=>a.start<b.start?-1:1)}
+function renderComps(list){
+  const t=day0(new Date());const up=list.filter(e=>new Date(e.end+"T00:00")>=t);
+  if(!up.length){$("evMeta").textContent="";$("event").innerHTML='<div class="empty">No events in the schedule.</div><div class="note">Add them to <i>10 Golf → Competitions → Schedule</i>, or just tell Claude.</div>';return}
+  const e=up[0];const s=new Date(e.start+"T00:00");const n=dayDiff(s,t);
+  const phase=n<=0?["Tournament week","ok"]:n<=7?["Tournament week","ok"]:n<=28?["Sharpen","warn"]:["Build","gold"];
+  $("evMeta").textContent=e.tour;
+  $("event").innerHTML=`<div class="days2">${n<=0?"Now":n}</div><div class="muted" style="margin-top:2px">${n<=0?"in play":n===1?"day to go":"days to go"}</div>
+    <div style="margin-top:12px;font-weight:600">${esc(e.name)}</div><div class="cm">${fmtDay(s)}${e.end!==e.start?" – "+fmtDay(new Date(e.end+"T00:00")):""}${e.venue?" · "+esc(e.venue):""}</div>
+    <span class="phase ${phase[1]}">${phase[0]}</span>
+    ${up[1]?`<div class="note">Then: ${esc(up[1].name)} · ${fmtDay(new Date(up[1].start+"T00:00"))}</div>`:""}`;
 }
 
 /* ============ DRILL TREND (Yardage Chart) ============ */
@@ -440,7 +527,10 @@ async function refresh(){
     safe(loadPractice,renderPractice,"practice","Daily To Do"),
     safe(loadTrend,renderTrend,"trend","the Drill Spreadsheet"),
     safe(loadCoaching,renderCoaching,"coaching","coach folders"),
-    safe(loadCalendar,renderCalendar,"cal","your calendar")]);
+    safe(loadCalendar,renderCalendar,"cal","your calendar"),
+    safe(loadWhoop,renderWhoop,"ready","Whoop data"),
+    safe(loadPlan,renderPlan,"plan","today's plan"),
+    safe(loadComps,renderComps,"event","the competition schedule")]);
 }
 function tick(){const d=new Date();$("clock").textContent=`${pad(d.getHours())}:${pad(d.getMinutes())}`;
   const h=d.getHours();$("greet").textContent=`Good ${h<12?"morning":h<18?"afternoon":"evening"}, James`;
@@ -476,9 +566,9 @@ setInterval(refresh,5*60*1000);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)refresh()});
 
 /* ============ settings ============ */
-$("setBtn").onclick=()=>{$("calUrl").value=ls.get("hud_cal","");$("settings").classList.add("show")};
+$("setBtn").onclick=()=>{$("calUrl").value=ls.get("hud_cal","");$("tgtIn").value=ls.get("hud_target","25");$("settings").classList.add("show")};
 $("sCancel").onclick=()=>$("settings").classList.remove("show");
-$("sSave").onclick=()=>{const v=$("calUrl").value.trim();ls.set("hud_cal",v);$("settings").classList.remove("show");refresh();toast(v?"Calendar link saved":"Calendar hidden")};
+$("sSave").onclick=()=>{const v=$("calUrl").value.trim();ls.set("hud_cal",v);const tg=parseInt($("tgtIn").value,10);if(tg>0)ls.set("hud_target",String(tg));$("settings").classList.remove("show");refresh();toast(v?"Calendar link saved":"Calendar hidden")};
 
 /* ============ voice note → inbox ============ */
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;let rec=null,on=false,base="";
