@@ -67,6 +67,16 @@ h1{font-family:var(--serif);font-weight:600;font-size:34px;letter-spacing:-.01em
 .day.today{border-color:var(--gold)}
 .day.off{opacity:.35}
 .day .v.z{color:var(--faint);font-weight:400}
+.day.pick{cursor:pointer}.day.pick:hover{border-color:var(--line2)}
+.day.sel{background:#221f18;border-color:var(--gold2)}
+.done{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:16px}
+.done .dh{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px}
+.done .dg{display:grid;grid-template-columns:78px 1fr;gap:10px;padding:6px 0;border-top:1px solid var(--line);font-size:13px}
+.done .dg:first-of-type{border-top:none}
+.done .da{color:var(--gold);font-size:12px;padding-top:1px}
+.done .di{padding:1px 0}.done .di::before{content:"✓ ";color:var(--green)}
+.done .di small{color:var(--faint)}.done .di small.warn{color:var(--amber)}
+.wk{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-bottom:4px}
 .area{display:grid;grid-template-columns:110px 1fr 34px;align-items:center;gap:12px;padding:5px 0;font-size:13px}
 .area .t{height:6px;background:var(--panel2);border-radius:6px;overflow:hidden}
 .area .t i{display:block;height:100%;background:var(--gold)}
@@ -202,6 +212,7 @@ const PATHS={
   todo:"10 Golf/Planning/Winter Plan 2026/Daily To Do.xlsx",
   drills:"10 Golf/Planning/Winter Plan 2026/Drill Spreadsheet (Fill it in).xlsx",
   coaching:"10 Golf/Coaching",
+  gym:"20 Gym",
   inbox:"00 Inbox"
 };
 
@@ -310,26 +321,49 @@ async function loadPractice(){
   let hdr=null;
   for(let r=1;r<=ws.maxRow&&!hdr;r++)for(const c of COLS){const v=String(ws.at(c,r)||"").replace(/\s+/g," ");if(v.includes(key)){hdr=r;break}}
   if(!hdr)return null;
-  const days=[];for(const c of COLS){const v=String(ws.at(c,hdr)||"").replace(/\s+/g," ");const m=v.match(/(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\s*\/?\s*(\d{1,2}) (\w{3})/);if(m)days.push({col:c,label:m[1],date:new Date(t.getFullYear(),MON.indexOf(m[3]),+m[2]),n:0})}
-  const areas={Irons:0,"Off the Tee":0,Chipping:0,Putting:0,Gym:0};let cur=null,tasks=0;
+  const days=[];for(const c of COLS){const v=String(ws.at(c,hdr)||"").replace(/\s+/g," ");const m=v.match(/(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\s*\/?\s*(\d{1,2}) (\w{3})/);if(m)days.push({col:c,label:m[1],date:new Date(t.getFullYear(),MON.indexOf(m[3]),+m[2]),n:0,done:[]})}
+  const areas={Irons:0,"Off the Tee":0,Chipping:0,Putting:0,Gym:0};let cur=null,band=null,tasks=0;
   for(let r=hdr+1;r<=ws.maxRow;r++){const a=String(ws.at("A",r)||"").trim();if(!a)continue;
     if(/^weekly completion|^week /i.test(a))break;
-    const k=a.toLowerCase().replace(/\s+/g," ");if(SECT[k]){cur=SECT[k];continue}if(SUB.has(k)||/^\d+ - \d+ ?yds$|^>\d+yds$/.test(k))continue;
-    tasks++;for(const d of days)if(ws.at(d.col,r)==="✓"){d.n++;if(cur)areas[cur]++}}
+    const k=a.toLowerCase().replace(/\s+/g," ");if(SECT[k]){cur=SECT[k];band=null;continue}if(SUB.has(k)||/^\d+ - \d+ ?yds$|^>\d+yds$/.test(k)){band=a.replace(/\s+/g," ");continue}
+    tasks++;const name=a.replace(/\s+/g," ").replace(/\(([^)]*)$/,"($1)");
+    for(const d of days)if(ws.at(d.col,r)==="✓"){d.n++;if(cur)areas[cur]++;d.done.push({area:cur||"Other",task:name,band})}}
+  /* gym sessions logged as notes: 20 Gym/<coach>/YYYY-MM-DD - Workout - <Session>.md */
+  const gym=await loadWorkouts();
+  for(const d of days){const g=gym.filter(w=>w.date===ymd(d.date));if(!g.length)continue;
+    const i=d.done.findIndex(x=>x.area==="Gym"&&/^workout$/i.test(x.task));
+    if(i>=0)d.done.splice(i,1);else{d.n++;areas.Gym++}   // a logged workout counts even if the box wasn't ticked
+    g.forEach((w,j)=>d.done.push({area:"Gym",task:w.title,band:w.coach,ticked:i>=0||j>0}))}
   return {days,areas,tasks,total:days.reduce((a,d)=>a+d.n,0)}
 }
+async function loadWorkouts(){const out=[];
+  try{for(const c of (await FS.list(PATHS.gym)).filter(e=>e.kind==="directory"))
+    for(const f of await FS.list(`${PATHS.gym}/${c.name}`)){const m=f.name.match(/^(\d{4}-\d{2}-\d{2}) - Workout - (.+)\.md$/);if(m)out.push({date:m[1],title:m[2],coach:c.name})}}catch(e){}
+  return out
+}
+let PR=null,PSEL=null;
 function renderPractice(p){
+  if(p!==undefined)PR=p;p=PR;
   if(!p){$("practice").innerHTML='<div class="empty">No tab for this month in Daily To Do.</div>';return}
   const t=day0(new Date());const max=Math.max(1,...Object.values(p.areas));
   const pctv=p.tasks&&p.days.length?Math.round(p.total/(p.tasks*p.days.length)*100):0;
-  $("prMeta").textContent=`${p.total} ticks · ${pctv}% of plan`;
+  $("prMeta").textContent=`${p.total} tick${p.total===1?"":"s"} · ${pctv}% of plan`;
+  const past=p.days.filter(d=>d.date<=t);
+  const sel=p.days.find(d=>ymd(d.date)===PSEL)||p.days.find(d=>+d.date===+t)||past.at(-1)||p.days[0];
+  const isToday=+sel.date===+t;
+  const groups={};sel.done.forEach(x=>(groups[x.area]=groups[x.area]||[]).push(x));
   const all=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
   $("practice").innerHTML=`<div class="days">${all.map(l=>{const d=p.days.find(x=>x.label===l);
       if(!d)return `<div class="day off"><div class="d">${l}</div><div class="v z">–</div></div>`;
       const fut=d.date>t,today=+d.date===+t;
-      return `<div class="day ${today?"today":""}"><div class="d">${l}</div><div class="v ${d.n?"":"z"}">${fut?"·":d.n}</div></div>`}).join("")}</div>
-    ${Object.entries(p.areas).map(([k,v])=>`<div class="area"><span class="muted">${k}</span><span class="t"><i style="width:${v/max*100}%"></i></span><span class="n">${v}</span></div>`).join("")}
-    ${p.total?"":'<div class="note">Nothing ticked yet this week — say what you practised and Claude ticks it.</div>'}`;
+      return `<div class="day ${today?"today":""} ${fut?"":"pick"} ${d===sel?"sel":""}" ${fut?"":`data-d="${ymd(d.date)}" title="See what was done"`}><div class="d">${l}</div><div class="v ${d.n?"":"z"}">${fut?"·":d.n}</div></div>`}).join("")}</div>
+    <div class="done"><div class="dh"><span>${isToday?"Done today":"Done "+fmtDay(sel.date)}</span><span>${sel.done.length} session${sel.done.length===1?"":"s"}</span></div>
+      ${sel.done.length?Object.entries(groups).map(([a,xs])=>`<div class="dg"><span class="da">${esc(a)}</span><div>${xs.map(x=>`<div class="di">${esc(x.task)}${x.band?` <small>· ${esc(x.band)}</small>`:""}${x.ticked===false?` <small class="warn">· logged, not ticked</small>`:""}</div>`).join("")}</div></div>`).join("")
+        :`<div class="empty">${sel.date>t?"Still to come.":isToday?"Nothing ticked yet today — say what you practised and Claude ticks it.":"Nothing logged that day."}</div>`}
+    </div>
+    <div class="wk">This week by area</div>
+    ${Object.entries(p.areas).map(([k,v])=>`<div class="area"><span class="muted">${k}</span><span class="t"><i style="width:${v/max*100}%"></i></span><span class="n">${v}</span></div>`).join("")}`;
+  $("practice").querySelectorAll(".day.pick").forEach(el=>el.onclick=()=>{PSEL=el.dataset.d;renderPractice()});
 }
 
 /* ============ DRILL TREND (Yardage Chart) ============ */
