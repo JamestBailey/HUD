@@ -471,17 +471,18 @@ function renderWhoop(w){
   const z=d.recovery!=null?zone(d.recovery):null;
   $("rdMeta").innerHTML=d.date===t?"today":`<span class="warn">from ${fmtDay(new Date(d.date))}</span>`;
   const avg=k=>{const v=days.slice(-8,-1).map(x=>x[k]).filter(x=>x!=null);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null};
-  const hrvAvg=avg("hrv");const hrvD=d.hrv!=null&&hrvAvg?d.hrv-hrvAvg:null;
+  const B=w.baseline||{};const useB=(B.days_in_baseline||0)>=14;const hrvAvg=useB?B.hrv_30d:avg("hrv");const hrvD=d.hrv!=null&&hrvAvg?d.hrv-hrvAvg:null;const rhrAvg=useB?B.rhr_30d:avg("rhr");const rhrD=d.rhr!=null&&rhrAvg?d.rhr-rhrAvg:null;
   const ADV={g:"<b class='ok'>Green.</b> Good day for high-intensity work: speed, gym strength, long range sessions.",
     a:"<b class='warn'>Amber.</b> Train as normal but keep the gym moderate. Prioritise quality over volume.",
     r:"<b class='bad'>Red.</b> Keep strain low: technical work, short game and putting. Skip heavy gym."};
   el.innerHTML=`<div class="rd"><div class="ring" style="--p:${d.recovery??0};--c:${z?ZC[z]:"var(--faint)"}"><div>${d.recovery??"–"}<small>${d.recovery!=null?"%":""}</small></div></div>
     <div class="rk"><div><span>HRV</span><b>${d.hrv!=null?Math.round(d.hrv)+" ms":"–"}</b> ${hrvD!=null?`<small class="${hrvD>=0?"ok":"warn"}">${hrvD>=0?"▲":"▼"}${Math.abs(Math.round(hrvD))}</small>`:""}</div>
-      <div><span>Resting HR</span><b>${d.rhr??"–"}</b></div>
+      <div><span>Resting HR</span><b>${d.rhr??"–"}</b> ${rhrD!=null&&Math.abs(rhrD)>=1?`<small class="${rhrD<=0?"ok":"warn"}">${rhrD>0?"▲":"▼"}${Math.abs(Math.round(rhrD))}</small>`:""}</div>
       <div><span>Sleep</span><b>${d.sleep_hours!=null?d.sleep_hours.toFixed(1)+" h":"–"}</b></div>
       <div><span>Sleep perf.</span><b>${d.sleep_perf!=null?d.sleep_perf+"%":"–"}</b></div>
       <div><span>Yesterday's strain</span><b>${(days.at(-2)||{}).strain!=null?days.at(-2).strain.toFixed(1):"–"}</b></div></div></div>
     ${z?`<div class="adv ${z}">${ADV[z]}</div>`:""}
+    ${useB?`<div class="note" style="margin:8px 0 6px">Arrows compare with your 30-day normal: HRV ${Math.round(B.hrv_30d)} ms · resting HR ${Math.round(B.rhr_30d)}</div>`:""}
     <div class="r7" title="Recovery, last 7 days">${days.slice(-7).map(x=>`<i title="${x.date}: ${x.recovery??"–"}%" style="height:${Math.max(8,(x.recovery||0))}%;background:${x.recovery!=null?ZC[zone(x.recovery)]:"var(--line)"}"></i>`).join("")}</div>`;
 }
 
