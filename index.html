@@ -38,7 +38,9 @@ h1{font-family:var(--serif);font-weight:600;font-size:34px;letter-spacing:-.01em
 .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:20px}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px 24px;min-width:0}
 .c3{grid-column:span 3}.c4{grid-column:span 4}.c5{grid-column:span 5}.c6{grid-column:span 6}.c7{grid-column:span 7}.c8{grid-column:span 8}.c12{grid-column:span 12}
-@media(max-width:1100px){.c3,.c4,.c5,.c6,.c7,.c8{grid-column:span 12}}
+@media(max-width:1100px){.c3,.c4,.c5,.c7,.c8{grid-column:span 12}}
+@media(max-width:1100px){.c6{grid-column:span 6}}
+@media(max-width:520px){.c6{grid-column:span 6}.mini .mv{display:block}.mv .ms{margin-top:6px}}
 .ch{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px}
 .ct{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600}
 .cm{font-size:12px;color:var(--faint)}
@@ -53,6 +55,28 @@ h1{font-family:var(--serif);font-weight:600;font-size:34px;letter-spacing:-.01em
 .pill{display:inline-block;padding:3px 10px;border-radius:20px;background:var(--panel2);border:1px solid var(--line2);font-size:12px;color:var(--text);margin:3px 6px 3px 0}
 .empty{color:var(--faint);font-size:13px;padding:6px 0}
 .note{font-size:12px;color:var(--faint);margin-top:12px}
+/* tabs */
+.tabs{display:flex;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:4px;margin-bottom:20px;width:max-content}
+.tabs button{background:none;border:none;color:var(--muted);font:inherit;font-size:13px;font-weight:500;padding:8px 18px;border-radius:9px;cursor:pointer;display:flex;align-items:center;gap:7px;transition:.15s}
+.tabs button:hover{color:var(--text)}
+.tabs button.on{background:var(--panel2);color:var(--gold2);box-shadow:inset 0 0 0 1px var(--line2)}
+.tabs .ti{font-size:12px;opacity:.8}
+.panel{display:none}.panel.on{display:block;animation:fade .18s ease}
+@keyframes fade{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+.mini{text-align:left;font:inherit;color:inherit;cursor:pointer;display:block;transition:.15s}
+.mini:hover{border-color:var(--line2)}
+.mini .ct::after{content:" ›";color:var(--faint)}
+.mv{margin-top:10px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.mv .mb{font-family:var(--serif);font-size:30px;font-weight:600;line-height:1}
+.mv .ms{font-size:13px;color:var(--muted)}.mv .mb small{font-family:var(--sans);font-weight:400}
+.wsum{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.wsum div{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.wsum span{display:block;font-size:11px;color:var(--faint);letter-spacing:.06em;text-transform:uppercase}
+.wsum b{font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
+.wd.fut .wh span:first-child{color:var(--muted)}
+.nodata{font-size:12px;color:var(--faint);margin-top:12px}
+.comp{display:grid;grid-template-columns:96px 1fr;gap:10px;font-size:13px;padding:6px 0;border-top:1px solid var(--line)}
+.comp .d{color:var(--gold);font-variant-numeric:tabular-nums}.comp .v{color:var(--faint);font-size:12px}
 /* focus line */
 .focus{display:flex;align-items:baseline;gap:14px;background:linear-gradient(90deg,#221f18,var(--panel));border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:12px;padding:14px 20px;margin-bottom:20px}
 .focus .fl{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:600;flex:none}
@@ -162,7 +186,18 @@ textarea:focus,input:focus{border-color:var(--gold)}
 .err{color:var(--red);font-size:12px;margin-top:8px}
 .or{text-align:center;color:var(--faint);font-size:12px;margin:14px 0 4px}
 @media(max-width:700px){
-  body{padding:calc(14px + env(safe-area-inset-top)) 12px calc(28px + env(safe-area-inset-bottom))}
+  body{padding:calc(14px + env(safe-area-inset-top)) 12px calc(86px + env(safe-area-inset-bottom))}
+  .tabs{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));width:auto;z-index:5;justify-content:space-around;box-shadow:0 10px 30px rgba(0,0,0,.5);background:rgba(22,24,27,.94);backdrop-filter:blur(10px)}
+  .tabs button{flex-direction:column;gap:2px;padding:7px 10px;font-size:11px;flex:1}
+  .tabs .ti{font-size:15px}
+  header .eyebrow{display:none}
+  header{flex-direction:row;align-items:center;flex-wrap:nowrap;gap:10px;padding-bottom:12px}header>div:first-child{flex:1;min-width:0}
+  h1{font-size:22px;margin-top:0}.sub{font-size:12px;margin-top:2px}
+  .hright{width:auto;margin-left:auto}.clock{display:none}
+  #voiceBtn{padding:9px 11px;font-size:0}#voiceBtn::before{content:"●";font-size:13px}
+  .focus{padding:12px 14px;gap:10px;flex-direction:column;align-items:flex-start}.focus .ft{font-size:17px}
+  .wsum{gap:6px}.wsum b{font-size:17px}
+  .mv .mb{font-size:26px}
   header{flex-direction:column;align-items:stretch;gap:12px;padding-bottom:14px;margin-bottom:14px}
   h1{font-size:26px}
   .hright{gap:8px}
@@ -198,17 +233,43 @@ textarea:focus,input:focus{border-color:var(--gold)}
     </div>
   </header>
 
-  <div class="focus" id="focus"><span class="fl">Focus</span><span class="ft faint">Loading…</span></div>
-  <div class="grid">
-    <section class="card c4"><div class="ch"><span class="ct">Readiness · Whoop</span><span class="cm" id="rdMeta"></span></div><div id="ready"></div></section>
-    <section class="card c5"><div class="ch"><span class="ct">Today's plan</span><span class="cm" id="plMeta"></span></div><div id="plan"></div></section>
-    <section class="card c3"><div class="ch"><span class="ct">Next event</span><span class="cm" id="evMeta"></span></div><div id="event"></div></section>
-    <section class="card c4"><div class="ch"><span class="ct">This week's practice</span><span class="cm" id="prMeta"></span></div><div id="practice"></div></section>
-    <section class="card c8"><div class="ch"><span class="ct">Coaching focus</span><span class="cm">latest per coach</span></div><div id="coaching"></div></section>
-    <section class="card c4"><div class="ch"><span class="ct">Calendar</span><span class="cm" id="calMeta"></span></div><div id="cal"></div></section>
-    <section class="card c8"><div class="ch"><span class="ct">Finances · this pay cycle</span><span class="cm" id="spMeta"></span></div><div id="spend"></div></section>
-    <section class="card c12"><div class="ch"><span class="ct">Strokes gained · yardage book</span><span class="cm" id="trMeta"></span></div><div id="trend"></div></section>
-  </div>
+  <nav class="tabs" id="tabs">
+    <button data-tab="today" class="on"><span class="ti">◉</span>Today</button>
+    <button data-tab="week"><span class="ti">▦</span>Week</button>
+    <button data-tab="golf"><span class="ti">⛳</span>Golf</button>
+    <button data-tab="money"><span class="ti">£</span>Money</button>
+  </nav>
+
+  <main class="panel on" id="p-today">
+    <div class="focus" id="focus"><span class="fl">Focus</span><span class="ft faint">Loading…</span></div>
+    <div class="grid">
+      <section class="card c4"><div class="ch"><span class="ct">Readiness · Whoop</span><span class="cm" id="rdMeta"></span></div><div id="ready"></div></section>
+      <section class="card c8"><div class="ch"><span class="ct">Today's plan</span><span class="cm" id="plMeta"></span></div><div id="plan"></div></section>
+      <button class="card mini c6" data-go="golf"><span class="ct">Next event</span><div id="evMini" class="mv"></div></button>
+      <button class="card mini c6" data-go="money"><span class="ct">Money</span><div id="moneyMini" class="mv"></div></button>
+    </div>
+  </main>
+
+  <main class="panel" id="p-week">
+    <div class="grid">
+      <section class="card c12"><div class="ch"><span class="ct">This week</span><span class="cm" id="prMeta"></span></div><div id="practice"></div></section>
+    </div>
+  </main>
+
+  <main class="panel" id="p-golf">
+    <div class="grid">
+      <section class="card c4"><div class="ch"><span class="ct">Next event</span><span class="cm" id="evMeta"></span></div><div id="event"></div></section>
+      <section class="card c8"><div class="ch"><span class="ct">Coaching focus</span><span class="cm">latest per coach</span></div><div id="coaching"></div></section>
+      <section class="card c12"><div class="ch"><span class="ct">Strokes gained · yardage book</span><span class="cm" id="trMeta"></span></div><div id="trend"></div></section>
+    </div>
+  </main>
+
+  <main class="panel" id="p-money">
+    <div class="grid">
+      <section class="card c12"><div class="ch"><span class="ct">Finances · this pay cycle</span><span class="cm" id="spMeta"></span></div><div id="spend"></div></section>
+    </div>
+  </main>
+  <div id="cal" hidden></div><span id="calMeta" hidden></span>
 </div>
 
 <!-- connect -->
@@ -365,6 +426,7 @@ function renderSpending(s){
   const win=Math.min(7,s.elapsed);let recent=0;for(let i=0;i<win;i++){const d=new Date(t0().getFullYear(),t0().getMonth(),t0().getDate()-i);recent+=s.daily[ymd(d)]||0}
   const rate=recent/Math.max(1,win);const proj=s.elapsed>=3?s.spent+rate*(s.daysLeft-1):null;const projSave=proj!=null?s.pay-s.bills-proj:null;const over=proj!=null?proj-s.allowance:null;
   $("spMeta").textContent=`${fmtDay(s.start)} – ${fmtDay(s.end)} · payday in ${s.daysLeft} day${s.daysLeft===1?"":"s"}`;
+  $("moneyMini").innerHTML=`<span class="mb ${s.remaining<0?"bad":""}">${gbp(s.remaining)} <small class="ms">left</small></span><span class="ms"><b class="gold">${gbp(Math.max(0,s.perDay))}/day</b> for ${s.daysLeft} days<br>${ahead>0?`<span class="warn">${gbp(ahead)} ahead of pace</span>`:`<span class="ok">${gbp(-ahead)} under pace</span>`}</span>`;
   const C={bills:"#5b6577",sav:"var(--green)",spent:"var(--gold)",left:"#3a3e45"};
   const seg=(v,c)=>`<i style="width:${Math.max(0,v)/s.pay*100}%;background:${c}"></i>`;
   // cumulative spend vs even pace
@@ -443,12 +505,14 @@ function renderPractice(p){
   const dayBlock=d=>{const today=+d.date===+t,fut=d.date>t;
     let body;
     if(fut){const pl=PLANS.find(x=>x.date===ymd(d.date));
-      body=pl?`<div class="faint" style="font-size:12px;margin-bottom:2px">Planned${pl.provisional?" (provisional)":""}</div>${(pl.blocks||[]).filter(b=>!b.fixed).map(b=>`<div class="wl"><span class="da">${esc(b.start||"")}</span> ${esc(b.title)}</div>`).join("")||'<div class="faint">Rest day</div>'}`
+      body=pl?`<div class="faint" style="font-size:12px;margin-bottom:2px">Planned${pl.provisional?" (provisional)":""}</div>${(pl.blocks||[]).map(b=>`<div class="wl ${b.fixed?"faint":""}"><span class="da">${esc(b.start||"")}</span> ${esc(b.title)}</div>`).join("")||'<div class="faint">Rest day</div>'}`
         :'<div class="faint">Still to come. The plan appears here the evening before.</div>'}
     else body=d.done.length?line(d):`<div class="faint">${today?"Nothing yet. Say what you practised and Claude ticks it.":"Nothing logged"}</div>`;
-    return `<div class="wd ${today?"now":""}"><div class="wh"><span>${today?"Today":fmtDay(d.date)}</span><span class="faint">${fut?"":d.n||""}</span></div>${body}</div>`};
-  const list=sel?[sel]:p.days.filter(d=>d.date<=t).reverse();
-  $("practice").innerHTML=`<div class="bar" style="margin-top:0"><i style="width:${Math.min(100,p.total/target*100)}%"></i></div>
+    return `<div class="wd ${today?"now":""} ${fut?"fut":""}"><div class="wh"><span>${today?"Today":fmtDay(d.date)}</span><span class="faint">${fut?"":d.n||""}</span></div>${body}</div>`};
+  const list=sel?[sel]:p.days.slice();
+  const rest=p.days.filter(d=>d.date<=t&&!d.n&&!d.done.length).length;
+  $("practice").innerHTML=`<div class="wsum"><div><span>Sessions</span><b>${p.total}</b><small class="faint"> / ${target}</small></div><div><span>Gym</span><b>${p.areas.Gym}</b><small class="faint"> / 3</small></div><div><span>Days off</span><b>${rest}</b><small class="faint"> / 1</small></div></div>
+    <div class="bar" style="margin-top:0"><i style="width:${Math.min(100,p.total/target*100)}%"></i></div>
     <div class="tgt"><span>${p.total>=target?'<span class="ok">Weekly target hit</span>':`${target-p.total} to go this week`}</span><span>target ${target}</span></div>
     <div class="days">${all.map(l=>{const d=p.days.find(x=>x.label===l);
       if(!d)return `<div class="day off"><div class="d">${l}</div><div class="v z">–</div></div>`;
@@ -491,13 +555,18 @@ async function loadPlan(){let j;try{j=JSON.parse(await FS.text(PATHS.plan))}catc
   return Array.isArray(j.days)?j.days:(j.date?[j]:[])}
 function planRows(p){return (p.blocks||[]).map(b=>`<div class="pb ${b.fixed?"fixed":""}"><div class="t">${esc(b.start||"")}${b.end?"–"+esc(b.end):""}</div><div><div class="n">${esc(b.title)}</div>${b.why?`<div class="w">${esc(b.why)}</div>`:""}</div></div>`).join("")}
 function renderPlan(days){
-  days=days||[];PLANS=days;if(PR)renderPractice();const t=ymd(new Date()),tm=ymd(new Date(Date.now()+864e5));
-  const p=days.find(x=>x.date===t),n=days.find(x=>x.date===tm);
+  days=days||[];PLANDAYS=days;PLANS=days;if(PR)renderPractice();const t=ymd(new Date()),tm=ymd(new Date(Date.now()+864e5));
+  let p=days.find(x=>x.date===t);const n=days.find(x=>x.date===tm);
   const latest=days.slice().sort((a,b)=>a.date<b.date?-1:1).at(-1);
   const f=(p&&p.focus)||(n&&n.focus)||(latest&&latest.focus);
   $("focus").innerHTML=`<span class="fl">Focus</span><span class="ft">${f?esc(f):'<span class="faint">No focus set yet. Claude sets it with each plan.</span>'}</span>`;
   const evening=new Date().getHours()>=17;
   let html="";
+  const hmm=d=>`${pad(d.getHours())}:${pad(d.getMinutes())}`,td=day0(new Date());
+  const calToday=CAL.filter(e=>!e.allDay&&+day0(e.s)===+td).map(e=>({start:hmm(e.s),end:hmm(e.e),title:e.title,fixed:true}));
+  if(p){const have=new Set((p.blocks||[]).map(b=>b.start));const extra=calToday.filter(e=>!have.has(e.start)&&!/^◆/.test(e.title));
+    if(extra.length)p=Object.assign({},p,{blocks:(p.blocks||[]).concat(extra).sort((a,b)=>(a.start||"")<(b.start||"")?-1:1)})}
+  else if(calToday.length)p={date:t,blocks:calToday,note:"From your calendar. No plan built for today."};
   if(p){
     $("plMeta").innerHTML=p.provisional?'<span class="warn">provisional · checked at 07:45</span>':(p.checked?"checked "+esc(p.checked.slice(11,16)):"");
     html+=(planRows(p)||'<div class="empty">Rest day.</div>')+(p.note?`<div class="note">${esc(p.note)}</div>`:"");
@@ -514,7 +583,7 @@ async function loadComps(){let t;try{t=await FS.text(PATHS.comps)}catch(e){retur
   return out.sort((a,b)=>a.start<b.start?-1:1)}
 function renderComps(list){
   const t=day0(new Date());const up=list.filter(e=>new Date(e.end+"T00:00")>=t);
-  if(!up.length){$("evMeta").textContent="";$("event").innerHTML='<div class="empty">No events in the schedule.</div><div class="note">Add them to <i>10 Golf → Competitions → Schedule</i>, or just tell Claude.</div>';return}
+  if(!up.length){$("evMini").innerHTML='<span class="ms">No events scheduled</span>';$("evMeta").textContent="";$("event").innerHTML='<div class="empty">No events in the schedule.</div><div class="note">Add them to <i>10 Golf → Competitions → Schedule</i>, or just tell Claude.</div>';return}
   const e=up[0];const s=new Date(e.start+"T00:00");const n=dayDiff(s,t);
   const addD=k=>new Date(s.getFullYear(),s.getMonth(),s.getDate()-k);
   const phase=n<=7?["Tournament Week","ok","Short, confidence-building sessions. No swing changes."]
@@ -524,7 +593,8 @@ function renderComps(list){
   $("event").innerHTML=`<div class="days2">${n<=0?"Now":n}</div><div class="muted" style="margin-top:2px">${n<=0?"in play":n===1?"day to go":"days to go"}</div>
     <div style="margin-top:12px;font-weight:600">${esc(e.name)}</div><div class="cm">${fmtDay(s)}${e.end!==e.start?" – "+fmtDay(new Date(e.end+"T00:00")):""}${e.venue?" · "+esc(e.venue):""}</div>
     <span class="phase ${phase[1]}">${phase[0]}</span><div class="note" style="margin-top:8px">${phase[2]}</div>
-    ${up[1]?`<div class="note">Then: ${esc(up[1].name)} · ${fmtDay(new Date(up[1].start+"T00:00"))}</div>`:""}`;
+    ${up.length>1?`<div class="fh" style="margin-top:18px">Coming up</div>${up.slice(1).map(x=>`<div class="comp"><span class="d">${fmtDay(new Date(x.start+"T00:00"))}</span><div>${esc(x.name)}${x.venue?`<div class="v">${esc(x.venue)}</div>`:""}</div></div>`).join("")}`:""}`;
+  $("evMini").innerHTML=`<span class="mb">${n<=0?"Now":n} <small class="ms">${n<=0?"in play":"days"}</small></span><span class="ms">${esc(e.name)}<br><span class="${phase[1]}">${phase[0]}</span></span>`;
 }
 
 /* ============ DRILL TREND (Yardage Chart) ============ */
@@ -546,11 +616,14 @@ function spark(pts){
 function renderTrend(bands){
   if(!bands.length){$("trend").innerHTML='<div class="empty">No Yardage Chart tab found.</div>';return}
   const n=bands.reduce((a,b)=>a+b.pts.length,0);$("trMeta").textContent=`${n} session${n===1?"":"s"} logged`;
-  $("trend").innerHTML=`<div class="bands">${bands.map(b=>{const last=b.pts.at(-1),prev=b.pts.at(-2);
+  const has=bands.filter(b=>b.pts.length),none=bands.filter(b=>!b.pts.length);
+  $("trend").innerHTML=`<div class="bands">${has.map(b=>{const last=b.pts.at(-1),prev=b.pts.at(-2);
     const ch=last&&prev?last.v-prev.v:null;
     return `<div class="band"><div class="bn">${esc(b.name)}</div><div class="bv">${last?(last.v>0?"+":"")+last.v.toFixed(2):"–"}</div>
       <div class="cm">${last?`${b.pts.length} · ${ch===null?"first session":(ch>=0?`<span class="ok">▲ ${ch.toFixed(2)}</span>`:`<span class="bad">▼ ${Math.abs(ch).toFixed(2)}</span>`)}`:"no sessions yet"}</div>${spark(b.pts)}</div>`}).join("")}</div>
-    ${n<3?'<div class="note">A trend line appears from the 2nd session in each band.</div>':""}`;
+    ${!has.length?'<div class="empty">No yardage-book sessions logged yet.</div>':""}
+    ${none.length?`<div class="nodata">No sessions yet: ${none.map(b=>esc(b.name)).join(" · ")}</div>`:""}
+    ${n<3&&has.length?'<div class="note">A trend line appears from the 2nd session in each band.</div>':""}`;
 }
 
 /* ============ COACHING FOCUS (lesson notes in the vault) ============ */
@@ -587,7 +660,8 @@ async function loadCalendar(){
   const r=await fetch(url+(url.includes("?")?"&":"?")+"days=8",{redirect:"follow"});const j=await r.json();if(j.error)throw new Error(j.error);
   return {events:j.events.map(e=>({...e,s:new Date(e.start),e:new Date(e.end)}))}
 }
-function renderCalendar(c){
+let CAL=[],PLANDAYS=[];
+function renderCalendar(c){CAL=c&&c.events?c.events:[];renderPlan(PLANDAYS);return;
   const t=day0(new Date());
   if(c.off){$("calMeta").textContent="";$("cal").innerHTML='<div class="empty">Calendar not connected.</div><div class="note">⚙ Settings → paste your calendar link. Steps are in <i>90 System → HUD Calendar Script</i>.</div>';return}
   const hm=d=>`${pad(d.getHours())}:${pad(d.getMinutes())}`;
@@ -642,6 +716,14 @@ $("relinkBtn").onclick=()=>{$("settings").classList.remove("show");connect()};
     $("pickBtn").textContent="Allow access";$("pickBtn").onclick=async()=>{if(await h.requestPermission({mode:"readwrite"})==="granted"){ROOT=h;$("connect").classList.remove("show");refresh()}}}catch(e){}}
   $("connect").classList.add("show");
 })();
+/* ============ tabs ============ */
+function showTab(t){if(!document.getElementById("p-"+t))t="today";
+  document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("on",p.id==="p-"+t));
+  document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));
+  ls.set("hud_tab",t);if(location.hash!=="#"+t)history.replaceState(null,"","#"+t);window.scrollTo(0,0)}
+document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>showTab(b.dataset.go));
+showTab((location.hash||"").slice(1)||ls.get("hud_tab","today"));
 $("refreshBtn").onclick=()=>{refresh();toast("Refreshed")};
 setInterval(refresh,5*60*1000);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)refresh()});
