@@ -37,7 +37,7 @@ h1{font-family:var(--serif);font-weight:600;font-size:34px;letter-spacing:-.01em
 .dot.ok{background:var(--green)} .dot.warn{background:var(--amber)}
 .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:20px}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px 24px;min-width:0}
-.c3{grid-column:span 3}.c4{grid-column:span 4}.c5{grid-column:span 5}.c6{grid-column:span 6}.c7{grid-column:span 7}.c8{grid-column:span 8}
+.c3{grid-column:span 3}.c4{grid-column:span 4}.c5{grid-column:span 5}.c6{grid-column:span 6}.c7{grid-column:span 7}.c8{grid-column:span 8}.c12{grid-column:span 12}
 @media(max-width:1100px){.c3,.c4,.c5,.c6,.c7,.c8{grid-column:span 12}}
 .ch{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px}
 .ct{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600}
@@ -80,6 +80,25 @@ h1{font-family:var(--serif);font-weight:600;font-size:34px;letter-spacing:-.01em
 .phase{display:inline-block;margin-top:12px;padding:3px 10px;border-radius:20px;font-size:12px;border:1px solid var(--line2);background:var(--panel2)}
 .tgt{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin:-4px 0 12px}
 .wk{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+/* finances */
+.fin{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+@media(max-width:800px){.fin{grid-template-columns:1fr;gap:18px}}
+.fh{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin:16px 0 8px}
+.fin>div>.fh:first-child{margin-top:0}
+.flow{display:flex;height:12px;border-radius:6px;overflow:hidden;background:var(--panel2)}
+.flow i{display:block;height:100%}
+.leg{display:grid;grid-template-columns:1fr 1fr;gap:4px 14px;margin-top:8px;font-size:12px}
+.leg span{display:flex;justify-content:space-between;gap:6px;color:var(--muted)}.leg b{color:var(--text);font-weight:500;font-variant-numeric:tabular-nums}
+.leg em{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px;font-style:normal}
+.proj{padding:10px 12px;border-radius:9px;background:var(--panel2);border:1px solid var(--line);font-size:13px;margin-top:12px}
+.proj.bad{border-color:rgba(224,112,92,.45)}.proj.ok{border-color:rgba(111,191,138,.4)}
+.cat{display:grid;grid-template-columns:110px 1fr 64px;gap:10px;align-items:center;font-size:13px;padding:3px 0}
+.cat .t{height:6px;background:var(--panel2);border-radius:6px;overflow:hidden}.cat .t i{display:block;height:100%;background:var(--gold)}
+.cat .n{text-align:right;font-variant-numeric:tabular-nums}
+.tx{display:grid;grid-template-columns:52px 1fr auto;gap:10px;font-size:13px;padding:5px 0;border-top:1px solid var(--line)}
+.tx:first-of-type{border-top:none}.tx .d{color:var(--faint);font-size:12px}.tx .a{font-variant-numeric:tabular-nums}
+.bill{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);padding:2px 0}.bill b{color:var(--text);font-weight:500}
+svg.cum{display:block;width:100%;height:70px;margin-top:10px}
 /* calendar */
 .ev{display:grid;grid-template-columns:64px 1fr;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
 .ev:first-child{border-top:none}
@@ -186,9 +205,9 @@ textarea:focus,input:focus{border-color:var(--gold)}
     <section class="card c3"><div class="ch"><span class="ct">Next event</span><span class="cm" id="evMeta"></span></div><div id="event"></div></section>
     <section class="card c4"><div class="ch"><span class="ct">This week's practice</span><span class="cm" id="prMeta"></span></div><div id="practice"></div></section>
     <section class="card c8"><div class="ch"><span class="ct">Coaching focus</span><span class="cm">latest per coach</span></div><div id="coaching"></div></section>
-    <section class="card c3"><div class="ch"><span class="ct">Calendar</span><span class="cm" id="calMeta"></span></div><div id="cal"></div></section>
-    <section class="card c6"><div class="ch"><span class="ct">Strokes gained · yardage book</span><span class="cm" id="trMeta"></span></div><div id="trend"></div></section>
-    <section class="card c3"><div class="ch"><span class="ct">Spending</span><span class="cm" id="spMeta"></span></div><div id="spend"></div></section>
+    <section class="card c4"><div class="ch"><span class="ct">Calendar</span><span class="cm" id="calMeta"></span></div><div id="cal"></div></section>
+    <section class="card c8"><div class="ch"><span class="ct">Finances · this pay cycle</span><span class="cm" id="spMeta"></span></div><div id="spend"></div></section>
+    <section class="card c12"><div class="ch"><span class="ct">Strokes gained · yardage book</span><span class="cm" id="trMeta"></span></div><div id="trend"></div></section>
   </div>
 </div>
 
@@ -323,27 +342,60 @@ async function openXlsx(path){
 /* ============ SPENDING ============ */
 async function loadSpending(){
   const x=await openXlsx(PATHS.spend);const S=await x.sheet("Setup"),L=await x.sheet("Log");
-  const pay=+S.at("B",5)||0,bills=+S.at("B",18)||0,sav=+S.at("B",22)||0,payday=+S.at("B",7)||1;
-  const allowance=typeof S.at("B",23)==="number"?S.at("B",23):pay-bills-sav;
+  const pay=+S.at("B",5)||0,extra=+S.at("B",6)||0,payday=+S.at("B",7)||1;
+  const items=[];for(let r=11;r<=17;r++){const n=S.at("A",r),v=S.at("B",r);if(n&&typeof v==="number")items.push({name:String(n),amt:v,type:String(S.at("C",r)||"Bill")})}
+  const bills=items.filter(i=>i.type!=="Savings").reduce((a,i)=>a+i.amt,0),fixedSav=items.filter(i=>i.type==="Savings").reduce((a,i)=>a+i.amt,0);
+  const savTarget=fixedSav+extra,allowance=pay-bills-savTarget;
   const t=day0(new Date());
   const start=t.getDate()>=payday?new Date(t.getFullYear(),t.getMonth(),payday):new Date(t.getFullYear(),t.getMonth()-1,payday);
   const next=new Date(start.getFullYear(),start.getMonth()+1,payday);const end=new Date(next-864e5);
-  let spent=0,last=null;const cat={};
+  let spent=0,last=null;const cat={},tx=[],daily={};
   for(let r=5;r<=L.maxRow;r++){const a=L.at("A",r),b=L.at("B",r);if(typeof a!=="number"||typeof b!=="number")continue;
     const d=serialToDate(a);if(!last||d>last)last=d;
-    if(d>=start&&d<=end){spent+=b;const c=L.at("C",r)||"Other";cat[c]=(cat[c]||0)+b}}
+    if(d>=start&&d<=end){spent+=b;const c=L.at("C",r)||"Other";cat[c]=(cat[c]||0)+b;tx.push({d,amt:b,cat:c,note:String(L.at("D",r)||""),r});const k=ymd(d);daily[k]=(daily[k]||0)+b}}
+  tx.sort((p,q)=>q.d-p.d||q.r-p.r);
   const total=dayDiff(end,start)+1,daysLeft=dayDiff(end,t)+1,elapsed=total-daysLeft+1;
-  return {allowance,spent,remaining:allowance-spent,perDay:(allowance-spent)/Math.max(1,daysLeft),daysLeft,total,elapsed,start,end,last,cat}
+  return {pay,bills,fixedSav,extra,savTarget,items,allowance,spent,remaining:allowance-spent,perDay:(allowance-spent)/Math.max(1,daysLeft),daysLeft,total,elapsed,start,end,next,last,cat,tx,daily}
 }
+const t0=()=>day0(new Date());
 function renderSpending(s){
   const pct=Math.max(0,Math.min(1,s.spent/s.allowance)),pace=Math.min(1,s.elapsed/s.total);
   const ahead=s.spent-(s.allowance*pace);const stale=s.last?dayDiff(new Date(),s.last):null;
-  $("spMeta").textContent=`${s.daysLeft} days left`;
-  $("spend").innerHTML=`<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
-      <div class="big ${s.remaining<0?"bad":""}" style="font-size:30px">${gbp(s.remaining)}</div>
-      <div class="gold" style="font-weight:600">${gbp(Math.max(0,s.perDay))}/day</div></div>
-    <div class="bar" title="Spent vs cycle elapsed"><i style="width:${pct*100}%"></i><b style="left:${pace*100}%"></b></div>
-    <div class="cm">${ahead>0?`<span class="warn">${gbp(ahead)} ahead of pace</span>`:`<span class="ok">${gbp(-ahead)} under pace</span>`}${stale>1?` · <span class="warn">last logged ${stale} days ago</span>`:""}</div>`;
+  // projection: what's spent + recent daily rate (last 7 days, or cycle so far if shorter) x days still to come
+  const win=Math.min(7,s.elapsed);let recent=0;for(let i=0;i<win;i++){const d=new Date(t0().getFullYear(),t0().getMonth(),t0().getDate()-i);recent+=s.daily[ymd(d)]||0}
+  const rate=recent/Math.max(1,win);const proj=s.elapsed>=3?s.spent+rate*(s.daysLeft-1):null;const projSave=proj!=null?s.pay-s.bills-proj:null;const over=proj!=null?proj-s.allowance:null;
+  $("spMeta").textContent=`${fmtDay(s.start)} – ${fmtDay(s.end)} · payday in ${s.daysLeft} day${s.daysLeft===1?"":"s"}`;
+  const C={bills:"#5b6577",sav:"var(--green)",spent:"var(--gold)",left:"#3a3e45"};
+  const seg=(v,c)=>`<i style="width:${Math.max(0,v)/s.pay*100}%;background:${c}"></i>`;
+  // cumulative spend vs even pace
+  let cum=0;const pts=[];for(let i=0;i<s.elapsed;i++){const d=new Date(s.start.getFullYear(),s.start.getMonth(),s.start.getDate()+i);cum+=s.daily[ymd(d)]||0;pts.push(cum)}
+  const top=Math.max(s.allowance,cum,proj||0)*1.05,X=i=>i/(s.total-1)*100,Y=v=>68-v/top*64;
+  const svg=`<svg class="cum" viewBox="0 0 100 70" preserveAspectRatio="none">
+    <line x1="0" y1="${Y(s.allowance)}" x2="100" y2="${Y(s.allowance)}" stroke="#34383e" stroke-dasharray="2 2" vector-effect="non-scaling-stroke"/>
+    <line x1="0" y1="${Y(0)}" x2="100" y2="${Y(s.allowance)}" stroke="#6b6963" stroke-dasharray="3 3" vector-effect="non-scaling-stroke"/>
+    ${pts.length>1?`<polyline points="${pts.map((v,i)=>X(i)+","+Y(v)).join(" ")}" fill="none" stroke="#c8a96a" stroke-width="1.8" vector-effect="non-scaling-stroke"/>`:""}
+    ${proj!=null?`<line x1="${X(pts.length-1)}" y1="${Y(cum)}" x2="100" y2="${Y(proj)}" stroke="${over>0?"#e0705c":"#6fbf8a"}" stroke-dasharray="2 3" stroke-width="1.4" vector-effect="non-scaling-stroke"/>`:""}</svg>
+    <div class="cm" style="display:flex;justify-content:space-between"><span><span class="gold">━</span> spent so far · <span class="faint">┄ even pace</span></span><span>allowance ${gbp(s.allowance)}</span></div>`;
+  const cats=Object.entries(s.cat).sort((a,b)=>b[1]-a[1]),cmax=Math.max(1,...cats.map(c=>c[1]));
+  $("spend").innerHTML=`<div class="fin"><div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
+        <div><div class="big ${s.remaining<0?"bad":""}" style="font-size:32px">${gbp(s.remaining)}</div><div class="muted" style="font-size:12px">left of ${gbp(s.allowance)} to spend</div></div>
+        <div style="text-align:right"><div class="gold" style="font-size:20px;font-weight:600">${gbp(Math.max(0,s.perDay))}</div><div class="muted" style="font-size:12px">a day until ${fmtDay(s.next)}</div></div></div>
+      <div class="bar" title="Spent vs cycle elapsed"><i style="width:${pct*100}%"></i><b style="left:${pace*100}%"></b></div>
+      <div class="cm">${ahead>0?`<span class="warn">${gbp(ahead)} ahead of an even pace</span>`:`<span class="ok">${gbp(-ahead)} under an even pace</span>`} · day ${s.elapsed} of ${s.total}${stale>1?` · <span class="warn">last logged ${stale} days ago</span>`:""}</div>
+      ${proj!=null?`<div class="proj ${over>0?"bad":"ok"}">Spending ${gbp(rate)}/day over the last ${win} days. Keep that up and you'll spend <b>${gbp(proj)}</b> this cycle: ${over>0?`<b class="bad">${gbp(over)} over</b> your allowance`:`<b class="ok">${gbp(-over)} under</b> your allowance`}. That leaves <b class="${projSave>=s.savTarget?"ok":"bad"}">${gbp(projSave)}</b> saved vs your ${gbp(s.savTarget)} target.</div>`:""}
+      ${svg}
+      <div class="fh">Where this month's pay goes · ${gbp(s.pay)}</div>
+      <div class="flow">${seg(s.bills,C.bills)}${seg(s.savTarget,C.sav)}${seg(Math.min(s.spent,s.allowance),C.spent)}${seg(Math.max(0,s.remaining),C.left)}</div>
+      <div class="leg"><span><span><em style="background:${C.bills}"></em>Fixed bills</span><b>${gbp(s.bills)}</b></span><span><span><em style="background:${C.sav}"></em>Savings</span><b>${gbp(s.savTarget)}</b></span>
+        <span><span><em style="background:${C.spent}"></em>Spent</span><b>${gbp(s.spent)}</b></span><span><span><em style="background:${C.left}"></em>Left to spend</span><b>${gbp(Math.max(0,s.remaining))}</b></span></div>
+      <div style="margin-top:10px">${s.items.map(i=>`<div class="bill"><span>${esc(i.name)}${i.type==="Savings"?' <span class="ok">· saving</span>':""}</span><b>${gbp(i.amt)}</b></div>`).join("")}${s.extra?`<div class="bill"><span>Extra savings target <span class="ok">· saving</span></span><b>${gbp(s.extra)}</b></div>`:""}</div>
+    </div><div>
+      <div class="fh">By category this cycle</div>
+      ${cats.length?cats.map(([k,v])=>`<div class="cat"><span class="muted">${esc(k)}</span><span class="t"><i style="width:${v/cmax*100}%"></i></span><span class="n">${gbp(v)}</span></div>`).join("")+`<div class="cm" style="margin-top:6px">${esc(cats[0][0])} is ${Math.round(cats[0][1]/s.spent*100)}% of spending · ${gbp(cats[0][1]/s.elapsed)}/day so far</div>`:'<div class="empty">Nothing logged this cycle yet.</div>'}
+      <div class="fh">Recent</div>
+      ${s.tx.slice(0,6).map(x=>`<div class="tx"><span class="d">${x.d.toLocaleDateString("en-GB",{day:"numeric",month:"short"})}</span><span>${esc(x.note||x.cat)} <span class="faint" style="font-size:12px">· ${esc(x.cat)}</span></span><span class="a">${gbp(x.amt)}</span></div>`).join("")||'<div class="empty">No transactions yet.</div>'}
+    </div></div>`;
 }
 
 /* ============ PRACTICE (Daily To Do) ============ */
