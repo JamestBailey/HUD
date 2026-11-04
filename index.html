@@ -10,13 +10,16 @@
 <meta name="theme-color" content="#0f1012">
 <link rel="apple-touch-icon" href="icon.png"><link rel="icon" href="icon.png">
 <title>Daily HUD · James Bailey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0f1012; --panel:#16181b; --panel2:#1b1e22; --line:#2a2d32; --line2:#34383e;
-  --text:#e6e3dc; --muted:#9a978f; --faint:#6b6963; --gold:#c8a96a; --gold2:#e0c48a;
+  --bg:#0c0c0d; --panel:#18181a; --panel2:#202023; --line:#26262a; --line2:#323237;
+  --text:#ecebe7; --muted:#9b9a96; --faint:#68676a; --gold:#d6cdb9; --gold2:#ebe4d4;
+  --sand:#d9d1bf; --lav:#c8c4f6; --ink:#121212; --ink2:rgba(18,18,18,.55);
   --green:#6fbf8a; --amber:#e0a35c; --red:#e0705c; --blue:#7da0d6;
   --sans:"Inter","Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;
-  --serif:"Georgia","Times New Roman",serif;
+  --serif:"Inter","Segoe UI Variable Display","Segoe UI",system-ui,sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{background:var(--bg);color:var(--text);font:14px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
@@ -24,7 +27,7 @@ body{min-height:100vh;padding:28px 32px 40px}
 .wrap{max-width:1360px;margin:0 auto}
 header{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding-bottom:22px;border-bottom:1px solid var(--line);margin-bottom:24px}
 .eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:600}
-h1{font-family:var(--serif);font-weight:600;font-size:34px;letter-spacing:-.01em;margin-top:6px}
+h1{font-family:var(--serif);font-weight:500;font-size:32px;letter-spacing:-.025em;margin-top:6px}
 .sub{color:var(--muted);margin-top:4px}
 .hright{display:flex;align-items:center;gap:12px}
 .clock{font-size:28px;font-weight:300;letter-spacing:.02em;color:var(--text);margin-right:8px;font-variant-numeric:tabular-nums}
@@ -36,7 +39,7 @@ h1{font-family:var(--serif);font-weight:600;font-size:34px;letter-spacing:-.01em
 .dot{width:7px;height:7px;border-radius:50%;background:var(--faint);display:inline-block}
 .dot.ok{background:var(--green)} .dot.warn{background:var(--amber)}
 .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:20px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px 24px;min-width:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:22px 24px;min-width:0}
 .c3{grid-column:span 3}.c4{grid-column:span 4}.c5{grid-column:span 5}.c6{grid-column:span 6}.c7{grid-column:span 7}.c8{grid-column:span 8}.c12{grid-column:span 12}
 @media(max-width:1100px){.c3,.c4,.c5,.c7,.c8{grid-column:span 12}}
 @media(max-width:1100px){.c6{grid-column:span 6}}
@@ -44,7 +47,7 @@ h1{font-family:var(--serif);font-weight:600;font-size:34px;letter-spacing:-.01em
 .ch{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px}
 .ct{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600}
 .cm{font-size:12px;color:var(--faint)}
-.big{font-family:var(--serif);font-size:40px;font-weight:600;letter-spacing:-.01em;line-height:1.1}
+.big{font-family:var(--serif);font-size:40px;font-weight:400;letter-spacing:-.03em;line-height:1.1}
 .muted{color:var(--muted)} .faint{color:var(--faint)} .gold{color:var(--gold)}
 .ok{color:var(--green)} .warn{color:var(--amber)} .bad{color:var(--red)}
 .bar{height:6px;background:var(--panel2);border-radius:6px;overflow:hidden;margin:14px 0 6px;position:relative}
@@ -55,6 +58,29 @@ h1{font-family:var(--serif);font-weight:600;font-size:34px;letter-spacing:-.01em
 .pill{display:inline-block;padding:3px 10px;border-radius:20px;background:var(--panel2);border:1px solid var(--line2);font-size:12px;color:var(--text);margin:3px 6px 3px 0}
 .empty{color:var(--faint);font-size:13px;padding:6px 0}
 .note{font-size:12px;color:var(--faint);margin-top:12px}
+/* bento */
+.bento{display:grid;gap:14px;grid-template-columns:repeat(4,1fr);grid-template-areas:"focus focus focus focus" "ready plan plan sess" "ready plan plan event" "money plan plan event";align-items:stretch}
+.b-focus{grid-area:focus}.b-ready{grid-area:ready}.b-plan{grid-area:plan}.b-sess{grid-area:sess}.b-event{grid-area:event}.b-money{grid-area:money}
+@media(max-width:1100px){.bento{grid-template-columns:1fr 1fr;grid-template-areas:"focus focus" "ready ready" "sess event" "plan plan" "money money"}}
+.tile{border-radius:22px;padding:20px 22px;min-width:0;border:none;text-align:left;font:inherit;display:flex;flex-direction:column;position:relative;overflow:hidden}
+button.tile{cursor:pointer;transition:transform .15s}button.tile:hover{transform:translateY(-2px)}
+.t-dark{background:var(--panel);color:var(--text);border:1px solid var(--line)}
+.t-sand{background:var(--sand);color:var(--ink)}.t-lav{background:var(--lav);color:var(--ink)}
+.t-sand .faint,.t-lav .faint,.t-sand .muted,.t-lav .muted,.t-sand .cm,.t-lav .cm,.t-sand .note,.t-lav .note{color:var(--ink2)}
+.tl{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:var(--muted);margin-bottom:6px}
+.t-sand .tl,.t-lav .tl{color:var(--ink2)}
+.num{font-size:44px;font-weight:300;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.num small{font-size:15px;letter-spacing:0;font-weight:400;margin-left:4px;opacity:.6}
+.sub2{font-size:13px;margin-top:6px}
+.bars{display:flex;align-items:flex-end;gap:3px;height:96px;margin-top:auto;padding-top:14px}
+.bars i{flex:1;border-radius:2px 2px 0 0;min-height:3px;background:var(--ink)}
+.bars i.dim{opacity:.18}
+.t-dark .bars i{background:var(--sand)}.t-lav .bars i{background:var(--ink)}
+.bars.sm{height:52px}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;margin-top:14px;font-size:12px}
+.kv span{display:block;opacity:.6}.kv b{font-size:15px;font-weight:500;font-variant-numeric:tabular-nums}
+.chip{display:inline-block;margin-top:10px;padding:4px 10px;border-radius:20px;font-size:12px;background:rgba(18,18,18,.08)}
+.t-dark .chip{background:var(--panel2);border:1px solid var(--line2)}
 /* tabs */
 .tabs{display:flex;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:4px;margin-bottom:20px;width:max-content}
 .tabs button{background:none;border:none;color:var(--muted);font:inherit;font-size:13px;font-weight:500;padding:8px 18px;border-radius:9px;cursor:pointer;display:flex;align-items:center;gap:7px;transition:.15s}
@@ -71,6 +97,8 @@ h1{font-family:var(--serif);font-weight:600;font-size:34px;letter-spacing:-.01em
 .mv .ms{font-size:13px;color:var(--muted)}.mv .mb small{font-family:var(--sans);font-weight:400}
 .wsum{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
 .wsum div{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.wsum div:nth-child(1){background:var(--lav);color:var(--ink);border:none;border-radius:16px}.wsum div:nth-child(2){background:var(--sand);color:var(--ink);border:none;border-radius:16px}.wsum div:nth-child(3){border-radius:16px}
+.wsum div:nth-child(-n+2) span,.wsum div:nth-child(-n+2) small{color:var(--ink2)}.wsum b{font-weight:300;font-size:28px;letter-spacing:-.03em}
 .wsum span{display:block;font-size:11px;color:var(--faint);letter-spacing:.06em;text-transform:uppercase}
 .wsum b{font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
 .wd.fut .wh span:first-child{color:var(--muted)}
@@ -78,7 +106,8 @@ h1{font-family:var(--serif);font-weight:600;font-size:34px;letter-spacing:-.01em
 .comp{display:grid;grid-template-columns:96px 1fr;gap:10px;font-size:13px;padding:6px 0;border-top:1px solid var(--line)}
 .comp .d{color:var(--gold);font-variant-numeric:tabular-nums}.comp .v{color:var(--faint);font-size:12px}
 /* focus line */
-.focus{display:flex;align-items:baseline;gap:14px;background:linear-gradient(90deg,#221f18,var(--panel));border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:12px;padding:14px 20px;margin-bottom:20px}
+.focus{display:flex;align-items:baseline;gap:14px;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:16px 22px;margin-bottom:20px}
+.b-focus{flex-direction:row;align-items:baseline;gap:16px}.b-focus .fl{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--lav);font-weight:600;flex:none}.b-focus .ft{font-size:20px;font-weight:400;letter-spacing:-.01em;line-height:1.35}
 .focus .fl{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:600;flex:none}
 .focus .ft{font-family:var(--serif);font-size:19px;line-height:1.35}
 /* readiness */
@@ -195,7 +224,8 @@ textarea:focus,input:focus{border-color:var(--gold)}
   h1{font-size:22px;margin-top:0}.sub{font-size:12px;margin-top:2px}
   .hright{width:auto;margin-left:auto}.clock{display:none}
   #voiceBtn{padding:9px 11px;font-size:0}#voiceBtn::before{content:"●";font-size:13px}
-  .focus{padding:12px 14px;gap:10px;flex-direction:column;align-items:flex-start}.focus .ft{font-size:17px}
+  .b-focus{flex-direction:column;gap:6px}.b-focus .ft{font-size:17px}
+  .bento{gap:10px}.tile{padding:16px 16px;border-radius:18px}.num{font-size:38px}.bars{height:72px}
   .wsum{gap:6px}.wsum b{font-size:17px}
   .mv .mb{font-size:26px}
   header{margin-bottom:14px}
@@ -236,17 +266,18 @@ textarea:focus,input:focus{border-color:var(--gold)}
   <nav class="tabs" id="tabs">
     <button data-tab="today" class="on"><span class="ti">◉</span>Today</button>
     <button data-tab="week"><span class="ti">▦</span>Week</button>
-    <button data-tab="golf"><span class="ti">⛳</span>Golf</button>
+    <button data-tab="golf"><span class="ti">⚑</span>Golf</button>
     <button data-tab="money"><span class="ti">£</span>Money</button>
   </nav>
 
   <main class="panel on" id="p-today">
-    <div class="focus" id="focus"><span class="fl">Focus</span><span class="ft faint">Loading…</span></div>
-    <div class="grid">
-      <section class="card c4"><div class="ch"><span class="ct">Readiness · Whoop</span><span class="cm" id="rdMeta"></span></div><div id="ready"></div></section>
-      <section class="card c8"><div class="ch"><span class="ct">Today's plan</span><span class="cm" id="plMeta"></span></div><div id="plan"></div></section>
-      <button class="card mini c6" data-go="golf"><span class="ct">Next event</span><div id="evMini" class="mv"></div></button>
-      <button class="card mini c6" data-go="money"><span class="ct">Money</span><div id="moneyMini" class="mv"></div></button>
+    <div class="bento">
+      <div class="tile t-dark b-focus" id="focus"><span class="fl">Focus</span><span class="ft faint">Loading…</span></div>
+      <section class="tile t-sand b-ready"><div class="tl"><span>Recovery · Whoop</span><span id="rdMeta"></span></div><div id="ready"></div></section>
+      <section class="tile t-dark b-plan"><div class="tl"><span>Today's plan</span><span id="plMeta"></span></div><div id="plan"></div></section>
+      <button class="tile t-lav b-sess" data-go="week"><div class="tl"><span>This week</span><span>›</span></div><div id="sessMini"></div></button>
+      <button class="tile t-dark b-event" data-go="golf"><div class="tl"><span>Next event</span><span>›</span></div><div id="evMini"></div></button>
+      <button class="tile t-dark b-money" data-go="money"><div class="tl"><span>Money</span><span>›</span></div><div id="moneyMini"></div></button>
     </div>
   </main>
 
@@ -426,7 +457,8 @@ function renderSpending(s){
   const win=Math.min(7,s.elapsed);let recent=0;for(let i=0;i<win;i++){const d=new Date(t0().getFullYear(),t0().getMonth(),t0().getDate()-i);recent+=s.daily[ymd(d)]||0}
   const rate=recent/Math.max(1,win);const proj=s.elapsed>=3?s.spent+rate*(s.daysLeft-1):null;const projSave=proj!=null?s.pay-s.bills-proj:null;const over=proj!=null?proj-s.allowance:null;
   $("spMeta").textContent=`${fmtDay(s.start)} – ${fmtDay(s.end)} · payday in ${s.daysLeft} day${s.daysLeft===1?"":"s"}`;
-  $("moneyMini").innerHTML=`<span class="mb ${s.remaining<0?"bad":""}">${gbp(s.remaining)} <small class="ms">left</small></span><span class="ms"><b class="gold">${gbp(Math.max(0,s.perDay))}/day</b> for ${s.daysLeft} days<br>${ahead>0?`<span class="warn">${gbp(ahead)} ahead of pace</span>`:`<span class="ok">${gbp(-ahead)} under pace</span>`}</span>`;
+  const dvals=Array.from({length:s.total},(_,i)=>{const d=new Date(s.start.getFullYear(),s.start.getMonth(),s.start.getDate()+i);return i<s.elapsed?(s.daily[ymd(d)]||0):null});const dmx=Math.max(1,...dvals.filter(v=>v!=null));
+  $("moneyMini").innerHTML=`<div class="num ${s.remaining<0?"bad":""}">${gbp(s.remaining)}<small>left</small></div><div class="sub2">`+`<b>${gbp(Math.max(0,s.perDay))}/day</b> for ${s.daysLeft} days · ${ahead>0?`<span class="warn">${gbp(ahead)} ahead of pace</span>`:`<span class="ok">${gbp(-ahead)} under pace</span>`}</div><div class="bars sm">${dvals.map(v=>`<i class="${v==null?"dim":""}" style="height:${v==null?6:Math.max(3,v/dmx*100)}%"></i>`).join("")}</div>`;
   const C={bills:"#5b6577",sav:"var(--green)",spent:"var(--gold)",left:"#3a3e45"};
   const seg=(v,c)=>`<i style="width:${Math.max(0,v)/s.pay*100}%;background:${c}"></i>`;
   // cumulative spend vs even pace
@@ -498,6 +530,9 @@ function renderPractice(p){
   const t=day0(new Date());
   const target=+ls.get("hud_target","25")||25;
   $("prMeta").textContent=`${p.total} / ${target} sessions`;
+  { const all7=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],mx=Math.max(4,...p.days.map(d=>d.n));
+    $("sessMini").innerHTML=`<div class="num">${p.total}<small>/ ${target}</small></div><div class="sub2">sessions · gym ${p.areas.Gym}/3</div>
+    <div class="bars sm">${all7.map(l=>{const d=p.days.find(x=>x.label===l);return `<i class="${!d||d.date>t?"dim":""}" title="${l}: ${d?d.n:0}" style="height:${d&&d.date<=t?Math.max(4,d.n/mx*100):8}%"></i>`}).join("")}</div>`; }
   const all=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
   const line=d=>{const g={};d.done.forEach(x=>(g[x.area]=g[x.area]||[]).push(x));
     return Object.entries(g).map(([a,xs])=>`<div class="wl"><span class="da">${esc(a)}</span> ${xs.map(x=>esc(x.task)+(x.band?` <small>(${esc(x.band)})</small>`:"")+(x.ticked===false?` <small class="warn">· not ticked</small>`:"")).join(", ")}</div>`).join("")};
@@ -530,24 +565,19 @@ function zone(r){return r>=67?"g":r>=34?"a":"r"}
 const ZC={g:"var(--green)",a:"var(--amber)",r:"var(--red)"};
 function renderWhoop(w){
   const el=$("ready");
-  if(!w||!w.days||!w.days.length){$("rdMeta").textContent="";el.innerHTML='<div class="empty">Whoop not connected yet.</div><div class="note">Set-up steps: <i>90 System → Whoop Sync</i>. Once connected, recovery, HRV and sleep land here every morning.</div>';return}
+  if(!w||!w.days||!w.days.length){$("rdMeta").textContent="";
+    el.innerHTML=`<div class="num">—</div><div class="sub2">Whoop not connected yet.<br><span class="faint">Steps: 90 System → Whoop Sync</span></div><div class="bars">${Array.from({length:14},(_,i)=>`<i class="dim" style="height:${30+((i*37)%55)}%"></i>`).join("")}</div>`;return}
   const days=w.days.slice().sort((a,b)=>a.date<b.date?-1:1);const d=days.at(-1);const t=ymd(new Date());
   const z=d.recovery!=null?zone(d.recovery):null;
-  $("rdMeta").innerHTML=d.date===t?"today":`<span class="warn">from ${fmtDay(new Date(d.date))}</span>`;
+  $("rdMeta").innerHTML=d.date===t?"today":`from ${fmtDay(new Date(d.date))}`;
   const avg=k=>{const v=days.slice(-8,-1).map(x=>x[k]).filter(x=>x!=null);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null};
-  const B=w.baseline||{};const useB=(B.days_in_baseline||0)>=14;const hrvAvg=useB?B.hrv_30d:avg("hrv");const hrvD=d.hrv!=null&&hrvAvg?d.hrv-hrvAvg:null;const rhrAvg=useB?B.rhr_30d:avg("rhr");const rhrD=d.rhr!=null&&rhrAvg?d.rhr-rhrAvg:null;
-  const ADV={g:"<b class='ok'>Green.</b> Good day for high-intensity work: speed, gym strength, long range sessions.",
-    a:"<b class='warn'>Amber.</b> Train as normal but keep the gym moderate. Prioritise quality over volume.",
-    r:"<b class='bad'>Red.</b> Keep strain low: technical work, short game and putting. Skip heavy gym."};
-  el.innerHTML=`<div class="rd"><div class="ring" style="--p:${d.recovery??0};--c:${z?ZC[z]:"var(--faint)"}"><div>${d.recovery??"–"}<small>${d.recovery!=null?"%":""}</small></div></div>
-    <div class="rk"><div><span>HRV</span><b>${d.hrv!=null?Math.round(d.hrv)+" ms":"–"}</b> ${hrvD!=null?`<small class="${hrvD>=0?"ok":"warn"}">${hrvD>=0?"▲":"▼"}${Math.abs(Math.round(hrvD))}</small>`:""}</div>
-      <div><span>Resting HR</span><b>${d.rhr??"–"}</b> ${rhrD!=null&&Math.abs(rhrD)>=1?`<small class="${rhrD<=0?"ok":"warn"}">${rhrD>0?"▲":"▼"}${Math.abs(Math.round(rhrD))}</small>`:""}</div>
-      <div><span>Sleep</span><b>${d.sleep_hours!=null?d.sleep_hours.toFixed(1)+" h":"–"}</b></div>
-      <div><span>Sleep perf.</span><b>${d.sleep_perf!=null?d.sleep_perf+"%":"–"}</b></div>
-      <div><span>Yesterday's strain</span><b>${(days.at(-2)||{}).strain!=null?days.at(-2).strain.toFixed(1):"–"}</b></div></div></div>
-    ${z?`<div class="adv ${z}">${ADV[z]}</div>`:""}
-    ${useB?`<div class="note" style="margin:8px 0 6px">Arrows compare with your 30-day normal: HRV ${Math.round(B.hrv_30d)} ms · resting HR ${Math.round(B.rhr_30d)}</div>`:""}
-    <div class="r7" title="Recovery, last 7 days">${days.slice(-7).map(x=>`<i title="${x.date}: ${x.recovery??"–"}%" style="height:${Math.max(8,(x.recovery||0))}%;background:${x.recovery!=null?ZC[zone(x.recovery)]:"var(--line)"}"></i>`).join("")}</div>`;
+  const hrvAvg=avg("hrv");const hrvD=d.hrv!=null&&hrvAvg?d.hrv-hrvAvg:null;
+  const ADV={g:"Green: go hard. Speed, strength, long range sessions.",a:"Amber: train as normal, gym moderate. Quality over volume.",r:"Red: keep strain low. Technical, short game, putting."};
+  const last=days.slice(-14);
+  el.innerHTML=`<div class="num">${d.recovery??"–"}<small>%</small></div><div class="sub2">${z?ADV[z]:""}</div>
+    <div class="kv"><div><span>HRV</span><b>${d.hrv!=null?Math.round(d.hrv)+" ms":"–"}</b>${hrvD!=null?` <small>${hrvD>=0?"▲":"▼"}${Math.abs(Math.round(hrvD))}</small>`:""}</div><div><span>Resting HR</span><b>${d.rhr??"–"}</b></div>
+      <div><span>Sleep</span><b>${d.sleep_hours!=null?d.sleep_hours.toFixed(1)+" h":"–"}</b>${d.sleep_perf!=null?` <small>${d.sleep_perf}%</small>`:""}</div><div><span>Yesterday's strain</span><b>${(days.at(-2)||{}).strain!=null?days.at(-2).strain.toFixed(1):"–"}</b></div></div>
+    <div class="bars" title="Recovery, last ${last.length} days">${last.map((x,i)=>`<i class="${i===last.length-1?"":"dim"}" title="${x.date}: ${x.recovery??"–"}%" style="height:${Math.max(4,x.recovery||0)}%"></i>`).join("")}</div>`;
 }
 
 /* ============ TODAY'S PLAN + FOCUS (written each morning by Claude) ============ */
@@ -583,7 +613,7 @@ async function loadComps(){let t;try{t=await FS.text(PATHS.comps)}catch(e){retur
   return out.sort((a,b)=>a.start<b.start?-1:1)}
 function renderComps(list){
   const t=day0(new Date());const up=list.filter(e=>new Date(e.end+"T00:00")>=t);
-  if(!up.length){$("evMini").innerHTML='<span class="ms">No events scheduled</span>';$("evMeta").textContent="";$("event").innerHTML='<div class="empty">No events in the schedule.</div><div class="note">Add them to <i>10 Golf → Competitions → Schedule</i>, or just tell Claude.</div>';return}
+  if(!up.length){$("evMini").innerHTML='<div class="sub2 faint">No events scheduled</div>';$("evMeta").textContent="";$("event").innerHTML='<div class="empty">No events in the schedule.</div><div class="note">Add them to <i>10 Golf → Competitions → Schedule</i>, or just tell Claude.</div>';return}
   const e=up[0];const s=new Date(e.start+"T00:00");const n=dayDiff(s,t);
   const addD=k=>new Date(s.getFullYear(),s.getMonth(),s.getDate()-k);
   const phase=n<=7?["Tournament Week","ok","Short, confidence-building sessions. No swing changes."]
@@ -594,7 +624,7 @@ function renderComps(list){
     <div style="margin-top:12px;font-weight:600">${esc(e.name)}</div><div class="cm">${fmtDay(s)}${e.end!==e.start?" – "+fmtDay(new Date(e.end+"T00:00")):""}${e.venue?" · "+esc(e.venue):""}</div>
     <span class="phase ${phase[1]}">${phase[0]}</span><div class="note" style="margin-top:8px">${phase[2]}</div>
     ${up.length>1?`<div class="fh" style="margin-top:18px">Coming up</div>${up.slice(1).map(x=>`<div class="comp"><span class="d">${fmtDay(new Date(x.start+"T00:00"))}</span><div>${esc(x.name)}${x.venue?`<div class="v">${esc(x.venue)}</div>`:""}</div></div>`).join("")}`:""}`;
-  $("evMini").innerHTML=`<span class="mb">${n<=0?"Now":n} <small class="ms">${n<=0?"in play":"days"}</small></span><span class="ms">${esc(e.name)}<br><span class="${phase[1]}">${phase[0]}</span></span>`;
+  $("evMini").innerHTML=`<div class="num">${n<=0?"Now":n}<small>${n<=0?"":"days"}</small></div><div class="sub2">${esc(e.name)}<br><span class="faint">${fmtDay(s)}${e.venue?" · "+esc(e.venue):""}</span></div><div style="margin-top:auto"><span class="chip">${phase[0]}</span></div>`;
 }
 
 /* ============ DRILL TREND (Yardage Chart) ============ */
