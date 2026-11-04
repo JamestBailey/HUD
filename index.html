@@ -14,9 +14,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0c0c0d; --panel:#18181a; --panel2:#202023; --line:#26262a; --line2:#323237;
-  --text:#ecebe7; --muted:#9b9a96; --faint:#68676a; --gold:#d6cdb9; --gold2:#ebe4d4;
-  --sand:#d9d1bf; --lav:#c8c4f6; --ink:#121212; --ink2:rgba(18,18,18,.55);
+  --bg:#111111; --panel:#1b1b1b; --panel2:#242424; --line:#2a2a2a; --line2:#383838;
+  --text:#f2f0eb; --muted:#a3a3a3; --faint:#7a7a7a; --gold:#ffb86b; --gold2:#ffd3a3;
+  --sand:#ffb86b; --lav:#8fd19e; --ink:#111111; --ink2:rgba(17,17,17,.62); --now:#ff6b5a;
   --green:#6fbf8a; --amber:#e0a35c; --red:#e0705c; --blue:#7da0d6;
   --sans:"Inter","Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;
   --serif:"Inter","Segoe UI Variable Display","Segoe UI",system-ui,sans-serif;
@@ -272,6 +272,57 @@ h1{font-weight:700;letter-spacing:-.03em}
 .cat .muted{color:var(--text);font-weight:500}
 .tabs button{font-weight:600}
 @media(max-width:700px){.b-focus .ft{font-size:18px}.num{font-size:40px}}
+
+/* ===== Timeline Today ===== */
+.today{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:18px;align-items:start}
+@media(max-width:1000px){.today{grid-template-columns:1fr}}
+.tday{display:flex;flex-direction:column;gap:14px;min-width:0}
+.tside{display:flex;flex-direction:column;gap:14px;min-width:0}
+.tpair{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.dhead{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.dtitle{font-size:30px;font-weight:800;letter-spacing:-.035em}
+.dsub{font-size:14px;font-weight:700;color:var(--gold);text-align:right}
+.strip{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.strip button{font:inherit;border:none;border-radius:16px;background:var(--panel);color:#d4d4d4;padding:9px 0 8px;cursor:pointer;min-height:58px}
+.strip button.on{background:var(--text);color:var(--ink)}
+.strip .sl{font-size:10px;font-weight:800;letter-spacing:.08em}.strip .sd{font-size:18px;font-weight:800;margin-top:1px}
+.strip i{display:block;width:6px;height:6px;border-radius:50%;margin:5px auto 0;background:#3a3a3a}
+.strip i.g{background:var(--lav)}.strip i.o{background:var(--gold)}
+.focus2{display:flex;gap:12px;align-items:baseline;padding:12px 16px;border-radius:16px;background:var(--panel)}
+.focus2 .fl{font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--gold);flex:none}
+.focus2 .ft{font-size:15px;font-weight:600;line-height:1.4}
+.tl-row{display:grid;grid-template-columns:54px minmax(0,1fr);gap:12px}
+.tl-t{font-size:13px;font-weight:800;color:var(--muted);padding-top:15px;font-variant-numeric:tabular-nums}
+.tl-b{padding-bottom:12px;min-width:0}
+.blk{display:block;width:100%;text-align:left;font:inherit;cursor:pointer;padding:14px 16px;border-radius:18px;border:1px solid;color:inherit}
+.blk.p{background:#2a1f12;border-color:rgba(255,184,107,.38);color:var(--gold)}
+.blk.g{background:#132519;border-color:rgba(143,209,158,.38);color:var(--lav)}
+.blk.f{background:#1a1a1a;border-color:#2e2e2e;color:#bdbdbd}
+.blk .bt{display:flex;justify-content:space-between;gap:8px;font-size:11px;font-weight:800;letter-spacing:.12em}
+.blk .bt span:last-child{font-weight:600;letter-spacing:0;opacity:.75}
+.blk .bn{font-size:16px;font-weight:700;margin-top:6px;line-height:1.3;color:var(--text)}
+.blk.f .bn{color:#cfcfcf}
+.blk .bp{font-size:12px;font-weight:700;margin-top:8px;opacity:.9}
+.bx{margin-top:8px;padding:12px 14px;border-radius:16px;background:var(--panel);display:flex;flex-direction:column;gap:8px}
+.bx .why{font-size:13px;color:#bdbdbd;line-height:1.45}
+.drill{display:flex;gap:10px;align-items:center;font:600 14px Inter,sans-serif;text-align:left;padding:10px 12px;border-radius:12px;min-height:44px;border:none;background:#2a2a2a;color:var(--text);cursor:pointer}
+.drill .m{width:22px;height:22px;flex:none;border-radius:50%;border:2px solid #555;display:grid;place-items:center;font-size:13px;font-weight:800}
+.drill.on{background:var(--gold);color:var(--ink)}.drill.on .m{border-color:var(--ink);background:var(--ink);color:var(--gold)}
+.drill.g.on{background:var(--lav)}.drill.g.on .m{color:var(--lav)}
+.drill.lock{cursor:default}
+.drill:disabled{opacity:.45;cursor:default}.drill.lock:disabled{opacity:1}
+.tside .tile{grid-area:auto}
+@media(max-width:700px){#greet{display:none}.sub{font-size:13px;font-weight:600;color:var(--text)}}
+.drill small{font-weight:500;opacity:.7;margin-left:auto;font-size:11px}
+.nowl{display:flex;align-items:center;gap:8px;margin:-4px 0 8px 0}
+.nowl span{font-size:10px;font-weight:800;color:var(--now);width:54px}.nowl i{flex:1;height:2px;background:var(--now);border-radius:2px}
+.also{margin-top:4px;padding:14px 16px;border-radius:18px;background:var(--panel)}
+.also .ah{font-size:11px;font-weight:800;letter-spacing:.12em;color:var(--muted);margin-bottom:6px}
+.rpill{display:inline-block;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:800;margin-left:8px;vertical-align:middle}
+.rpill.g{background:var(--lav);color:var(--ink)}.rpill.a{background:var(--gold);color:var(--ink)}.rpill.r{background:var(--now);color:var(--ink)}
+.tabs{border-radius:22px}.tabs button{border-radius:16px}
+.tabs button.on{background:var(--text);color:var(--ink);box-shadow:none}
+@media(max-width:700px){.dtitle{font-size:26px}.strip{gap:5px}.strip button{border-radius:14px}.tpair{gap:10px}.tside{gap:10px}}
 </style>
 </head>
 <body>
@@ -299,14 +350,23 @@ h1{font-weight:700;letter-spacing:-.03em}
   </nav>
 
   <main class="panel on" id="p-today">
-    <div class="bento">
-      <div class="tile t-dark b-focus" id="focus"><span class="fl">Focus</span><span class="ft faint">Loading…</span></div>
-      <section class="tile t-sand b-ready"><div class="tl"><span>Recovery · Whoop</span><span id="rdMeta"></span></div><div id="ready"></div></section>
-      <section class="tile t-dark b-plan"><div class="tl"><span>Today's plan</span><span id="plMeta"></span></div><div id="plan"></div></section>
-      <button class="tile t-lav b-sess" data-go="week"><div class="tl"><span>This week</span><span>›</span></div><div id="sessMini"></div></button>
-      <button class="tile t-dark b-event" data-go="golf"><div class="tl"><span>Next event</span><span>›</span></div><div id="evMini"></div></button>
-      <button class="tile t-dark b-money" data-go="money"><div class="tl"><span>Money</span><span>›</span></div><div id="moneyMini"></div></button>
+    <div class="today">
+      <div class="tday">
+        <div class="dhead"><span class="dtitle" id="dTitle">Today</span><span class="dsub" id="dSub"></span></div>
+        <div class="strip" id="dStrip"></div>
+        <div class="focus2" id="focus"><span class="fl">Focus</span><span class="ft faint">Loading…</span></div>
+        <div id="timeline"></div>
+      </div>
+      <div class="tside">
+        <section class="tile t-sand b-ready"><div class="tl"><span>Recovery · Whoop</span><span id="rdMeta"></span></div><div id="ready"></div></section>
+        <div class="tpair">
+          <button class="tile t-lav b-sess" data-go="week"><div class="tl"><span>This week</span><span>›</span></div><div id="sessMini"></div></button>
+          <button class="tile t-dark b-event" data-go="golf"><div class="tl"><span>Next event</span><span>›</span></div><div id="evMini"></div></button>
+        </div>
+        <button class="tile t-dark b-money" data-go="money"><div class="tl"><span>Money</span><span>›</span></div><div id="moneyMini"></div></button>
+      </div>
     </div>
+    <div id="plan" hidden></div><span id="plMeta" hidden></span>
   </main>
 
   <main class="panel" id="p-week">
@@ -390,6 +450,7 @@ const PATHS={
   coaching:"10 Golf/Coaching",
   gym:"20 Gym",
   whoop:"90 System/Data/whoop.json",
+  ticks:"90 System/Data/ticks.json",
   plan:"90 System/Data/plan.json",
   comps:"10 Golf/Competitions/Schedule.md",
   inbox:"00 Inbox"
@@ -416,7 +477,10 @@ const FS={
   async list(path){ if(USE_GH)return (await (await GH.req(path)).json()).map(x=>({name:x.name,kind:x.type==="dir"?"directory":"file"}));
     if(TEST){const r=await fetch(TEST+encodeURI(path)+"/__list.json");return r.ok?r.json():[]}
     let h=ROOT;for(const p of path.split("/"))h=await h.getDirectoryHandle(p);const out=[];for await(const [n,x] of h.entries())out.push({name:n,kind:x.kind});return out},
-  async write(path,text){ if(USE_GH){await GH.req(path,{method:"PUT",body:JSON.stringify({message:"HUD: "+path.split("/").pop(),content:b64(text),branch:GH.branch})});return}
+  async write(path,text){ if(USE_GH){
+      const put=async()=>{let sha;try{sha=(await (await GH.req(path)).json()).sha}catch(e){if(!/not found/.test(e.message))throw e}
+        await GH.req(path,{method:"PUT",body:JSON.stringify({message:"HUD: "+path.split("/").pop(),content:b64(text),branch:GH.branch,...(sha?{sha}:{})})})};
+      try{await put()}catch(e){if(/409|422/.test(e.message)){await put()}else throw e}return}
     if(TEST){console.log("WRITE",path,text);return}
     const [d,n]=await FS.handle(path,true);const fh=await d.getFileHandle(n,{create:true});const w=await fh.createWritable();await w.write(text);await w.close()}
 };
@@ -532,28 +596,43 @@ async function loadPractice(){
   for(let r=1;r<=ws.maxRow&&!hdr;r++)for(const c of COLS){const v=String(ws.at(c,r)||"").replace(/\s+/g," ");if(v.includes(key)){hdr=r;break}}
   if(!hdr)return null;
   const days=[];for(const c of COLS){const v=String(ws.at(c,hdr)||"").replace(/\s+/g," ");const m=v.match(/(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\s*\/?\s*(\d{1,2}) (\w{3})/);if(m)days.push({col:c,label:m[1],date:new Date(t.getFullYear(),MON.indexOf(m[3]),+m[2]),n:0,done:[]})}
-  const areas={Irons:0,"Off the Tee":0,Chipping:0,Putting:0,Gym:0};let cur=null,band=null,tasks=0;
+  const areas={Irons:0,"Off the Tee":0,Chipping:0,Putting:0,Gym:0};let cur=null,curRaw="",band=null,tasks=0;
   for(let r=hdr+1;r<=ws.maxRow;r++){const a=String(ws.at("A",r)||"").trim();if(!a)continue;
     if(/^weekly completion|^week /i.test(a))break;
-    const k=a.toLowerCase().replace(/\s+/g," ");if(SECT[k]){cur=SECT[k];band=null;continue}if(SUB.has(k)||/^\d+ - \d+ ?yds$|^>\d+yds$/.test(k)){band=a.replace(/\s+/g," ");continue}
+    const k=a.toLowerCase().replace(/\s+/g," ");if(SECT[k]){cur=SECT[k];curRaw=a.replace(/\s+/g," ").trim();band=null;continue}if(SUB.has(k)||/^\d+ - \d+ ?yds$|^>\d+yds$/.test(k)){band=a.replace(/\s+/g," ");continue}
     tasks++;const name=a.replace(/\s+/g," ").replace(/\(([^)]*)$/,"($1)");
-    for(const d of days)if(ws.at(d.col,r)==="✓"){d.n++;if(cur)areas[cur]++;d.done.push({area:cur||"Other",task:name,band})}}
+    for(const d of days)if(ws.at(d.col,r)==="✓"){d.n++;if(cur)areas[cur]++;d.done.push({area:cur||"Other",task:name,band,key:nk((band||curRaw)+" :: "+name)})}}
   /* gym sessions logged as notes: 20 Gym/<coach>/YYYY-MM-DD - Workout - <Session>.md */
   const gym=await loadWorkouts();
   for(const d of days){const g=gym.filter(w=>w.date===ymd(d.date));if(!g.length)continue;
     const i=d.done.findIndex(x=>x.area==="Gym"&&/^workout$/i.test(x.task));
     if(i>=0)d.done.splice(i,1);else{d.n++;areas.Gym++}   // a logged workout counts even if the box wasn't ticked
     g.forEach((w,j)=>d.done.push({area:"Gym",task:w.title,band:w.coach,ticked:i>=0||j>0}))}
+  await loadTicks();
   return {days,areas,tasks,total:days.reduce((a,d)=>a+d.n,0)}
 }
+/* ---- ticks made on the HUD (90 System/Data/ticks.json), merged on top of Daily To Do ---- */
+const nk=s=>String(s||"").toLowerCase().replace(/\s+/g," ").replace(/[()]/g,"").trim();
+let TICKS={},TICKS_LOADED=false;
+async function loadTicks(){try{const j=JSON.parse(await FS.text(PATHS.ticks));TICKS=j.ticks||{}}catch(e){TICKS=TICKS_LOADED?TICKS:{}}TICKS_LOADED=true}
+function keyArea(k){const sec=k.split("::")[0].trim().toLowerCase();if(/yds/.test(sec))return "Irons";return SECT[sec]||"Other"}
+function keyLabel(k){const [sec,task]=k.split("::").map(x=>x.trim());return /yds/i.test(sec)?`${task} (${sec})`:task}
+function mergeTicks(raw){if(!raw)return raw;const p=JSON.parse(JSON.stringify(raw,(k,v)=>v));p.days=raw.days.map(d=>Object.assign({},d,{done:d.done.slice()}));p.areas=Object.assign({},raw.areas);p.total=raw.total;
+  for(const d of p.days){const have=new Set(d.done.map(x=>x.key).filter(Boolean));
+    for(const k of (TICKS[ymd(d.date)]||[])){if(have.has(nk(k)))continue;const ar=keyArea(k),[sec,task]=k.split("::").map(x=>x.trim());
+      d.done.push({area:ar,task,band:/yds/i.test(sec)?sec:null,key:nk(k),hud:true});d.n++;p.total++;if(p.areas[ar]!=null)p.areas[ar]++}}
+  return p}
+let TSAVE=Promise.resolve();
+function saveTicks(){const body=JSON.stringify({note:"Drills ticked on the Daily HUD, waiting to be copied into Daily To Do.xlsx by the evening refresh. Keys are 'Section :: Task' exactly as tick_practice.py --list prints them.",ticks:TICKS},null,1);
+  TSAVE=TSAVE.then(()=>FS.write(PATHS.ticks,body)).then(()=>toast("Saved")).catch(e=>toast("Couldn't save tick: "+e.message));return TSAVE}
 async function loadWorkouts(){const out=[];
   try{for(const c of (await FS.list(PATHS.gym)).filter(e=>e.kind==="directory"))
     for(const f of await FS.list(`${PATHS.gym}/${c.name}`)){const m=f.name.match(/^(\d{4}-\d{2}-\d{2}) - Workout - (.+)\.md$/);if(m)out.push({date:m[1],title:m[2],coach:c.name})}}catch(e){}
   return out
 }
-let PR=null,PSEL=null,PLANS=[];
+let PR=null,PR_RAW=null,PSEL=null,PLANS=[];
 function renderPractice(p){
-  if(p!==undefined)PR=p;p=PR;
+  if(p!==undefined)PR_RAW=p;PR=mergeTicks(PR_RAW);p=PR;renderDay();
   if(!p){$("practice").innerHTML='<div class="empty">No tab for this month in Daily To Do.</div>';return}
   const t=day0(new Date());
   const target=+ls.get("hud_target","25")||25;
@@ -597,14 +676,16 @@ function renderWhoop(w){
     el.innerHTML=`<div class="num">—</div><div class="sub2">Whoop not connected yet.<br><span class="faint">Steps: 90 System → Whoop Sync</span></div><div class="bars">${Array.from({length:14},(_,i)=>`<i class="dim" style="height:${30+((i*37)%55)}%"></i>`).join("")}</div>`;return}
   const days=w.days.slice().sort((a,b)=>a.date<b.date?-1:1);const d=days.at(-1);const t=ymd(new Date());
   const z=d.recovery!=null?zone(d.recovery):null;
+  READY=d.date===t&&d.recovery!=null?{rec:d.recovery,z}:null;renderDay();
   $("rdMeta").innerHTML=d.date===t?"today":`from ${fmtDay(new Date(d.date))}`;
   const avg=k=>{const v=days.slice(-8,-1).map(x=>x[k]).filter(x=>x!=null);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null};
-  const hrvAvg=avg("hrv");const hrvD=d.hrv!=null&&hrvAvg?d.hrv-hrvAvg:null;
+  const B=w.baseline||{};const useB=(B.days_in_baseline||0)>=14;const hrvAvg=useB?B.hrv_30d:avg("hrv");const hrvD=d.hrv!=null&&hrvAvg?d.hrv-hrvAvg:null;const rhrAvg=useB?B.rhr_30d:avg("rhr");const rhrD=d.rhr!=null&&rhrAvg?d.rhr-rhrAvg:null;
   const ADV={g:"Green: go hard. Speed, strength, long range sessions.",a:"Amber: train as normal, gym moderate. Quality over volume.",r:"Red: keep strain low. Technical, short game, putting."};
   const last=days.slice(-14);
   el.innerHTML=`<div class="num">${d.recovery??"–"}<small>%</small></div><div class="sub2">${z?ADV[z]:""}</div>
-    <div class="kv"><div><span>HRV</span><b>${d.hrv!=null?Math.round(d.hrv)+" ms":"–"}</b>${hrvD!=null?` <small>${hrvD>=0?"▲":"▼"}${Math.abs(Math.round(hrvD))}</small>`:""}</div><div><span>Resting HR</span><b>${d.rhr??"–"}</b></div>
+    <div class="kv"><div><span>HRV</span><b>${d.hrv!=null?Math.round(d.hrv)+" ms":"–"}</b>${hrvD!=null?` <small>${hrvD>=0?"▲":"▼"}${Math.abs(Math.round(hrvD))}</small>`:""}</div><div><span>Resting HR</span><b>${d.rhr??"–"}</b>${rhrD!=null&&Math.abs(rhrD)>=1?` <small>${rhrD>0?"▲":"▼"}${Math.abs(Math.round(rhrD))}</small>`:""}</div>
       <div><span>Sleep</span><b>${d.sleep_hours!=null?d.sleep_hours.toFixed(1)+" h":"–"}</b>${d.sleep_perf!=null?` <small>${d.sleep_perf}%</small>`:""}</div><div><span>Yesterday's strain</span><b>${(days.at(-2)||{}).strain!=null?days.at(-2).strain.toFixed(1):"–"}</b></div></div>
+    ${useB?`<div class="sub2 faint" style="font-size:12px;margin-top:10px">Arrows vs your 30-day normal: HRV ${Math.round(B.hrv_30d)} ms · RHR ${Math.round(B.rhr_30d)}</div>`:""}
     <div class="bars" title="Recovery, last ${last.length} days">${last.map((x,i)=>`<i class="${i===last.length-1?"":"dim"}" title="${x.date}: ${x.recovery??"–"}%" style="height:${Math.max(4,x.recovery||0)}%"></i>`).join("")}</div>`;
 }
 
@@ -613,26 +694,74 @@ async function loadPlan(){let j;try{j=JSON.parse(await FS.text(PATHS.plan))}catc
   return Array.isArray(j.days)?j.days:(j.date?[j]:[])}
 function planRows(p){return (p.blocks||[]).map(b=>`<div class="pb ${b.fixed?"fixed":""}"><div class="t">${esc(b.start||"")}${b.end?"–"+esc(b.end):""}</div><div><div class="n">${esc(b.title)}</div>${b.why?`<div class="w">${esc(b.why)}</div>`:""}</div></div>`).join("")}
 function renderPlan(days){
-  days=days||[];PLANDAYS=days;PLANS=days;if(PR)renderPractice();const t=ymd(new Date()),tm=ymd(new Date(Date.now()+864e5));
-  let p=days.find(x=>x.date===t);const n=days.find(x=>x.date===tm);
+  days=days||[];PLANDAYS=days;PLANS=days;
+  const t=ymd(new Date()),tm=ymd(new Date(Date.now()+864e5));const p=days.find(x=>x.date===t),n=days.find(x=>x.date===tm);
   const latest=days.slice().sort((a,b)=>a.date<b.date?-1:1).at(-1);
   const f=(p&&p.focus)||(n&&n.focus)||(latest&&latest.focus);
   $("focus").innerHTML=`<span class="fl">Focus</span><span class="ft">${f?esc(f):'<span class="faint">No focus set yet. Claude sets it with each plan.</span>'}</span>`;
-  const evening=new Date().getHours()>=17;
-  let html="";
-  const hmm=d=>`${pad(d.getHours())}:${pad(d.getMinutes())}`,td=day0(new Date());
-  const calToday=CAL.filter(e=>!e.allDay&&+day0(e.s)===+td).map(e=>({start:hmm(e.s),end:hmm(e.e),title:e.title,fixed:true}));
-  if(p){const have=new Set((p.blocks||[]).map(b=>b.start));const extra=calToday.filter(e=>!have.has(e.start)&&!/^◆/.test(e.title));
-    if(extra.length)p=Object.assign({},p,{blocks:(p.blocks||[]).concat(extra).sort((a,b)=>(a.start||"")<(b.start||"")?-1:1)})}
-  else if(calToday.length)p={date:t,blocks:calToday,note:"From your calendar. No plan built for today."};
-  if(p){
-    $("plMeta").innerHTML=p.provisional?'<span class="warn">provisional · checked at 07:45</span>':(p.checked?"checked "+esc(p.checked.slice(11,16)):"");
-    html+=(planRows(p)||'<div class="empty">Rest day.</div>')+(p.note?`<div class="note">${esc(p.note)}</div>`:"");
-  }else{$("plMeta").textContent="";html+='<div class="empty">No plan for today.</div><div class="note">Claude plans tomorrow each evening at 20:30 and checks it against your recovery at 07:45. Say <i>"plan my day"</i> to run it now.</div>'}
-  if(n){html+=`<div class="next" style="margin-top:${p?14:10}px"><div class="wk" style="margin-bottom:6px">Tomorrow · ${fmtDay(new Date(n.date))}</div>${planRows(n)||'<div class="empty">Rest day.</div>'}</div>`}
-  else if(evening&&p){html+='<div class="note">Tomorrow\'s plan arrives at 20:30.</div>'}
-  $("plan").innerHTML=html;
+  if(PR_RAW)renderPractice();else renderDay();
 }
+
+/* ============ TODAY: timeline ============ */
+let DSEL=null,OPEN={},READY=null;
+function weekDates(){const t=day0(new Date());const mon=new Date(t.getFullYear(),t.getMonth(),t.getDate()-((t.getDay()+6)%7));return Array.from({length:7},(_,i)=>new Date(mon.getFullYear(),mon.getMonth(),mon.getDate()+i))}
+function renderDay(){
+  if(!$("timeline"))return;
+  const t=day0(new Date()),tk=ymd(t);const dates=weekDates();if(!DSEL)DSEL=tk;
+  const sel=new Date(DSEL+"T00:00");const isToday=DSEL===tk,isFut=sel>t;
+  const pd=(PR&&PR.days||[]).find(d=>ymd(d.date)===DSEL);
+  const doneKeys=new Map((pd?pd.done:[]).filter(x=>x.key).map(x=>[x.key,x]));
+  let plan=(PLANDAYS||[]).find(x=>x.date===DSEL);
+  // calendar events (today) that the plan doesn't already include
+  if(isToday&&CAL.length){const hm=d=>`${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    const ev=CAL.filter(e=>!e.allDay&&+day0(e.s)===+t&&!/^◆/.test(e.title)).map(e=>({start:hm(e.s),end:hm(e.e),title:e.title,fixed:true}));
+    const have=new Set((plan&&plan.blocks||[]).map(b=>b.start));const extra=ev.filter(e=>!have.has(e.start));
+    if(extra.length)plan=Object.assign({date:DSEL},plan||{},{blocks:((plan&&plan.blocks)||[]).concat(extra).sort((a,b)=>(a.start||"")<(b.start||"")?-1:1)})}
+  const blocks=(plan&&plan.blocks)||[];
+  // strip
+  const L=["MON","TUE","WED","THU","FRI","SAT","SUN"];
+  $("dStrip").innerHTML=dates.map((d,i)=>{const k=ymd(d),p=(PR&&PR.days||[]).find(x=>ymd(x.date)===k),pl=(PLANDAYS||[]).find(x=>x.date===k);
+    const dot=p&&p.n?"g":(pl&&(pl.blocks||[]).some(b=>!b.fixed||(b.drills||[]).length)?"o":"");
+    return `<button data-d="${k}" class="${k===DSEL?"on":""}" aria-label="${fmtDay(d)}"><div class="sl">${L[i]}</div><div class="sd">${d.getDate()}</div><i class="${dot}"></i></button>`}).join("");
+  $("dStrip").querySelectorAll("button").forEach(b=>b.onclick=()=>{DSEL=b.dataset.d;OPEN={};renderDay()});
+  // header
+  const nDone=pd?pd.n:0,nB=blocks.filter(b=>!b.fixed||(b.drills||[]).length).length;
+  $("dTitle").innerHTML=(isToday?"Today":sel.toLocaleDateString("en-GB",{weekday:"long"}))+(isToday&&READY?`<span class="rpill ${READY.z}">${READY.rec}%</span>`:"");
+  $("dSub").textContent=blocks.length?`${nB} session${nB===1?"":"s"}${isFut?" planned":""}${!isFut&&nDone?` · ${nDone} done`:""}`:(nDone?`${nDone} done`:(isFut||isToday?"Rest day":"Nothing logged"));
+  // which block is now / next
+  const nowM=new Date().getHours()*60+new Date().getMinutes(),mins=s=>{const [h,m]=String(s||"0:0").split(":").map(Number);return h*60+m};
+  const nextIdx=isToday?blocks.findIndex(b=>mins(b.start)>nowM):-1;
+  const curIdx=isToday?blocks.findIndex(b=>mins(b.start)<=nowM&&mins(b.end||b.start)>nowM):-1;
+  if(!Object.keys(OPEN).length&&isToday){const o=curIdx>=0?curIdx:nextIdx;if(o>=0&&(blocks[o].drills||[]).length)OPEN[o]=true}
+  const used=new Set();
+  let html="";
+  blocks.forEach((b,i)=>{
+    if(isToday&&i===nextIdx&&curIdx<0)html+=`<div class="nowl"><span>NOW</span><i></i></div>`;
+    const drills=(b.drills||[]);drills.forEach(k=>used.add(nk(k)));
+    const gym=/gym|1079/i.test(b.title)||drills.some(k=>/^gym/i.test(k));const appt=b.fixed&&!drills.length;const cls=appt?"f":gym?"g":"p";
+    const parts=String(b.title).split(" · ");const tag=appt?(parts.length>1?parts.slice(1).join(" · "):""):(parts.length>1?parts[0]:"");const title=appt?parts[0]:(parts.length>1?parts.slice(1).join(" · "):b.title);
+    const dn=drills.filter(k=>doneKeys.has(nk(k))).length;
+    html+=`<div class="tl-row"><div class="tl-t">${esc(b.start||"")}</div><div class="tl-b">
+      <button class="blk ${cls}" data-i="${i}" aria-expanded="${!!OPEN[i]}"><div class="bt"><span>${esc((tag||(b.fixed?"Fixed":"Session")).toUpperCase())}</span><span>${esc(b.start||"")}${b.end?"–"+esc(b.end):""}</span></div>
+        <div class="bn">${esc(title)}</div>${drills.length?`<div class="bp">${dn} / ${drills.length} drills ${dn===drills.length?"✓":""}</div>`:""}</button>
+      ${OPEN[i]?`<div class="bx">${b.why?`<div class="why">${esc(b.why)}</div>`:b.fixed?'<div class="why">From your calendar.</div>':""}
+        ${drills.map(k=>{const x=doneKeys.get(nk(k));const on=!!x,lock=on&&!x.hud;
+          return `<button class="drill ${gym?"g":""} ${on?"on":""} ${lock?"lock":""}" data-k="${esc(k)}" ${isFut||lock?"disabled":""}><span class="m">${on?"✓":""}</span><span>${esc(keyLabel(k))}</span>${lock?"<small>in Daily To Do</small>":""}</button>`}).join("")}
+        ${isFut&&drills.length?'<div class="why">Ticks open on the day.</div>':""}</div>`:""}
+    </div></div>`});
+  if(isToday&&blocks.length&&nextIdx<0&&curIdx<0)html+=`<div class="nowl"><span>NOW</span><i></i></div>`;
+  const extra=(pd?pd.done:[]).filter(x=>!x.key||!used.has(x.key));
+  if(extra.length){const g={};extra.forEach(x=>(g[x.area]=g[x.area]||[]).push(x));
+    html+=`<div class="also"><div class="ah">${blocks.length?"ALSO DONE":"DONE"}</div>${Object.entries(g).map(([a,xs])=>`<div class="wl"><span class="da">${esc(a)}</span> ${xs.map(x=>esc(x.task)+(x.band?` <small class="faint">(${esc(x.band)})</small>`:"")).join(", ")}</div>`).join("")}</div>`}
+  if(!blocks.length&&!extra.length)html+=`<div class="also"><div class="faint">${isFut||isToday?"Nothing planned. The plan arrives the evening before.":"Nothing logged this day."}</div></div>`;
+  if(plan&&plan.note&&!isFut)html+=`<div class="note" style="margin-top:4px">${esc(plan.note)}</div>`;
+  $("timeline").innerHTML=html;
+  $("timeline").querySelectorAll(".blk").forEach(b=>b.onclick=()=>{const i=+b.dataset.i;OPEN[i]=!OPEN[i];renderDay()});
+  $("timeline").querySelectorAll(".drill:not([disabled])").forEach(b=>b.onclick=()=>toggleTick(DSEL,b.dataset.k));
+}
+function toggleTick(date,k){const list=(TICKS[date]||[]).slice();const i=list.findIndex(x=>nk(x)===nk(k));
+  if(i>=0)list.splice(i,1);else list.push(k);if(list.length)TICKS[date]=list;else delete TICKS[date];
+  renderPractice();saveTicks()}
 
 /* ============ COMPETITION COUNTDOWN ============ */
 async function loadComps(){let t;try{t=await FS.text(PATHS.comps)}catch(e){return []}
