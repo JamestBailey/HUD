@@ -27,7 +27,7 @@ a{color:var(--gold2)}
 <script>
 "use strict";
 const REDIRECT="https://jamestbailey.github.io/HUD/whoop.html";
-const SCOPES="offline read:recovery read:sleep read:cycles";
+const SCOPES="offline read:recovery read:sleep read:cycles read:workout";
 const Q=new URLSearchParams(location.search),app=document.getElementById("app");
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 if(Q.get("code")){
