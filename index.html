@@ -473,8 +473,8 @@ h1{font-weight:700;letter-spacing:-.03em}
 .rblock{background:var(--panel2);border-radius:14px;padding:10px 14px;font-size:13px;text-align:center}.rblock b{font-size:24px;display:block}
 .rstrip{margin:18px 0 6px;overflow:hidden}.rstrip svg{display:block;max-width:100%;height:auto}
 .rgrid{display:grid;grid-template-columns:1.3fr 1fr;gap:24px;margin-top:12px}@media(max-width:800px){.rgrid{grid-template-columns:1fr}}
-.rms{display:flex;gap:12px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}.rms:first-child{border-top:none}
-.rms .ri{font-size:14px;font-weight:600}.rms .rd{font-size:12px;color:var(--muted);margin-top:2px}.rms.done .ri{color:var(--muted);text-decoration:line-through}
+.rms{display:flex;gap:12px;align-items:center;padding:9px 10px;margin:2px -10px;border-radius:14px;position:relative;isolation:isolate;overflow:hidden;transition:box-shadow .3s}
+.rms .ri{font-size:14px;font-weight:600}.rms .rd{font-size:12px;color:var(--muted);margin-top:2px}.rms.done .ri{color:var(--lav)}
 .rms .wtick{border-color:var(--line2)}.rms .wtick.on{border-color:var(--lav)}
 /* week in review */
 .rvhead{font-size:18px;font-weight:700;line-height:1.4;letter-spacing:-.01em;max-width:900px}
@@ -484,6 +484,17 @@ h1{font-weight:700;letter-spacing:-.03em}
 .rvi{background:var(--panel2);border-radius:14px;padding:11px 14px;display:grid;grid-template-columns:12px 1fr;column-gap:10px;row-gap:2px;align-items:center}
 .rvi .sd{width:10px;height:10px;border-radius:50%;background:var(--line2)}.rvi .sd.ok{background:var(--lav)}.rvi .sd.warn{background:var(--gold)}.rvi .sd.bad{background:#ff8a65}
 .rvi .rl{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}.rvi .rv{grid-column:2;font-size:15px;font-weight:700}.rvi .rx{grid-column:2;font-size:12.5px;color:var(--muted);line-height:1.4}
+
+/* green overlay for completed rows (milestones, weigh-in) */
+.rms::before,.blk.w::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(143,209,158,.22),rgba(143,209,158,.10));transform:scaleX(0);transform-origin:left;transition:transform .55s cubic-bezier(.3,.8,.3,1) .15s;z-index:-1;border-radius:inherit}
+.rms.done::before,.blk.w.done::before{transform:scaleX(1)}
+.rms.done{box-shadow:inset 0 0 0 1px rgba(143,209,158,.35)}
+.blk.w{position:relative;isolation:isolate;overflow:hidden;transition:border-color .3s,box-shadow .3s}
+.blk.w.done{background:#1d2621!important;border-color:rgba(143,209,158,.75);box-shadow:0 0 0 2px rgba(143,209,158,.45)}
+.rms.pop{animation:gpop .5s cubic-bezier(.3,1.5,.5,1)}.blk.w.pop{animation:gpop .5s cubic-bezier(.3,1.5,.5,1)}
+.rms.pop .wtick,.blk.w.pop .wtick{animation:gringpop .5s cubic-bezier(.3,1.6,.5,1)}
+.wtick{transition:background .25s,border-color .25s}
+@media(prefers-reduced-motion:reduce){.rms.pop,.blk.w.pop,.rms.pop .wtick,.blk.w.pop .wtick{animation:none}.rms::before,.blk.w::before{transition:none}}
 </style>
 </head>
 <body>
@@ -982,7 +993,7 @@ function renderDay(){
   if(!blocks.length&&!extra.length)html+=`<div class="also"><div class="faint">${isFut||isToday?"Nothing planned. The plan arrives the evening before.":"Nothing logged this day."}</div></div>`;
   if(plan&&plan.note&&!isFut)html+=`<div class="note" style="margin-top:4px">${esc(plan.note)}</div>`;
   $("timeline").innerHTML=html;
-  if(sel.getDay()===1&&WEIGHTS)wBindDay(DSEL);
+  if(sel.getDay()===1&&WEIGHTS){wBindDay(DSEL);if(WJUST===DSEL){WJUST=null;const b=$("timeline").querySelector(".blk.w");if(b)animDone(b)}}
   $("timeline").querySelectorAll(".blk").forEach(b=>b.onclick=()=>{const i=+b.dataset.i;OPEN[i]=!OPEN[i];renderDay()});
   $("timeline").querySelectorAll(".drill:not([disabled])").forEach(b=>b.onclick=()=>{const k=b.dataset.k;const ticked=(TICKS[DSEL]||[]).some(x=>nk(x)===nk(k));
     if(!ticked&&resultSpec(k)){ENTRY={date:DSEL,k,vals:{},neg:false};renderDay();setTimeout(()=>{const i=$("timeline").querySelector(".resbox input");if(i)i.focus()},30)}
@@ -1658,13 +1669,13 @@ function wBindDay(date){const i=$("wInDay"),b=$("wSaveDay");if($("wEdit"))$("wEd
   if(!i||!b)return;i.onkeydown=e=>{if(e.key==="Enter")b.click()};
   b.onclick=async()=>{const kg=wParse(i.value);if(!kg){$("wErrDay").textContent="Enter your weight in kg, e.g. 68.4";return}
     if(!ready()){toast("Connect your vault first (⚙)");return}b.disabled=true;
-    try{await wSave(date,kg);WENTRY=null;toast(`Weigh-in saved: ${gFmtKg(kg)} kg`);renderDay();gRenderWeight()}catch(e){$("wErrDay").textContent="Couldn't save: "+e.message;b.disabled=false}}}
+    try{const first=!wFor(date);await wSave(date,kg);WENTRY=null;WJUST=first?date:null;toast(`Weigh-in saved: ${gFmtKg(kg)} kg`);renderDay();gRenderWeight()}catch(e){$("wErrDay").textContent="Couldn't save: "+e.message;b.disabled=false}}}
 
 /* ============ ROAD TO PORTUGAL: phases to the first event + prep milestones ============ */
 function compsSplit(t){const m=t.search(/^##\s*Prep milestones/im);return m<0?[t,""]:[t.slice(0,m),t.slice(m)]}
 function parseMilestones(t){const out=[];for(const l of compsSplit(t)[1].split(/\r?\n/)){const c=l.split("|").map(x=>x.trim());if(c.length<4)continue;
   if(!/^\d{4}-\d{2}-\d{2}$/.test(c[1]))continue;out.push({due:c[1],item:c[2],done:/✓|done|yes|x/i.test(c[3]||""),doneTxt:c[3]||"",raw:l})}return out.sort((a,b)=>a.due<b.due?-1:1)}
-var COMPS=[],MILES=[],COMPS_TXT="";
+var COMPS=[],MILES=[],COMPS_TXT="",MJUST=null,WJUST=null;
 async function loadComps(){let t;try{t=await FS.text(PATHS.comps)}catch(e){return {ev:[],ms:[],txt:""}}
   const out=[];for(const l of compsSplit(t)[0].split(/\r?\n/)){const c=l.split("|").map(x=>x.trim());if(c.length<5)continue;
     const st=c[1],en=c[2];if(!/^\d{4}-\d{2}-\d{2}$/.test(st))continue;out.push({start:st,end:/^\d{4}-\d{2}-\d{2}$/.test(en)?en:st,name:c[3],venue:c[4]||"",tour:c[5]||""})}
@@ -1715,10 +1726,11 @@ function roadMiles(){const el=$("rMiles");if(!el)return;const t=ymd(new Date());
     const st=m.done?'<span class="ok">Done</span>':m.due<t?`<span class="warn">${-days} day${days===-1?"":"s"} overdue</span>`:days===0?'<span class="warn">Due today</span>':`<span class="faint">in ${days} day${days===1?"":"s"}</span>`;
     return `<div class="rms ${m.done?"done":""}"><button class="wtick ${m.done?"on":""}" data-mi="${i}" aria-label="${m.done?"Mark not done":"Mark done"}: ${esc(m.item)}">${m.done?"✓":""}</button>
       <div><div class="ri">${esc(m.item)}</div><div class="rd">${fmtDay(d)} · ${st}</div></div></div>`}).join("");
+  if(MJUST){const i=MILES.findIndex(x=>x.item===MJUST);MJUST=null;const row=el.querySelectorAll(".rms")[i];if(row)animDone(row)}
   el.querySelectorAll("[data-mi]").forEach(b=>b.onclick=async()=>{const m=MILES[+b.dataset.mi];if(!ready()){toast("Connect your vault first (⚙)");return}
     b.disabled=true;try{const txt=await FS.text(PATHS.comps);const c=m.raw.split("|");const doneCell=m.done?" ":` ✓ ${ymd(new Date())} `;
       const nl=c.length>=5?[c[0],c[1],c[2],doneCell,...c.slice(4)].join("|"):m.raw;if(!txt.includes(m.raw))throw new Error("the Schedule note changed; refresh and try again");
-      const nt=txt.replace(m.raw,nl);await FS.write(PATHS.comps,nt);renderComps({ev:COMPS,ms:parseMilestones(nt),txt:nt});toast(m.done?"Marked not done":"Milestone done ✓")}
+      const nt=txt.replace(m.raw,nl);await FS.write(PATHS.comps,nt);MJUST=m.done?null:m.item;renderComps({ev:COMPS,ms:parseMilestones(nt),txt:nt});toast(m.done?"Marked not done":"Milestone done ✓")}
     catch(e){toast("Couldn't save: "+e.message);b.disabled=false}})}
 
 /* ============ WEEK IN REVIEW (written by the Sunday planning run) ============ */
@@ -1734,6 +1746,10 @@ function renderReview(j){REVIEWS=(j&&j.reviews||[]).slice().sort((a,b)=>a.week_s
     <div class="rvitems">${(r.items||[]).map(it=>`<div class="rvi"><i class="sd ${dot[it.status]||""}" aria-label="${esc(it.status||"")}"></i><div class="rl">${esc(it.label||it.area||"")}</div><div class="rv">${esc(it.value||"")}</div>${it.detail?`<div class="rx">${esc(it.detail)}</div>`:""}</div>`).join("")}</div>
     <div class="note">${fmtDay(ws)} – ${fmtDay(we)} · written ${r.written?esc(String(r.written).replace("T"," ").slice(0,16)):""} by the Sunday planning run · full note in <i>10 Golf → Planning → Weekly Reviews</i></div>`;
   if($("rvSel"))$("rvSel").onchange=e=>{RVSEL=+e.target.value;renderReview({reviews:REVIEWS})}}
+
+/* shared "done" animation: overlay sweeps in, ring pulses, tick pops (same feel as a finished exercise) */
+function animDone(el){el.classList.remove("done","pop");void el.offsetWidth;el.classList.add("done","pop");
+  try{navigator.vibrate&&navigator.vibrate([30,40,60])}catch(e){}setTimeout(()=>el.classList.remove("pop"),700)}
 </script>
 </body>
 </html>
