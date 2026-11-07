@@ -467,6 +467,23 @@ h1{font-weight:700;letter-spacing:-.03em}
 .blk.w .bt{color:var(--lav)}.wrow{display:flex;align-items:center;gap:12px;margin-top:6px}
 .wtick{width:34px;height:34px;flex:none;border-radius:10px;border:2px solid var(--lav);background:none;color:var(--ink);font:800 17px Inter,sans-serif;cursor:pointer}
 .wtick.on{background:var(--lav)}
+
+/* road to the next event */
+.rhead{display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap}.rhead .days2{line-height:1}
+.rblock{background:var(--panel2);border-radius:14px;padding:10px 14px;font-size:13px;text-align:center}.rblock b{font-size:24px;display:block}
+.rstrip{margin:18px 0 6px;overflow:hidden}.rstrip svg{display:block;max-width:100%;height:auto}
+.rgrid{display:grid;grid-template-columns:1.3fr 1fr;gap:24px;margin-top:12px}@media(max-width:800px){.rgrid{grid-template-columns:1fr}}
+.rms{display:flex;gap:12px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}.rms:first-child{border-top:none}
+.rms .ri{font-size:14px;font-weight:600}.rms .rd{font-size:12px;color:var(--muted);margin-top:2px}.rms.done .ri{color:var(--muted);text-decoration:line-through}
+.rms .wtick{border-color:var(--line2)}.rms .wtick.on{border-color:var(--lav)}
+/* week in review */
+.rvhead{font-size:18px;font-weight:700;line-height:1.4;letter-spacing:-.01em;max-width:900px}
+.rvchange{margin:14px 0;background:#2a1f12;border:1px solid var(--gold);border-radius:16px;padding:12px 16px;font-size:14px;line-height:1.45}
+.rvchange span{display:block;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}.rvchange b{font-size:16px}.rvchange div{color:var(--muted);margin-top:4px}
+.rvitems{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.rvi{background:var(--panel2);border-radius:14px;padding:11px 14px;display:grid;grid-template-columns:12px 1fr;column-gap:10px;row-gap:2px;align-items:center}
+.rvi .sd{width:10px;height:10px;border-radius:50%;background:var(--line2)}.rvi .sd.ok{background:var(--lav)}.rvi .sd.warn{background:var(--gold)}.rvi .sd.bad{background:#ff8a65}
+.rvi .rl{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}.rvi .rv{grid-column:2;font-size:15px;font-weight:700}.rvi .rx{grid-column:2;font-size:12.5px;color:var(--muted);line-height:1.4}
 </style>
 </head>
 <body>
@@ -516,14 +533,15 @@ h1{font-weight:700;letter-spacing:-.03em}
 
   <main class="panel" id="p-week">
     <div class="grid">
+      <section class="card c12"><div class="ch"><span class="ct">Week in review</span><span class="cm" id="rvMeta"></span></div><div id="review"><div class="empty">Loading…</div></div></section>
       <section class="card c12"><div class="ch"><span class="ct">This week</span><span class="cm" id="prMeta"></span></div><div id="practice"></div></section>
     </div>
   </main>
 
   <main class="panel" id="p-golf">
     <div class="grid">
-      <section class="card c4"><div class="ch"><span class="ct">Next event</span><span class="cm" id="evMeta"></span></div><div id="event"></div></section>
-      <section class="card c8"><div class="ch"><span class="ct">Coaching focus</span><span class="cm">latest per coach</span></div><div id="coaching"></div></section>
+      <section class="card c12"><div class="ch"><span class="ct">Road to the next event</span><span class="cm" id="evMeta"></span></div><div id="event"></div></section>
+      <section class="card c12"><div class="ch"><span class="ct">Coaching focus</span><span class="cm">latest per coach</span></div><div id="coaching"></div></section>
       <section class="card c12"><div class="ch"><span class="ct">Strokes gained · yardage book</span><span class="cm" id="trMeta"></span></div><div id="trend"></div></section>
     </div>
   </main>
@@ -620,6 +638,7 @@ const fmtDay=d=>d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",mont
 const ls={get(k,d){try{const v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2600)}
 const PATHS={
+  review:"90 System/Data/review.json",
   spend:"40 Life/Finances/Spending Tracker.xlsx",
   todo:"10 Golf/Planning/Winter Plan 2026/Daily To Do.xlsx",
   drills:"10 Golf/Planning/Winter Plan 2026/Drill Spreadsheet (Fill it in).xlsx",
@@ -1002,26 +1021,6 @@ function toggleTick(date,k){const list=(TICKS[date]||[]).slice();const i=list.fi
   renderPractice();saveTicks()}
 
 /* ============ COMPETITION COUNTDOWN ============ */
-async function loadComps(){let t;try{t=await FS.text(PATHS.comps)}catch(e){return []}
-  const out=[];for(const l of t.split(/\r?\n/)){const c=l.split("|").map(x=>x.trim());if(c.length<5)continue;
-    const st=c[1],en=c[2];if(!/^\d{4}-\d{2}-\d{2}$/.test(st))continue;out.push({start:st,end:/^\d{4}-\d{2}-\d{2}$/.test(en)?en:st,name:c[3],venue:c[4]||"",tour:c[5]||""})}
-  return out.sort((a,b)=>a.start<b.start?-1:1)}
-function renderComps(list){
-  const t=day0(new Date());const up=list.filter(e=>new Date(e.end+"T00:00")>=t);
-  if(!up.length){$("evMini").innerHTML='<div class="sub2 faint">No events scheduled</div>';$("evMeta").textContent="";$("event").innerHTML='<div class="empty">No events in the schedule.</div><div class="note">Add them to <i>10 Golf → Competitions → Schedule</i>, or just tell Claude.</div>';return}
-  const e=up[0];const s=new Date(e.start+"T00:00");const n=dayDiff(s,t);
-  const addD=k=>new Date(s.getFullYear(),s.getMonth(),s.getDate()-k);
-  const phase=n<=7?["Tournament Week","ok","Short, confidence-building sessions. No swing changes."]
-    :n<=28?["Sharpening Phase","warn",`More on-course and pressure games. Tournament week from ${fmtDay(addD(7))}.`]
-    :["Building Phase","gold",`Technical work and volume. Sharpen from ${fmtDay(addD(28))}.`];
-  $("evMeta").textContent=e.tour;
-  $("event").innerHTML=`<div class="days2">${n<=0?"Now":n}</div><div class="muted" style="margin-top:2px">${n<=0?"in play":n===1?"day to go":"days to go"}</div>
-    <div style="margin-top:12px;font-weight:600">${esc(e.name)}</div><div class="cm">${fmtDay(s)}${e.end!==e.start?" – "+fmtDay(new Date(e.end+"T00:00")):""}${e.venue?" · "+esc(e.venue):""}</div>
-    <span class="phase ${phase[1]}">${phase[0]}</span><div class="note" style="margin-top:8px">${phase[2]}</div>
-    ${up.length>1?`<div class="fh" style="margin-top:18px">Coming up</div>${up.slice(1).map(x=>`<div class="comp"><span class="d">${fmtDay(new Date(x.start+"T00:00"))}</span><div>${esc(x.name)}${x.venue?`<div class="v">${esc(x.venue)}</div>`:""}</div></div>`).join("")}`:""}`;
-  $("evMini").innerHTML=`<div class="num">${n<=0?"Now":n}<small>${n<=0?"":"days"}</small></div><div class="sub2">${esc(e.name)}<br><span class="faint">${fmtDay(s)}${e.venue?" · "+esc(e.venue):""}</span></div><div style="margin-top:auto"><span class="chip">${phase[0]}</span></div>`;
-}
-
 /* ============ DRILL TREND (Yardage Chart) ============ */
 async function loadTrend(){
   const x=await openXlsx(PATHS.drills);const ws=await x.sheet("Yardage Chart");if(!ws)return [];const out=[];
@@ -1111,7 +1110,8 @@ async function refresh(){
     safe(loadWhoop,renderWhoop,"ready","Whoop data"),
     safe(loadPlan,renderPlan,"plan","today's plan"),
     safe(loadComps,renderComps,"event","the competition schedule"),
-    safe(loadGym,renderGym,"gStart","your gym notes")]);
+    safe(loadGym,renderGym,"gStart","your gym notes"),
+    safe(loadReview,renderReview,"review","the weekly review")]);
   if(G.hist)try{gRenderStart()}catch(e){}
 }
 function tick(){const d=new Date();$("clock").textContent=`${pad(d.getHours())}:${pad(d.getMinutes())}`;
@@ -1147,7 +1147,7 @@ $("relinkBtn").onclick=()=>{$("settings").classList.remove("show");connect()};
 function showTab(t){if(!document.getElementById("p-"+t))t="today";
   document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("on",p.id==="p-"+t));
   document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));
-  if(t==="gym")setTimeout(()=>{try{G.byEx&&gRenderProg();gRenderWeight()}catch(e){}},0);ls.set("hud_tab",t);if(location.hash!=="#"+t)history.replaceState(null,"","#"+t);window.scrollTo(0,0)}
+  if(t==="golf")setTimeout(()=>{try{COMPS.length&&renderComps({ev:COMPS,ms:MILES,txt:COMPS_TXT})}catch(e){}},0);if(t==="gym")setTimeout(()=>{try{G.byEx&&gRenderProg();gRenderWeight()}catch(e){}},0);ls.set("hud_tab",t);if(location.hash!=="#"+t)history.replaceState(null,"","#"+t);window.scrollTo(0,0)}
 document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
 document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>showTab(b.dataset.go));
 showTab((location.hash||"").slice(1)||ls.get("hud_tab","today"));
@@ -1659,6 +1659,81 @@ function wBindDay(date){const i=$("wInDay"),b=$("wSaveDay");if($("wEdit"))$("wEd
   b.onclick=async()=>{const kg=wParse(i.value);if(!kg){$("wErrDay").textContent="Enter your weight in kg, e.g. 68.4";return}
     if(!ready()){toast("Connect your vault first (⚙)");return}b.disabled=true;
     try{await wSave(date,kg);WENTRY=null;toast(`Weigh-in saved: ${gFmtKg(kg)} kg`);renderDay();gRenderWeight()}catch(e){$("wErrDay").textContent="Couldn't save: "+e.message;b.disabled=false}}}
+
+/* ============ ROAD TO PORTUGAL: phases to the first event + prep milestones ============ */
+function compsSplit(t){const m=t.search(/^##\s*Prep milestones/im);return m<0?[t,""]:[t.slice(0,m),t.slice(m)]}
+function parseMilestones(t){const out=[];for(const l of compsSplit(t)[1].split(/\r?\n/)){const c=l.split("|").map(x=>x.trim());if(c.length<4)continue;
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(c[1]))continue;out.push({due:c[1],item:c[2],done:/✓|done|yes|x/i.test(c[3]||""),doneTxt:c[3]||"",raw:l})}return out.sort((a,b)=>a.due<b.due?-1:1)}
+var COMPS=[],MILES=[],COMPS_TXT="";
+async function loadComps(){let t;try{t=await FS.text(PATHS.comps)}catch(e){return {ev:[],ms:[],txt:""}}
+  const out=[];for(const l of compsSplit(t)[0].split(/\r?\n/)){const c=l.split("|").map(x=>x.trim());if(c.length<5)continue;
+    const st=c[1],en=c[2];if(!/^\d{4}-\d{2}-\d{2}$/.test(st))continue;out.push({start:st,end:/^\d{4}-\d{2}-\d{2}$/.test(en)?en:st,name:c[3],venue:c[4]||"",tour:c[5]||""})}
+  return {ev:out.sort((a,b)=>a.start<b.start?-1:1),ms:parseMilestones(t),txt:t}}
+function renderComps(r){COMPS=r.ev||[];MILES=r.ms||[];COMPS_TXT=r.txt||"";
+  const t=day0(new Date());const up=COMPS.filter(e=>new Date(e.end+"T00:00")>=t);
+  if(!up.length){$("evMini").innerHTML='<div class="sub2 faint">No events scheduled</div>';$("evMeta").textContent="";$("event").innerHTML='<div class="empty">No events in the schedule.</div><div class="note">Add them to <i>10 Golf → Competitions → Schedule</i>, or just tell Claude.</div>';return}
+  const e=up[0];const s=new Date(e.start+"T00:00");const n=dayDiff(s,t);
+  const addD=k=>new Date(s.getFullYear(),s.getMonth(),s.getDate()-k);
+  const phase=n<=7?["Tournament Week","ok","Short, confidence-building sessions. No swing changes."]
+    :n<=28?["Sharpening Phase","warn",`More on-course and pressure games, less technical change. Tournament week from ${fmtDay(addD(7))}.`]
+    :["Building Phase","gold",`Technical work and volume. Sharpen from ${fmtDay(addD(28))}.`];
+  $("evMeta").textContent=e.tour;
+  $("evMini").innerHTML=`<div class="num">${n<=0?"Now":n}<small>${n<=0?"":"days"}</small></div><div class="sub2">${esc(e.name)}<br><span class="faint">${fmtDay(s)}${e.venue?" · "+esc(e.venue):""}</span></div><div style="margin-top:auto"><span class="chip">${phase[0]}</span></div>`;
+  const block=up.filter(x=>x.tour&&x.tour===e.tour);const last=block.length?block.at(-1):e;
+  const open=MILES.filter(m=>!m.done),over=open.filter(m=>m.due<ymd(t));
+  $("event").innerHTML=`<div class="road">
+    <div class="rhead"><div><div class="days2">${n<=0?"Now":n}</div><div class="muted">${n<=0?"in play":n===1?"day to go":"days to go"}</div></div>
+      <div style="flex:1;min-width:200px"><div style="font-weight:700;font-size:16px">${esc(e.name)}</div><div class="cm">${fmtDay(s)}${e.end!==e.start?" – "+fmtDay(new Date(e.end+"T00:00")):""}${e.venue?" · "+esc(e.venue):""}</div>
+        <span class="phase ${phase[1]}">${phase[0]}</span><div class="note" style="margin-top:6px">${phase[2]}</div></div>
+      ${block.length>1?`<div class="rblock"><b>${block.length}</b> events<br><span class="faint">to ${fmtDay(new Date(last.end+"T00:00"))}</span></div>`:""}</div>
+    <div class="rstrip" id="rStrip"></div>
+    <div class="rgrid"><div><div class="fh">Prep milestones${open.length?` · ${open.length} to do`:""}${over.length?` · <span class="warn">${over.length} overdue</span>`:""}</div><div id="rMiles"></div></div>
+      <div><div class="fh">Events</div>${up.slice(0,8).map(x=>`<div class="comp"><span class="d">${fmtDay(new Date(x.start+"T00:00"))}</span><div>${esc(x.name)}${x.venue?`<div class="v">${esc(x.venue)}</div>`:""}</div></div>`).join("")}</div></div></div>`;
+  roadStrip(t,e,last);roadMiles()}
+function roadStrip(t,first,last){const el=$("rStrip");if(!el)return;
+  const W=Math.max(300,Math.min(1240,el.clientWidth||($("event").clientWidth)||700)),H=96,P={l:8,r:8};
+  const s=new Date(first.start+"T00:00"),end=new Date(new Date(last.end+"T00:00").getTime()+2*864e5);
+  const t0=t.getTime(),t1=end.getTime();const X=d=>P.l+Math.max(0,Math.min(1,(d.getTime()-t0)/(t1-t0)))*(W-P.l-P.r);
+  const back=k=>new Date(s.getFullYear(),s.getMonth(),s.getDate()-k);
+  const segs=[["Build",t,back(28),"var(--gold)",.35],["Sharpen",back(28),back(7),"var(--sand)",.55],["Taper",back(7),s,"var(--lav)",.6],["Events",s,end,"var(--lav)",1]]
+    .filter(g=>g[2]>t);
+  const y=44,h=14;
+  let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Phases from today to the end of the event block">`;
+  segs.forEach(g=>{const a=X(g[1]<t?t:g[1]),b=X(g[2]);if(b-a<1)return;
+    svg+=`<rect x="${a+1}" y="${y}" width="${Math.max(1,b-a-2)}" height="${h}" rx="4" fill="${g[3]}" fill-opacity="${g[4]}"/>`;
+    if(b-a>48)svg+=`<text x="${(a+b)/2}" y="${y+h+16}" text-anchor="middle" font-size="11" font-weight="700" fill="var(--muted)">${g[0]}</text>`});
+  COMPS.filter(c=>c.start>=first.start&&c.start<=last.start).forEach(c=>{const x=X(new Date(c.start+"T00:00"));svg+=`<circle cx="${x}" cy="${y+h/2}" r="3.5" fill="var(--ink)"/>`});
+  const months=[];for(let d=new Date(t.getFullYear(),t.getMonth()+1,1);d<end;d=new Date(d.getFullYear(),d.getMonth()+1,1))months.push(d);
+  months.forEach(d=>{const x=X(d);svg+=`<line x1="${x}" x2="${x}" y1="${y-4}" y2="${y+h+4}" stroke="var(--line2)"/><text x="${x+3}" y="${H-2}" font-size="10" fill="var(--faint)">${d.toLocaleDateString("en-GB",{month:"short"})}</text>`});
+  MILES.forEach(m=>{const d=new Date(m.due+"T00:00");if(d<t&&m.done)return;const x=X(d<t?t:d);const col=m.done?"var(--lav)":m.due<ymd(t)?"var(--orange,#ff8a65)":"var(--text)";
+    svg+=`<path d="M${x},${y-6} l5,-7 l-5,-7 l-5,7 Z" fill="${col}" stroke="var(--panel)" stroke-width="1.5"><title>${esc(m.item)} · ${fmtDay(d)}${m.done?" · done":""}</title></path>`});
+  svg+=`<line x1="${P.l}" x2="${P.l}" y1="${y-24}" y2="${y+h+4}" stroke="var(--gold)" stroke-width="2"/><text x="${P.l+4}" y="${y-18}" font-size="11" font-weight="800" fill="var(--gold)">Today</text></svg>`;
+  el.innerHTML=svg+`<div class="gleg" style="justify-content:flex-start;margin:4px 0 0"><span><i style="background:var(--text);transform:rotate(45deg);border-radius:2px;width:9px;height:9px"></i>Milestone due</span><span><i style="background:var(--ink);border:2px solid var(--lav);border-radius:50%;width:9px;height:9px;box-sizing:border-box"></i>Event</span></div>`}
+function roadMiles(){const el=$("rMiles");if(!el)return;const t=ymd(new Date());
+  if(!MILES.length){el.innerHTML='<div class="empty">No milestones yet. Add them under <b>## Prep milestones</b> in the Schedule note, or tell Claude.</div>';return}
+  el.innerHTML=MILES.map((m,i)=>{const d=new Date(m.due+"T00:00"),days=dayDiff(d,day0(new Date()));
+    const st=m.done?'<span class="ok">Done</span>':m.due<t?`<span class="warn">${-days} day${days===-1?"":"s"} overdue</span>`:days===0?'<span class="warn">Due today</span>':`<span class="faint">in ${days} day${days===1?"":"s"}</span>`;
+    return `<div class="rms ${m.done?"done":""}"><button class="wtick ${m.done?"on":""}" data-mi="${i}" aria-label="${m.done?"Mark not done":"Mark done"}: ${esc(m.item)}">${m.done?"✓":""}</button>
+      <div><div class="ri">${esc(m.item)}</div><div class="rd">${fmtDay(d)} · ${st}</div></div></div>`}).join("");
+  el.querySelectorAll("[data-mi]").forEach(b=>b.onclick=async()=>{const m=MILES[+b.dataset.mi];if(!ready()){toast("Connect your vault first (⚙)");return}
+    b.disabled=true;try{const txt=await FS.text(PATHS.comps);const c=m.raw.split("|");const doneCell=m.done?" ":` ✓ ${ymd(new Date())} `;
+      const nl=c.length>=5?[c[0],c[1],c[2],doneCell,...c.slice(4)].join("|"):m.raw;if(!txt.includes(m.raw))throw new Error("the Schedule note changed; refresh and try again");
+      const nt=txt.replace(m.raw,nl);await FS.write(PATHS.comps,nt);renderComps({ev:COMPS,ms:parseMilestones(nt),txt:nt});toast(m.done?"Marked not done":"Milestone done ✓")}
+    catch(e){toast("Couldn't save: "+e.message);b.disabled=false}})}
+
+/* ============ WEEK IN REVIEW (written by the Sunday planning run) ============ */
+var REVIEWS=null,RVSEL=0;
+async function loadReview(){try{return JSON.parse(await FS.text(PATHS.review))}catch(e){if(e.name==="NotFoundError"||/not found|missing|could not be found|404/i.test(e.message))return {reviews:[]};throw e}}
+function renderReview(j){REVIEWS=(j&&j.reviews||[]).slice().sort((a,b)=>a.week_start<b.week_start?1:-1);const el=$("review");
+  if(!REVIEWS.length){$("rvMeta").textContent="";el.innerHTML='<div class="empty">The first review is written on Sunday evening, when Claude plans next week.</div>';return}
+  const r=REVIEWS[Math.min(RVSEL,REVIEWS.length-1)];const ws=new Date(r.week_start+"T00:00"),we=new Date(ws.getTime()+6*864e5);
+  $("rvMeta").innerHTML=REVIEWS.length>1?`<select class="gsel" id="rvSel" style="padding:5px 10px;font-size:13px">${REVIEWS.map((x,i)=>`<option value="${i}" ${i===RVSEL?"selected":""}>Week of ${fmtDay(new Date(x.week_start+"T00:00"))}</option>`).join("")}</select>`:`Week of ${fmtDay(ws)}`;
+  const dot={good:"ok",watch:"warn",off:"bad"};
+  el.innerHTML=`<div class="rvhead">${esc(r.headline||"")}</div>
+    ${r.change?`<div class="rvchange"><span>One change for ${RVSEL===0?"this":"the next"} week</span><b>${esc(r.change.what||"")}</b>${r.change.why?`<div>${esc(r.change.why)}</div>`:""}</div>`:""}
+    <div class="rvitems">${(r.items||[]).map(it=>`<div class="rvi"><i class="sd ${dot[it.status]||""}" aria-label="${esc(it.status||"")}"></i><div class="rl">${esc(it.label||it.area||"")}</div><div class="rv">${esc(it.value||"")}</div>${it.detail?`<div class="rx">${esc(it.detail)}</div>`:""}</div>`).join("")}</div>
+    <div class="note">${fmtDay(ws)} – ${fmtDay(we)} · written ${r.written?esc(String(r.written).replace("T"," ").slice(0,16)):""} by the Sunday planning run · full note in <i>10 Golf → Planning → Weekly Reviews</i></div>`;
+  if($("rvSel"))$("rvSel").onchange=e=>{RVSEL=+e.target.value;renderReview({reviews:REVIEWS})}}
 </script>
 </body>
 </html>
