@@ -307,8 +307,18 @@ h1{font-weight:700;letter-spacing:-.03em}
 .bx .why{font-size:13px;color:#bdbdbd;line-height:1.45}
 .drill{display:flex;gap:10px;align-items:center;font:600 14px Inter,sans-serif;text-align:left;padding:10px 12px;border-radius:12px;min-height:44px;border:none;background:#2a2a2a;color:var(--text);cursor:pointer}
 .drill .m{width:22px;height:22px;flex:none;border-radius:50%;border:2px solid #555;display:grid;place-items:center;font-size:13px;font-weight:800}
-.drill.on{background:var(--gold);color:var(--ink)}.drill.on .m{border-color:var(--ink);background:var(--ink);color:var(--gold)}
-.drill.g.on{background:var(--lav)}.drill.g.on .m{color:var(--lav)}
+.drill{position:relative;isolation:isolate;overflow:hidden;transition:color .25s,box-shadow .3s}
+.drill::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(143,209,158,.30),rgba(143,209,158,.15));transform:scaleX(0);transform-origin:left;transition:transform .5s cubic-bezier(.3,.8,.3,1) .1s;z-index:-1}
+.drill .m{transition:background .25s,border-color .25s,color .25s}
+.drill.on,.drill.g.on{background:#2a2a2a;color:var(--lav);box-shadow:inset 0 0 0 1px rgba(143,209,158,.45)}.drill.on::before{transform:scaleX(1)}
+.drill.on .m,.drill.g.on .m{border-color:var(--lav);background:var(--lav);color:var(--ink)}
+.drill.pop{animation:gpop .5s cubic-bezier(.3,1.5,.5,1)}.drill.pop .m{animation:gringpop .5s cubic-bezier(.3,1.6,.5,1)}
+.blk{position:relative;isolation:isolate;overflow:hidden;transition:border-color .3s,box-shadow .3s}
+.blk.alldone::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(143,209,158,.22),rgba(143,209,158,.10));z-index:-1;animation:gsweep .6s cubic-bezier(.3,.8,.3,1) both}
+.blk.alldone{border-color:rgba(143,209,158,.75);box-shadow:0 0 0 2px rgba(143,209,158,.45)}.blk.alldone .bp{color:var(--lav)}
+.blk.alldone.still::before{animation:none}.blk.pop{animation:gpop .5s cubic-bezier(.3,1.5,.5,1)}
+@keyframes gsweep{from{transform:scaleX(0);transform-origin:left}to{transform:scaleX(1);transform-origin:left}}
+@media(prefers-reduced-motion:reduce){.drill.pop,.drill.pop .m,.blk.pop{animation:none}.drill::before{transition:none}.blk.alldone::before{animation:none}}
 .drill.lock{cursor:default}
 .drill:disabled{opacity:.45;cursor:default}.drill.lock:disabled{opacity:1}
 .tside .tile{grid-area:auto}
@@ -931,7 +941,7 @@ function renderPlan(days){
 }
 
 /* ============ TODAY: timeline ============ */
-let DSEL=null,OPEN={},READY=null;
+let DSEL=null,OPEN={},READY=null,PREVDONE={};
 function weekDates(){const t=day0(new Date());const mon=new Date(t.getFullYear(),t.getMonth(),t.getDate()-((t.getDay()+6)%7));return Array.from({length:7},(_,i)=>new Date(mon.getFullYear(),mon.getMonth(),mon.getDate()+i))}
 function renderDay(){
   if(!$("timeline"))return;
@@ -970,7 +980,7 @@ function renderDay(){
     const parts=String(b.title).split(" · ");const tag=appt?(parts.length>1?parts.slice(1).join(" · "):""):(parts.length>1?parts[0]:"");const title=appt?parts[0]:(parts.length>1?parts.slice(1).join(" · "):b.title);
     const dn=drills.filter(k=>doneKeys.has(nk(k))).length;
     html+=`<div class="tl-row"><div class="tl-t">${esc(b.start||"")}</div><div class="tl-b">
-      <button class="blk ${cls}" data-i="${i}" aria-expanded="${!!OPEN[i]}"><div class="bt"><span>${esc((tag||(b.fixed?"Fixed":"Session")).toUpperCase())}</span><span>${esc(b.start||"")}${b.end?"–"+esc(b.end):""}</span></div>
+      <button class="blk ${cls} ${drills.length&&dn===drills.length?"alldone":""}" data-i="${i}" data-dk="${esc(drills.map(nk).join("|"))}" aria-expanded="${!!OPEN[i]}"><div class="bt"><span>${esc((tag||(b.fixed?"Fixed":"Session")).toUpperCase())}</span><span>${esc(b.start||"")}${b.end?"–"+esc(b.end):""}</span></div>
         <div class="bn">${esc(title)}</div>${drills.length?`<div class="bp">${dn} / ${drills.length} drills ${dn===drills.length?"✓":""}</div>`:""}</button>
       ${OPEN[i]?`<div class="bx">${b.why?`<div class="why">${esc(b.why)}</div>`:b.fixed?'<div class="why">From your calendar.</div>':""}
         ${drills.map(k=>{const x=doneKeys.get(nk(k));const on=!!x,lock=on&&!x.hud;const spec=resultSpec(k),res=getResult(DSEL,k);
@@ -993,6 +1003,11 @@ function renderDay(){
   if(!blocks.length&&!extra.length)html+=`<div class="also"><div class="faint">${isFut||isToday?"Nothing planned. The plan arrives the evening before.":"Nothing logged this day."}</div></div>`;
   if(plan&&plan.note&&!isFut)html+=`<div class="note" style="margin-top:4px">${esc(plan.note)}</div>`;
   $("timeline").innerHTML=html;
+  {const prev=PREVDONE[DSEL],now=new Set(doneKeys.keys());
+   $("timeline").querySelectorAll(".blk.alldone").forEach(b=>{const ks=(b.dataset.dk||"").split("|").filter(Boolean);
+     if(prev&&ks.some(k=>!prev.has(k)))animDone(b);else b.classList.add("still")});
+   if(prev)$("timeline").querySelectorAll(".drill.on[data-k]").forEach(d=>{if(!prev.has(nk(d.dataset.k)))animDone(d)});
+   PREVDONE[DSEL]=now}
   if(sel.getDay()===1&&WEIGHTS){wBindDay(DSEL);if(WJUST===DSEL){WJUST=null;const b=$("timeline").querySelector(".blk.w");if(b)animDone(b)}}
   $("timeline").querySelectorAll(".blk").forEach(b=>b.onclick=()=>{const i=+b.dataset.i;OPEN[i]=!OPEN[i];renderDay()});
   $("timeline").querySelectorAll(".drill:not([disabled])").forEach(b=>b.onclick=()=>{const k=b.dataset.k;const ticked=(TICKS[DSEL]||[]).some(x=>nk(x)===nk(k));
