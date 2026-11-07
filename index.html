@@ -337,6 +337,78 @@ h1{font-weight:700;letter-spacing:-.03em}
 .rerr{font-size:12px;color:var(--now);margin-right:auto}
 .drill small.rv{opacity:1;font-weight:800;font-size:13px}
 .addres{align-self:flex-start;margin:-2px 0 2px 4px;background:none;border:none;color:var(--gold);font:700 13px Inter,sans-serif;cursor:pointer;padding:6px 4px}
+
+/* ===== Gym ===== */
+.gstart{display:flex;flex-direction:column;gap:10px}
+.gplan{font-size:13px;color:var(--muted);margin-bottom:4px}.gplan b{color:var(--text)}
+.gtpls{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.gtpl{font:inherit;text-align:left;cursor:pointer;border-radius:16px;border:1px solid var(--line2);background:var(--panel2);color:var(--text);padding:14px 16px;min-height:72px;display:flex;flex-direction:column;gap:4px}
+.gtpl:hover{border-color:var(--gold)}
+.gtpl.sug{border-color:var(--gold);background:#2a1f12}
+.gtpl .gn{font-weight:700;font-size:15px}.gtpl .gm{font-size:12px;color:var(--muted)}
+.gtag{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:999px;background:var(--line2);color:var(--muted);margin-left:6px;vertical-align:middle}
+.gtag.mike{background:rgba(143,209,158,.18);color:var(--lav)}.gtag.me{background:rgba(255,184,107,.18);color:var(--gold)}
+.grow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.gbig{font-size:40px;font-weight:700;letter-spacing:-.04em;line-height:1}.gbig small{font-size:15px;font-weight:600;color:var(--muted);margin-left:4px}
+.gwk{display:flex;align-items:flex-end;gap:6px;height:70px;margin-top:14px}
+.gwk div{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}
+.gwk i{width:100%;max-width:26px;border-radius:4px 4px 0 0;background:var(--gold);min-height:3px}
+.gwk i.dim{background:var(--line2)}
+.gwk span{font-size:10px;color:var(--faint);font-weight:700}
+.gsel{background:var(--bg);border:1px solid var(--line2);border-radius:10px;color:var(--text);font:inherit;font-size:14px;padding:9px 12px;max-width:100%}
+.gchart{position:relative;margin-top:14px}
+.gchart svg{display:block;max-width:100%;height:auto;overflow:visible}
+.gtip{position:absolute;pointer-events:none;background:var(--panel2);border:1px solid var(--line2);border-radius:10px;padding:7px 10px;font-size:12px;white-space:nowrap;transform:translate(-50%,-110%);opacity:0;transition:opacity .1s}
+.gtip b{color:var(--text)}.gstats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.gstats div{background:var(--panel2);border-radius:14px;padding:10px 12px}.gstats span{display:block;font-size:11px;color:var(--faint);font-weight:700;letter-spacing:.06em;text-transform:uppercase}.gstats b{font-size:18px}
+.ghist{margin-top:12px}.ghist .r{display:grid;grid-template-columns:96px 1fr;gap:10px;padding:7px 0;border-top:1px solid var(--line);font-size:13px}.ghist .r span:first-child{color:var(--gold);font-variant-numeric:tabular-nums}
+.gsess{padding:10px 0;border-top:1px solid var(--line)}.gsess:first-child{border-top:none}
+.gsess .h{display:flex;justify-content:space-between;gap:10px;font-size:14px;font-weight:700}.gsess .h span:last-child{color:var(--faint);font-weight:500;font-size:12px}
+.gsess .x{font-size:12.5px;color:var(--muted);margin-top:3px;line-height:1.5}
+/* full-screen sheets: logger, template builder, library */
+.gsheet{position:fixed;inset:0;background:var(--bg);z-index:30;display:none;flex-direction:column}
+.gsheet.show{display:flex}
+.gtop{display:flex;align-items:center;gap:10px;padding:calc(12px + env(safe-area-inset-top)) 16px 12px;border-bottom:1px solid var(--line);background:var(--panel)}
+.gtop .gt{flex:1;min-width:0}.gtop .gt b{display:block;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.gtop .gt span{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.gbody{flex:1;overflow-y:auto;padding:14px 16px calc(200px + env(safe-area-inset-bottom));max-width:760px;width:100%;margin:0 auto;-webkit-overflow-scrolling:touch}
+.gex{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:12px}
+.gex .eh{display:flex;align-items:flex-start;gap:8px}.gex .en{flex:1;font-size:16px;font-weight:700;line-height:1.3}
+.gex .el{font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.45}.gex .el b{color:var(--gold)}
+.gx{background:none;border:none;color:var(--faint);font:700 18px Inter,sans-serif;cursor:pointer;padding:2px 6px;min-width:34px;min-height:34px}
+.gx:hover{color:var(--text)}
+.gsets{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.gset{display:grid;grid-template-columns:26px 1fr 1fr 52px;gap:8px;align-items:center}
+.gset .sn{font-size:13px;font-weight:800;color:var(--faint);text-align:center}
+.gset label{position:relative;display:block}
+.gset input{width:100%;font:700 18px Inter,sans-serif;text-align:center;padding:10px 30px 10px 8px;border-radius:12px;border:1px solid var(--line2);background:var(--bg);color:var(--text);min-height:46px}
+.gset label small{position:absolute;right:9px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--faint);font-weight:700;pointer-events:none}
+.gset input:focus{outline:2px solid var(--gold);outline-offset:0;border-color:transparent}
+.gok{min-height:46px;border-radius:12px;border:2px solid var(--line2);background:none;color:var(--faint);font:800 18px Inter,sans-serif;cursor:pointer}
+.gset.done input{background:#132519;border-color:rgba(143,209,158,.4)}
+.gset.done .gok{background:var(--lav);border-color:var(--lav);color:var(--ink)}
+.gadd{background:none;border:none;color:var(--gold);font:700 13px Inter,sans-serif;cursor:pointer;padding:8px 2px}
+.gnote{margin-top:8px;font-size:14px!important;padding:9px 12px!important;border-radius:10px!important}
+.gbar{position:fixed;left:0;right:0;bottom:0;z-index:31;padding:10px 16px calc(12px + env(safe-area-inset-bottom));background:rgba(22,22,22,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);display:flex;gap:10px;justify-content:center}
+.gbar .btn{min-height:48px;font-size:15px;flex:1;max-width:360px;justify-content:center}
+.grest{position:fixed;left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:32;max-width:520px;margin:0 auto;background:var(--sand);color:var(--ink);border-radius:18px;padding:12px 14px;display:none;align-items:center;gap:10px;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.grest.show{display:flex}.grest.over{background:var(--lav)}
+.grest .rt{flex:1;font-weight:800;font-size:26px;font-variant-numeric:tabular-nums;letter-spacing:-.02em}.grest .rt small{font-size:12px;font-weight:700;opacity:.65;margin-left:6px;letter-spacing:0}
+.grest button{font:800 14px Inter,sans-serif;border:none;border-radius:12px;padding:10px 12px;background:rgba(17,17,17,.12);color:var(--ink);cursor:pointer;min-height:42px}
+/* template builder */
+.gtrow{display:grid;grid-template-columns:1fr 58px 70px 64px 34px;gap:6px;align-items:center;margin-bottom:6px}
+.gtrow input{width:100%;font-size:15px!important;padding:9px 8px!important;border-radius:10px!important}
+.gthead{display:grid;grid-template-columns:1fr 58px 70px 64px 34px;gap:6px;font-size:10px;font-weight:800;letter-spacing:.08em;color:var(--faint);text-transform:uppercase;margin:10px 0 6px}
+.gseg{display:flex;gap:6px}.gseg button{font:600 13px Inter,sans-serif;padding:8px 14px;border-radius:999px;border:1px solid var(--line2);background:none;color:var(--muted);cursor:pointer}.gseg button.on{background:var(--text);color:var(--ink);border-color:var(--text)}
+/* library */
+.glf{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.glf input{flex:2 1 220px}.glf select{flex:1 1 130px}
+.gli{display:flex;gap:12px;align-items:center;padding:8px;border-radius:14px;cursor:pointer;border:1px solid transparent}
+.gli:hover{background:var(--panel)}.gli img{width:64px;height:48px;object-fit:cover;border-radius:10px;background:var(--panel2);flex:none}
+.gli .ln{font-weight:700;font-size:14px}.gli .lm{font-size:12px;color:var(--muted);text-transform:capitalize}
+.gdet img{width:100%;max-width:360px;border-radius:14px;background:var(--panel2);margin:4px 8px 8px 0}
+.gdet ol{padding-left:20px;margin-top:10px}.gdet li{margin:6px 0;color:#d0d0d0;line-height:1.5}
+@media(max-width:1100px){#p-gym .c6{grid-column:span 12}}
+#p-gym .ch{flex-wrap:wrap;gap:8px}
+@media(max-width:700px){.gstats{grid-template-columns:repeat(3,1fr);gap:6px}.gstats b{font-size:16px}.gtrow,.gthead{grid-template-columns:1fr 46px 58px 54px 30px;gap:4px}}
 </style>
 </head>
 <body>
@@ -360,6 +432,7 @@ h1{font-weight:700;letter-spacing:-.03em}
     <button data-tab="today" class="on"><span class="ti">◉</span>Today</button>
     <button data-tab="week"><span class="ti">▦</span>Week</button>
     <button data-tab="golf"><span class="ti">⚑</span>Golf</button>
+    <button data-tab="gym"><span class="ti">◆</span>Gym</button>
     <button data-tab="money"><span class="ti">£</span>Money</button>
   </nav>
 
@@ -394,6 +467,16 @@ h1{font-weight:700;letter-spacing:-.03em}
       <section class="card c4"><div class="ch"><span class="ct">Next event</span><span class="cm" id="evMeta"></span></div><div id="event"></div></section>
       <section class="card c8"><div class="ch"><span class="ct">Coaching focus</span><span class="cm">latest per coach</span></div><div id="coaching"></div></section>
       <section class="card c12"><div class="ch"><span class="ct">Strokes gained · yardage book</span><span class="cm" id="trMeta"></span></div><div id="trend"></div></section>
+    </div>
+  </main>
+
+  <main class="panel" id="p-gym">
+    <div class="grid">
+      <section class="card c8"><div class="ch"><span class="ct">Start a session</span><span class="cm" id="gStartMeta"></span></div><div id="gStart"><div class="empty">Loading…</div></div></section>
+      <section class="card c4"><div class="ch"><span class="ct">This week</span><span class="cm" id="gWeekMeta"></span></div><div id="gWeek"></div></section>
+      <section class="card c12"><div class="ch"><span class="ct">Progress</span><span class="cm" id="gProgMeta"></span></div><div id="gProg"></div></section>
+      <section class="card c6"><div class="ch"><span class="ct">Recent sessions</span><span class="cm" id="gRecMeta"></span></div><div id="gRecent"></div></section>
+      <section class="card c6"><div class="ch"><span class="ct">Templates</span><span class="cm"><button class="btn" id="gNewTpl" style="padding:6px 12px">+ New</button> <button class="btn" id="gLibBtn" style="padding:6px 12px">Exercise library</button></span></div><div id="gTpls"></div></section>
     </div>
   </main>
 
@@ -440,6 +523,27 @@ h1{font-weight:700;letter-spacing:-.03em}
   <input type="text" id="tgtIn" inputmode="numeric" placeholder="25">
   <div class="mrow"><button class="btn" id="tokBtn">Change GitHub token</button><button class="btn" id="relinkBtn">Re-link vault folder</button><button class="btn" id="sCancel">Close</button><button class="btn primary" id="sSave">Save</button></div>
 </div></div>
+
+<!-- gym: live logger -->
+<div class="gsheet" id="gLog">
+  <div class="gtop"><div class="gt"><b id="gLogName">Session</b><span id="gLogClock">0:00</span></div>
+    <button class="btn" id="gLogMin">Minimise</button></div>
+  <div class="gbody" id="gLogBody"></div>
+  <div class="grest" id="gRest"><div class="rt" id="gRestT">1:30<small>rest</small></div>
+    <button data-r="-15">−15</button><button data-r="15">+15</button><button data-r="skip">Skip</button></div>
+  <div class="gbar"><button class="btn" id="gLogDiscard">Discard</button><button class="btn primary" id="gLogFinish">Finish &amp; save</button></div>
+</div>
+<!-- gym: template builder -->
+<div class="gsheet" id="gTb">
+  <div class="gtop"><div class="gt"><b id="gTbTitle">New template</b><span>Saved to 20 Gym → Templates</span></div><button class="btn" id="gTbClose">Close</button></div>
+  <div class="gbody" id="gTbBody"></div>
+  <div class="gbar"><button class="btn primary" id="gTbSave">Save template</button></div>
+</div>
+<!-- gym: exercise library -->
+<div class="gsheet" id="gLib" style="z-index:40">
+  <div class="gtop"><div class="gt"><b id="gLibTitle">Exercise library</b><span id="gLibMeta">Free Exercise DB · public domain</span></div><button class="btn" id="gLibClose">Close</button></div>
+  <div class="gbody" id="gLibBody"></div>
+</div>
 
 <div class="toast" id="toast"></div>
 
@@ -947,7 +1051,9 @@ async function refresh(){
     safe(loadCalendar,renderCalendar,"cal","your calendar"),
     safe(loadWhoop,renderWhoop,"ready","Whoop data"),
     safe(loadPlan,renderPlan,"plan","today's plan"),
-    safe(loadComps,renderComps,"event","the competition schedule")]);
+    safe(loadComps,renderComps,"event","the competition schedule"),
+    safe(loadGym,renderGym,"gStart","your gym notes")]);
+  if(G.hist)try{gRenderStart()}catch(e){}
 }
 function tick(){const d=new Date();$("clock").textContent=`${pad(d.getHours())}:${pad(d.getMinutes())}`;
   const h=d.getHours();$("greet").textContent=`Good ${h<12?"morning":h<18?"afternoon":"evening"}, James`;
@@ -982,7 +1088,7 @@ $("relinkBtn").onclick=()=>{$("settings").classList.remove("show");connect()};
 function showTab(t){if(!document.getElementById("p-"+t))t="today";
   document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("on",p.id==="p-"+t));
   document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));
-  ls.set("hud_tab",t);if(location.hash!=="#"+t)history.replaceState(null,"","#"+t);window.scrollTo(0,0)}
+  if(t==="gym")setTimeout(()=>{try{G.byEx&&gRenderProg()}catch(e){}},0);ls.set("hud_tab",t);if(location.hash!=="#"+t)history.replaceState(null,"","#"+t);window.scrollTo(0,0)}
 document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
 document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>showTab(b.dataset.go));
 showTab((location.hash||"").slice(1)||ls.get("hud_tab","today"));
@@ -1017,6 +1123,286 @@ $("vSave").onclick=async()=>{
   catch(e){$("vErr").textContent="Couldn't save: "+e.message}
 };
 document.addEventListener("keydown",e=>{if(e.key==="Escape")document.querySelectorAll(".overlay.show").forEach(o=>{if(o.id!=="connect")o.classList.remove("show")})});
+
+/* ============ GYM: templates, live logger, progress, exercise library ============
+   Sessions are vault notes: 20 Gym/<Mike|James>/YYYY-MM-DD - Workout - <Session>.md (table: # | Exercise | Sets × Reps | Load | Notes)
+   Templates:                 20 Gym/Templates/<Name>.md (front matter: name, by; table: # | Exercise | Sets | Reps | Rest | Notes)
+   Exercise library:          Free Exercise DB (github.com/yuhonas/free-exercise-db, Unlicense), loaded on demand. */
+const GYMP={tpl:"20 Gym/Templates",lib:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/dist/exercises.json",
+  img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/",weekTarget:3,draft:"hud_gym_draft"};
+const G={hist:[],tpls:[],byEx:{},lib:null,libP:null,cache:{},sel:ls.get("hud_gym_sel",""),draft:null,tick:null,wake:null,audio:null};
+
+/* ---- parsing ---- */
+const gNum=s=>{const m=String(s??"").match(/-?\d+(?:\.\d+)?/);return m?+m[0]:null};
+const gKey=s=>String(s||"").toLowerCase().replace(/\(.*?\)/g," ").replace(/[^a-z0-9 ]/g," ").split(/\s+/).filter(Boolean).map(w=>w.length>3&&w.endsWith("s")&&!w.endsWith("ss")?w.slice(0,-1):w).join(" ");
+const gFmtKg=n=>n==null?"–":(Math.round(n*100)/100).toString();
+function gFront(md){const m=md.match(/^---\r?\n([\s\S]*?)\r?\n---/);const o={};if(m)for(const l of m[1].split(/\r?\n/)){const k=l.match(/^([\w-]+):\s*(.*)$/);if(k)o[k[1]]=k[2].replace(/^["']|["']$/g,"").trim()}return o}
+function gTable(md){
+  const lines=md.split(/\r?\n/).filter(l=>/^\s*\|/.test(l));if(lines.length<2)return [];
+  const cells=l=>l.trim().replace(/^\|/,"").replace(/\|$/,"").split("|").map(x=>x.trim());
+  const hdr=cells(lines[0]).map(h=>h.toLowerCase());
+  return lines.slice(1).filter(l=>!/^\s*\|[\s:|-]+\|?\s*$/.test(l)).map(l=>{const c=cells(l),o={};hdr.forEach((h,i)=>o[h]=c[i]??"");return o})}
+const gCol=(o,re)=>{const k=Object.keys(o).find(k=>re.test(k));return k?o[k]:""};
+function gParseSets(s){s=String(s||"").replace(/×/g,"x");const m=s.match(/^\s*(\d+)\s*x\s*(\d+)/i);if(m)return Array(+m[1]).fill(+m[2]);
+  return s.split("/").map(gNum).filter(x=>x!=null)}
+function gParseLoad(s,n){s=String(s||"");const bw=/body ?weight|^\s*bw\b/i.test(s);
+  const unit=s.replace(/(\d+(?:\.\d+)?\s*(?:\/|→|->)\s*)*\d+(?:\.\d+)?\s*kg/gi," ").replace(/body ?weight|\bbw\b/gi," ").replace(/[+→/]/g," ").replace(/\s+/g," ").trim();
+  const nums=(s.match(/\d+(?:\.\d+)?(?=\s*(?:kg|\/|→|->|$|\s))/gi)||[]).map(Number);
+  let kg;if(!nums.length)kg=Array(n).fill(bw?0:null);else if(nums.length===n)kg=nums;else kg=Array.from({length:n},(_,i)=>i===0?nums[0]:nums[nums.length-1]);
+  return {kg,unit,bw:bw&&!nums.length}}
+function gParseSession(md){
+  return gTable(md).map(r=>{const name=gCol(r,/exercise/);const reps=gParseSets(gCol(r,/sets|reps/));const L=gParseLoad(gCol(r,/load|weight/),reps.length);
+    return {name,key:gKey(name),sets:reps.map((x,i)=>({reps:x,kg:L.kg[i]})),unit:L.unit,bw:L.bw,note:gCol(r,/note/)}}).filter(e=>e.name&&e.sets.length)}
+function gParseTpl(md,file){const fm=gFront(md);
+  const ex=gTable(md).map(r=>{const name=gCol(r,/exercise/);if(!name)return null;
+    let sets=gNum(gCol(r,/^sets$/)),reps=gCol(r,/^reps$/);
+    if(!sets){const sr=gCol(r,/sets/);const m=sr.replace(/×/g,"x").match(/(\d+)\s*x\s*([\d–-]+)/i);if(m){sets=+m[1];reps=m[2]}}
+    return {name,key:gKey(name),sets:sets||3,reps:String(reps||"").replace(/-/g,"–")||"10",rest:gNum(gCol(r,/rest/))||90,note:gCol(r,/note/)}}).filter(Boolean);
+  return {file,name:fm.name||file.replace(/\.md$/,""),by:/mike/i.test(fm.by||"")?"Mike":"Me",ex}}
+
+/* ---- loading ---- */
+async function gText(path){if(G.cache[path]!=null)return G.cache[path];const t=await FS.text(path);G.cache[path]=t;return t}
+async function loadGym(){
+  const files=[];let dirs=[];
+  try{dirs=(await FS.list(PATHS.gym)).filter(e=>e.kind==="directory"&&!/^templates$/i.test(e.name))}catch(e){}
+  await Promise.all(dirs.map(async d=>{try{for(const f of await FS.list(`${PATHS.gym}/${d.name}`)){const m=f.name.match(/^(\d{4}-\d{2}-\d{2}) - Workout - (.+)\.md$/);
+    if(m)files.push({path:`${PATHS.gym}/${d.name}/${f.name}`,date:m[1],title:m[2],folder:d.name})}}catch(e){}}));
+  files.sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:a.path<b.path?-1:1);
+  const recent=files.slice(-80);
+  await Promise.all(recent.map(async f=>{try{const t=await gText(f.path);f.fm=gFront(t);f.ex=gParseSession(t)}catch(e){f.ex=[]}}));
+  let tpls=[];
+  try{const list=(await FS.list(GYMP.tpl)).filter(f=>f.kind==="file"&&/\.md$/.test(f.name));
+    tpls=await Promise.all(list.map(async f=>{const p=`${GYMP.tpl}/${f.name}`;delete G.cache[p];return gParseTpl(await gText(p),f.name)}))}catch(e){}
+  tpls.sort((a,b)=>(a.by===b.by?0:a.by==="Mike"?-1:1)||a.name.localeCompare(b.name));
+  return {hist:recent,tpls}}
+function gIndex(){const by={};
+  for(const s of G.hist)for(const e of s.ex){const sets=e.sets.filter(x=>x.reps>0);if(!sets.length)continue;
+    const top=sets.reduce((a,b)=>((b.kg||0)>(a.kg||0)||((b.kg||0)===(a.kg||0)&&b.reps>a.reps))?b:a);
+    const e1=sets.reduce((m,x)=>x.kg&&x.reps<=12?Math.max(m,x.kg*(1+x.reps/30)):m,0);
+    (by[e.key]=by[e.key]||{name:e.name,rows:[]}).rows.push({date:s.date,session:s.title,sets,unit:e.unit,bw:e.bw,top,e1rm:e1?Math.round(e1*10)/10:null,vol:sets.reduce((v,x)=>v+(x.kg||0)*x.reps,0)});
+    by[e.key].name=e.name}
+  G.byEx=by}
+
+/* ---- progression (double progression; Mike's programme overrides) ---- */
+function gIncr(name,unit){return /dumbbell|\bdb\b|kettlebell|each hand|each dumbbell/i.test(name+" "+(unit||""))?2:2.5}  // dumbbells 2 kg; bars, cables, machines 2.5 kg
+function gSuggest(name,tplEx){
+  const h=G.byEx[gKey(name)];const top=String(tplEx?.reps||"").split("–").map(Number).filter(Boolean);const tgt=top.length?top[top.length-1]:null;const n=tplEx?.sets||null;
+  if(!h)return {kg:null,reps:tgt,last:null,why:tgt?`New exercise: pick a weight you can do ${tgt} good reps with.`:"New exercise."};
+  const L=h.rows[h.rows.length-1];const w=Math.max(...L.sets.map(s=>s.kg||0));const reps=L.sets.map(s=>s.reps);
+  const lastTxt=`${reps.join("/")} @ ${L.bw&&!w?"bodyweight":gFmtKg(w)+" kg"} (${fmtDay(new Date(L.date+"T00:00"))})`;
+  const want=tgt||Math.max(...reps);const needN=n||L.sets.length;
+  const hit=L.sets.length>=needN&&reps.slice(0,needN).every(r=>r>=want);
+  if(L.bw&&!w)return {kg:0,reps:hit?want+1:want,last:lastTxt,why:hit?`Hit ${needN}×${want} → try ${want+1} reps a set`:`Aim for ${needN}×${want}`};
+  const inc=gIncr(name,L.unit);
+  return hit?{kg:w+inc,reps:want,last:lastTxt,why:`Hit ${needN}×${want} last time → try <b>${gFmtKg(w+inc)} kg</b>`}
+            :{kg:w,reps:want,last:lastTxt,why:`Stay at <b>${gFmtKg(w)} kg</b> until you get ${needN}×${want}`}}
+
+/* ---- render: Gym tab ---- */
+const gWeekStart=d=>{const x=day0(d);x.setDate(x.getDate()-((x.getDay()+6)%7));return x};
+function renderGym(r){G.hist=r.hist;G.tpls=r.tpls;gIndex();gRenderStart();gRenderWeek();gRenderProg();gRenderRecent();gRenderTpls()}
+function gPlannedToday(){const t=ymd(new Date());const p=(PLANS||[]).find(x=>x.date===t);if(!p)return null;
+  return (p.blocks||[]).find(b=>/gym|workout|1079|squat|deadlift|s&c/i.test(b.title||""))||null}
+function gMatchTpl(title){if(!title)return null;const t=gKey(title);let best=null,bs=0;
+  for(const tp of G.tpls){const words=gKey(tp.name).split(" ");const s=words.filter(w=>t.includes(w)).length/words.length;if(s>bs){bs=s;best=tp}}return bs>=.5?best:null}
+function gRenderStart(){
+  const el=$("gStart");const d=gLoadDraft();
+  if(d){$("gStartMeta").textContent="in progress";const done=d.ex.reduce((a,e)=>a+e.sets.filter(s=>s.done).length,0);
+    el.innerHTML=`<div class="gstart"><div class="gplan"><b>${esc(d.name)}</b> · started ${new Date(d.start).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})} · ${done} sets done</div>
+      <div class="grow"><button class="btn primary" id="gResume" style="min-height:46px">Resume session</button></div></div>`;
+    $("gResume").onclick=()=>gOpenLog();return}
+  const plan=gPlannedToday();const sug=plan?gMatchTpl(plan.title):null;$("gStartMeta").textContent=plan?"planned today":"";
+  const card=t=>`<button class="gtpl ${sug===t?"sug":""}" data-tpl="${esc(t.file)}"><span class="gn">${esc(t.name)}<span class="gtag ${t.by==="Mike"?"mike":"me"}">${t.by==="Mike"?"Mike":"Mine"}</span></span><span class="gm">${t.ex.length} exercises · ${esc(t.ex.slice(0,3).map(e=>e.name).join(", "))}${t.ex.length>3?"…":""}</span></button>`;
+  const order=sug?[sug,...G.tpls.filter(t=>t!==sug)]:G.tpls;
+  el.innerHTML=`<div class="gstart">${plan?`<div class="gplan">Today's plan: <b>${esc(plan.title)}</b>${plan.start?` · ${esc(plan.start)}`:""}${sug?"":" · pick the template that matches"}</div>`:""}
+    ${G.tpls.length?`<div class="gtpls">${order.map(card).join("")}</div>`:'<div class="empty">No templates yet. Make one with <b>+ New</b>, or start an empty session.</div>'}
+    <div class="grow"><button class="btn" id="gEmpty">Empty session</button></div></div>`;
+  el.querySelectorAll("[data-tpl]").forEach(b=>b.onclick=()=>gStart(G.tpls.find(t=>t.file===b.dataset.tpl)));
+  $("gEmpty").onclick=()=>gStart(null)}
+function gRenderWeek(){
+  const ws=gWeekStart(new Date());const weeks=[];for(let i=7;i>=0;i--){const s=new Date(ws);s.setDate(s.getDate()-7*i);weeks.push({s,n:0,vol:0})}
+  for(const h of G.hist){const d=new Date(h.date+"T00:00");const w=weeks.find(w=>d>=w.s&&d<new Date(w.s.getTime()+7*864e5));if(w){w.n++;w.vol+=h.ex.reduce((a,e)=>a+e.sets.reduce((v,x)=>v+(x.kg||0)*x.reps,0),0)}}
+  const cur=weeks[7],prev=weeks[6];const mx=Math.max(GYMP.weekTarget,...weeks.map(w=>w.n));
+  $("gWeekMeta").textContent=`target ${GYMP.weekTarget}`;
+  const dv=prev.vol?Math.round((cur.vol-prev.vol)/prev.vol*100):null;
+  $("gWeek").innerHTML=`<div class="gbig">${cur.n}<small>/ ${GYMP.weekTarget} sessions</small></div>
+    <div class="sub2" style="margin-top:8px">${Math.round(cur.vol).toLocaleString("en-GB")} kg lifted${dv!=null?` · <span class="${dv>=0?"ok":"warn"}">${dv>=0?"+":""}${dv}% vs last week</span>`:""}</div>
+    <div class="gwk" role="img" aria-label="Sessions per week, last 8 weeks">${weeks.map((w,i)=>`<div title="Week of ${fmtDay(w.s)}: ${w.n} session${w.n===1?"":"s"}"><i class="${w.n?"":"dim"}" style="height:${Math.max(4,w.n/mx*100)}%"></i><span>${i===7?"Now":w.s.getDate()+"/"+(w.s.getMonth()+1)}</span></div>`).join("")}</div>`}
+function gRenderProg(){
+  const keys=Object.keys(G.byEx).sort((a,b)=>G.byEx[b].rows.length-G.byEx[a].rows.length||G.byEx[a].name.localeCompare(G.byEx[b].name));
+  if(!keys.length){$("gProg").innerHTML='<div class="empty">Log a session and your progress shows here.</div>';$("gProgMeta").textContent="";return}
+  if(!G.byEx[G.sel])G.sel=keys[0];const X=G.byEx[G.sel],rows=X.rows;$("gProgMeta").textContent=`${rows.length} session${rows.length===1?"":"s"}`;
+  const bw=rows.every(r=>!r.top.kg);const val=r=>bw?r.top.reps:r.top.kg;const unit=bw?"reps":"kg";
+  const best=rows.reduce((a,b)=>val(b)>val(a)?b:a);const bestE=rows.reduce((m,r)=>Math.max(m,r.e1rm||0),0);
+  const W=Math.max(300,Math.min(1240,($("gProg").clientWidth||640))),H=W<500?170:220,P={l:38,r:14,t:14,b:26};const vs=rows.map(val);let lo=Math.min(...vs),hi=Math.max(...vs);if(lo===hi){lo-=lo?lo*.1:1;hi+=hi?hi*.1:1}
+  const pad2=(hi-lo)*.15;lo=Math.max(0,lo-pad2);hi+=pad2;
+  const x=i=>rows.length===1?(P.l+W-P.r)/2:P.l+i*(W-P.l-P.r)/(rows.length-1),y=v=>P.t+(1-(v-lo)/(hi-lo))*(H-P.t-P.b);
+  const ticks=[lo,(lo+hi)/2,hi];
+  const svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(X.name)}: top set ${unit} per session">
+    ${ticks.map(t=>`<line x1="${P.l}" x2="${W-P.r}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)" stroke-width="1"/><text x="${P.l-8}" y="${y(t)+4}" text-anchor="end" font-size="11" fill="var(--faint)">${Math.round(t*10)/10}</text>`).join("")}
+    ${rows.length>1?`<polyline fill="none" stroke="var(--gold)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" points="${rows.map((r,i)=>x(i)+","+y(val(r))).join(" ")}"/>`:""}
+    ${rows.map((r,i)=>`<circle cx="${x(i)}" cy="${y(val(r))}" r="5" fill="var(--gold)" stroke="var(--panel)" stroke-width="2"/>`).join("")}
+    ${rows.map((r,i)=>(i===0||i===rows.length-1||rows.length<=6)?`<text x="${x(i)}" y="${H-6}" text-anchor="middle" font-size="11" fill="var(--faint)">${new Date(r.date+"T00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short"})}</text>`:"").join("")}
+    ${rows.map((r,i)=>`<rect data-i="${i}" x="${x(i)-Math.max(12,(W-P.l-P.r)/rows.length/2)}" y="0" width="${Math.max(24,(W-P.l-P.r)/rows.length)}" height="${H}" fill="transparent"/>`).join("")}</svg>`;
+  $("gProg").innerHTML=`<div class="grow"><select class="gsel" id="gSel">${keys.map(k=>`<option value="${esc(k)}" ${k===G.sel?"selected":""}>${esc(G.byEx[k].name)} (${G.byEx[k].rows.length})</option>`).join("")}</select>
+      <span class="faint" style="font-size:12px">Top set ${unit} per session</span></div>
+    <div class="gchart" id="gChart">${svg}<div class="gtip" id="gTip"></div></div>
+    <div class="gstats"><div><span>Last top set</span><b>${bw?rows.at(-1).top.reps+" reps":gFmtKg(rows.at(-1).top.kg)+" kg × "+rows.at(-1).top.reps}</b></div>
+      <div><span>Best</span><b>${bw?best.top.reps+" reps":gFmtKg(best.top.kg)+" kg × "+best.top.reps}</b></div>
+      <div><span>Est. 1-rep max</span><b>${bestE?gFmtKg(Math.round(bestE))+" kg":"–"}</b></div></div>
+    <div class="ghist">${rows.slice(-6).reverse().map(r=>`<div class="r"><span>${fmtDay(new Date(r.date+"T00:00"))}</span><span>${r.sets.map(s=>s.reps).join(" / ")} @ ${r.bw&&!r.top.kg?"bodyweight":[...new Set(r.sets.map(s=>gFmtKg(s.kg)))].join(" / ")+" kg"} <span class="faint">· ${esc(r.session)}</span></span></div>`).join("")}</div>
+    <div class="note">Est. 1-rep max uses the Epley formula on sets of 12 reps or fewer — a guide for tracking, not a number to test.</div>`;
+  window.addEventListener("resize",()=>{clearTimeout(G.rz);G.rz=setTimeout(()=>{if($("p-gym").classList.contains("on"))gRenderProg()},200)},{once:true});
+  $("gSel").onchange=e=>{G.sel=e.target.value;ls.set("hud_gym_sel",G.sel);gRenderProg()};
+  const tip=$("gTip"),ch=$("gChart");
+  ch.querySelectorAll("rect[data-i]").forEach(rc=>{const show=()=>{const i=+rc.dataset.i,r=rows[i];const box=ch.getBoundingClientRect(),sc=box.width/W;
+    tip.innerHTML=`<b>${fmtDay(new Date(r.date+"T00:00"))}</b> · ${bw?r.top.reps+" reps":gFmtKg(r.top.kg)+" kg × "+r.top.reps}<br><span class="faint">${r.sets.map(s=>s.reps).join("/")} reps${r.e1rm?" · e1RM "+Math.round(r.e1rm)+" kg":""}</span>`;
+    tip.style.left=x(i)*sc+"px";tip.style.top=y(val(r))*sc+"px";tip.style.opacity=1};
+    rc.addEventListener("mouseenter",show);rc.addEventListener("touchstart",show,{passive:true});rc.addEventListener("mouseleave",()=>tip.style.opacity=0)})}
+function gRenderRecent(){const s=G.hist.slice(-8).reverse();$("gRecMeta").textContent=G.hist.length?`${G.hist.length} logged`:"";
+  $("gRecent").innerHTML=s.length?s.map(h=>{const sets=h.ex.reduce((a,e)=>a+e.sets.length,0),vol=h.ex.reduce((a,e)=>a+e.sets.reduce((v,x)=>v+(x.kg||0)*x.reps,0),0);
+    return `<div class="gsess"><div class="h"><span>${esc(h.title)}</span><span>${fmtDay(new Date(h.date+"T00:00"))} · ${esc(h.folder)}</span></div>
+      <div class="x">${h.ex.length} exercises · ${sets} sets · ${Math.round(vol).toLocaleString("en-GB")} kg${h.fm&&h.fm.duration_min?` · ${esc(h.fm.duration_min)} min`:""}<br>${esc(h.ex.map(e=>e.name).join(" · "))}</div></div>`}).join("")
+    :'<div class="empty">No sessions logged yet.</div>'}
+function gRenderTpls(){
+  $("gTpls").innerHTML=G.tpls.length?G.tpls.map(t=>`<div class="gsess"><div class="h"><span>${esc(t.name)}<span class="gtag ${t.by==="Mike"?"mike":"me"}">${t.by==="Mike"?"Mike":"Mine"}</span></span><span><button class="lnk" data-edit="${esc(t.file)}" style="background:none;border:none;color:var(--gold);font:600 13px Inter,sans-serif;cursor:pointer">Edit</button></span></div>
+    <div class="x">${t.ex.map(e=>`${esc(e.name)} <span class="faint">${e.sets}×${esc(e.reps)}</span>`).join(" · ")}</div></div>`).join("")
+    :'<div class="empty">No templates yet.</div>';
+  $("gTpls").querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>gOpenTb(G.tpls.find(t=>t.file===b.dataset.edit)))}
+
+/* ---- live logger ---- */
+function gLoadDraft(){try{const d=JSON.parse(ls.get(GYMP.draft,"null"));return d&&d.ex?d:null}catch(e){return null}}
+function gSave(){if(G.draft)ls.set(GYMP.draft,JSON.stringify(G.draft))}
+function gExFrom(name,tplEx){const s=gSuggest(name,tplEx);const n=tplEx?.sets||(G.byEx[gKey(name)]?.rows.at(-1).sets.length)||3;
+  const lastU=G.byEx[gKey(name)]?.rows.at(-1).unit||"";
+  return {name,unit:lastU,rest:tplEx?.rest||90,target:tplEx?`${tplEx.sets} × ${tplEx.reps}`:"",last:s.last,why:s.why,note:"",tplNote:tplEx?.note||"",
+    sets:Array.from({length:n},()=>({kg:s.kg!=null?String(gFmtKg(s.kg)):"",reps:s.reps!=null?String(s.reps):"",done:false}))}}
+function gStart(tpl){
+  if(gLoadDraft()&&!confirm("You have a session in progress. Replace it?"))return;
+  G.draft={name:tpl?tpl.name:"Gym session",tpl:tpl?tpl.name:"",by:tpl?tpl.by:"Me",start:Date.now(),restEnd:null,restFor:null,ex:tpl?tpl.ex.map(e=>gExFrom(e.name,e)):[]};
+  gSave();gOpenLog();gRenderStart()}
+function gOpenLog(){G.draft=G.draft||gLoadDraft();if(!G.draft)return;$("gLog").classList.add("show");document.body.style.overflow="hidden";gRenderLog();
+  clearInterval(G.tick);G.tick=setInterval(gTick,500);gTick();
+  try{navigator.wakeLock&&navigator.wakeLock.request("screen").then(w=>G.wake=w).catch(()=>{})}catch(e){}}
+function gCloseLog(){$("gLog").classList.remove("show");document.body.style.overflow="";clearInterval(G.tick);try{G.wake&&G.wake.release()}catch(e){}G.wake=null;gRenderStart()}
+function gRenderLog(){const d=G.draft;$("gLogName").textContent=d.name;
+  $("gLogBody").innerHTML=d.ex.map((e,i)=>`<div class="gex" data-e="${i}"><div class="eh"><div class="en">${esc(e.name)}${e.target?` <span class="faint" style="font-weight:600;font-size:13px">${esc(e.target)}</span>`:""}</div>
+      <button class="gx" data-act="info" title="How to do it">ⓘ</button><button class="gx" data-act="del" title="Remove exercise">×</button></div>
+      ${e.last||e.why||e.tplNote?`<div class="el">${e.last?`Last: ${esc(e.last)}<br>`:""}${e.why||""}${e.tplNote?`<br>Mike: ${esc(e.tplNote)}`:""}</div>`:""}
+      <div class="gsets">${e.sets.map((s,j)=>`<div class="gset ${s.done?"done":""}" data-s="${j}"><span class="sn">${j+1}</span>
+        <label><input inputmode="decimal" data-f="kg" value="${esc(s.kg)}" placeholder="${/body|bw/i.test(e.unit)?"BW":"kg"}" aria-label="Set ${j+1} weight"><small>kg</small></label>
+        <label><input inputmode="numeric" data-f="reps" value="${esc(s.reps)}" placeholder="reps" aria-label="Set ${j+1} reps"><small>reps</small></label>
+        <button class="gok" data-act="done" aria-label="Set ${j+1} done">✓</button></div>`).join("")}</div>
+      <div class="grow" style="justify-content:space-between"><button class="gadd" data-act="addset">+ Set</button><span class="faint" style="font-size:12px">Rest ${e.rest}s</span></div>
+      <input type="text" class="gnote" data-f="note" value="${esc(e.note)}" placeholder="Notes (how it felt, form cues)"></div>`).join("")+
+    `<div class="grow" style="margin:6px 0 4px"><button class="btn" data-act="addex">+ Add exercise from library</button><button class="btn" data-act="addcustom">+ Custom exercise</button></div>
+     <div class="note">Saves on this phone as you go, so locking the screen or closing the tab won't lose anything. <b>Finish &amp; save</b> writes the session to your vault.</div>`}
+$("gLogBody").addEventListener("input",ev=>{const t=ev.target,f=t.dataset.f;if(!f)return;const ex=t.closest("[data-e]");if(!ex)return;const e=G.draft.ex[+ex.dataset.e];
+  if(f==="note")e.note=t.value;else{const s=e.sets[+t.closest("[data-s]").dataset.s];s[f]=t.value.replace(",",".")}gSave()});
+$("gLogBody").addEventListener("click",ev=>{const b=ev.target.closest("[data-act]");if(!b)return;const a=b.dataset.act;const exEl=b.closest("[data-e]");const i=exEl?+exEl.dataset.e:-1;const e=i>=0?G.draft.ex[i]:null;
+  if(a==="done"){const j=+b.closest("[data-s]").dataset.s,s=e.sets[j];s.done=!s.done;
+    if(s.done){if(!s.reps){s.done=false;toast("Enter the reps first");return}
+      for(let k=j+1;k<e.sets.length;k++){if(!e.sets[k].done&&!e.sets[k].kg)e.sets[k].kg=s.kg}
+      gRestStart(e.rest);gBeepPrime()}
+    gSave();gRenderLog();return}
+  if(a==="addset"){const l=e.sets.at(-1)||{kg:"",reps:""};e.sets.push({kg:l.kg,reps:l.reps,done:false});gSave();gRenderLog();return}
+  if(a==="del"){if(confirm(`Remove ${e.name}?`)){G.draft.ex.splice(i,1);gSave();gRenderLog()}return}
+  if(a==="info"){gOpenLib(null,e.name);return}
+  if(a==="addex"){gOpenLib(name=>{G.draft.ex.push(gExFrom(name,null));gSave();gRenderLog();setTimeout(()=>{const a=$("gLogBody").querySelectorAll(".gex");a.length&&a[a.length-1].scrollIntoView({behavior:"smooth"})},50)});return}
+  if(a==="addcustom"){const n=prompt("Exercise name");if(n&&n.trim()){G.draft.ex.push(gExFrom(n.trim(),null));gSave();gRenderLog()}return}});
+/* rest timer: stored as an end time, so it stays right if the phone locks */
+function gRestStart(sec){G.draft.restFor=sec;G.draft.restEnd=Date.now()+sec*1000;G.draft.beeped=false;gSave();gTick()}
+$("gRest").addEventListener("click",ev=>{const r=ev.target.closest("[data-r]");if(!r||!G.draft)return;
+  if(r.dataset.r==="skip")G.draft.restEnd=null;else G.draft.restEnd=Math.max(Date.now(),G.draft.restEnd)+(+r.dataset.r)*1000;gSave();gTick()});
+function gTick(){const d=G.draft;if(!d)return;const el=Math.floor((Date.now()-d.start)/1000);
+  $("gLogClock").textContent=`${Math.floor(el/3600)?Math.floor(el/3600)+":":""}${Math.floor(el/3600)?pad(Math.floor(el/60)%60):Math.floor(el/60)}:${pad(el%60)} · ${d.ex.reduce((a,e)=>a+e.sets.filter(s=>s.done).length,0)} sets done`;
+  const rb=$("gRest");if(!d.restEnd){rb.classList.remove("show");return}
+  const left=Math.round((d.restEnd-Date.now())/1000);rb.classList.add("show");rb.classList.toggle("over",left<=0);
+  const a=Math.abs(left);$("gRestT").innerHTML=`${left<0?"+":""}${Math.floor(a/60)}:${pad(a%60)}<small>${left>0?"rest":"go — next set"}</small>`;
+  if(left<=0&&!d.beeped){d.beeped=true;gSave();gBeep()}
+  if(left<-60){d.restEnd=null;gSave()}}
+function gBeepPrime(){try{if(!G.audio){G.audio=new (window.AudioContext||window.webkitAudioContext)()}if(G.audio.state==="suspended")G.audio.resume()}catch(e){}}
+function gBeep(){try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){}
+  try{const c=G.audio;if(!c)return;[0,.25].forEach(t=>{const o=c.createOscillator(),g=c.createGain();o.frequency.value=880;g.gain.setValueAtTime(.0001,c.currentTime+t);g.gain.exponentialRampToValueAtTime(.3,c.currentTime+t+.02);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+t+.2);o.connect(g).connect(c.destination);o.start(c.currentTime+t);o.stop(c.currentTime+t+.22)})}catch(e){}}
+$("gLogMin").onclick=gCloseLog;
+$("gLogDiscard").onclick=()=>{if(!confirm("Discard this session? Nothing will be saved."))return;ls.set(GYMP.draft,"null");G.draft=null;gCloseLog()};
+$("gLogFinish").onclick=async()=>{const d=G.draft;const ex=d.ex.map(e=>({...e,sets:e.sets.filter(s=>s.done&&+s.reps>0)})).filter(e=>e.sets.length);
+  if(!ex.length){toast("Tick at least one set first");return}
+  if(!ready()){toast("Connect your vault first (⚙)");return}
+  const btn=$("gLogFinish");btn.disabled=true;btn.textContent="Saving…";
+  try{const {path,md}=gBuildNote(d,ex);await FS.write(path,md);G.cache[path]=md;ls.set(GYMP.draft,"null");G.draft=null;gCloseLog();toast("Session saved to your vault");refresh()}
+  catch(e){toast("Couldn't save: "+e.message+" (still kept on this phone)")}
+  finally{btn.disabled=false;btn.textContent="Finish & save"}};
+function gBuildNote(d,ex){
+  const dt=new Date(d.start),date=ymd(dt);const folder=d.by==="Mike"?"Mike":"James";
+  const safe=d.name.replace(/[\\/:*?"<>|#^[\]]/g," ").replace(/\s+/g," ").trim()||"Gym session";
+  let file=`${date} - Workout - ${safe}`,k=2;while(G.hist.some(h=>h.path===`${PATHS.gym}/${folder}/${file}.md`))file=`${date} - Workout - ${safe} ${k++}`;
+  const mins=Math.max(1,Math.round((Date.now()-d.start)/60000));
+  const unitOf=e=>{const u=(e.unit||"").replace(/^kg\s*/i,"").trim();return u&&!/body ?weight/i.test(u)?" "+u:""};
+  const rows=ex.map((e,i)=>{const reps=e.sets.map(s=>+s.reps),kgs=e.sets.map(s=>s.kg===""?null:+s.kg);
+    const sr=reps.every(r=>r===reps[0])?`${reps.length} × ${reps[0]}`:reps.join(" / ");
+    const bw=kgs.every(k=>!k);const load=bw?"Bodyweight":(kgs.every(k=>k===kgs[0])?`${gFmtKg(kgs[0])} kg`:`${kgs.map(k=>gFmtKg(k||0)).join(" / ")} kg`)+unitOf(e);
+    return `| ${i+1} | ${e.name.replace(/\|/g,"/")} | ${sr} | ${load} | ${(e.note||"").replace(/\|/g,"/").replace(/\r?\n/g," ")} |`});
+  const next=ex.map(e=>{const tp=G.tpls.find(t=>t.name===d.tpl)?.ex.find(x=>x.key===gKey(e.name));const reps=e.sets.map(s=>+s.reps),w=Math.max(...e.sets.map(s=>+s.kg||0));
+    const tgtA=String(tp?.reps||"").split("–").map(Number).filter(Boolean);const tgt=tgtA.length?tgtA.at(-1):Math.max(...reps);const n=tp?.sets||e.sets.length;
+    const hit=reps.length>=n&&reps.slice(0,n).every(r=>r>=tgt);
+    if(!w)return `- ${e.name}: ${hit?`all ${n} × ${tgt} done → aim for ${tgt+1} reps a set`:`aim for ${n} × ${tgt}`}.`;
+    const inc=gIncr(e.name,e.unit);return `- ${e.name}: ${hit?`hit ${n} × ${tgt} at ${gFmtKg(w)} kg → try ${gFmtKg(w+inc)} kg`:`stay at ${gFmtKg(w)} kg until you get ${n} × ${tgt}`}.`});
+  const md=`---\ndate: ${date}\ntype: workout\nsession: ${safe}\n${d.tpl?`template: "${d.tpl}"\n`:""}by: ${d.by==="Mike"?"Mike":"James"}\nduration_min: ${mins}\nlogged: HUD\ntags: [gym, workout]\n---\n\n# ${safe} — ${date}\n\n| # | Exercise | Sets × Reps | Load | Notes |\n|---|----------|-------------|------|-------|\n${rows.join("\n")}\n\n## Next session\n*Suggested by the HUD (add weight once every set hits the target reps). Mike's programme overrides this.*\n${next.join("\n")}\n`;
+  return {path:`${PATHS.gym}/${folder}/${file}.md`,md}}
+
+/* ---- template builder ---- */
+let TB=null;
+function gOpenTb(t){TB=t?{file:t.file,name:t.name,by:t.by,ex:t.ex.map(e=>({...e}))}:{file:null,name:"",by:"Me",ex:[]};
+  $("gTbTitle").textContent=t?"Edit template":"New template";$("gTb").classList.add("show");document.body.style.overflow="hidden";gRenderTb()}
+function gRenderTb(){$("gTbBody").innerHTML=`<label class="ct" style="display:block;margin-bottom:6px">Name</label><input type="text" id="tbName" value="${esc(TB.name)}" placeholder="e.g. Heavy Lower · 1079">
+  <div class="grow" style="margin:14px 0 4px"><span class="ct">Written by</span><div class="gseg"><button data-by="Mike" class="${TB.by==="Mike"?"on":""}">Mike</button><button data-by="Me" class="${TB.by!=="Mike"?"on":""}">Me</button></div></div>
+  <div class="gthead"><span>Exercise</span><span>Sets</span><span>Reps</span><span>Rest s</span><span></span></div>
+  <div id="tbRows">${TB.ex.map((e,i)=>`<div class="gtrow" data-i="${i}"><input type="text" data-f="name" value="${esc(e.name)}"><input type="text" inputmode="numeric" data-f="sets" value="${e.sets}"><input type="text" data-f="reps" value="${esc(e.reps)}"><input type="text" inputmode="numeric" data-f="rest" value="${e.rest}"><button class="gx" data-del="${i}">×</button></div>`).join("")}</div>
+  ${TB.ex.length?"":'<div class="empty">No exercises yet.</div>'}
+  <div class="grow" style="margin-top:10px"><button class="btn" id="tbLib">+ From library</button><button class="btn" id="tbCustom">+ Custom</button></div>
+  <div class="note">Reps can be a range, e.g. <b>8–10</b>: the HUD suggests more weight once every set reaches the top of the range.</div>`;
+  $("tbName").oninput=e=>TB.name=e.target.value;
+  $("gTbBody").querySelectorAll("[data-by]").forEach(b=>b.onclick=()=>{TB.by=b.dataset.by;gRenderTb()});
+  $("tbRows").oninput=ev=>{const r=ev.target.closest("[data-i]");if(!r)return;const e=TB.ex[+r.dataset.i],f=ev.target.dataset.f;e[f]=f==="sets"||f==="rest"?(parseInt(ev.target.value,10)||""):ev.target.value};
+  $("tbRows").onclick=ev=>{const b=ev.target.closest("[data-del]");if(b){TB.ex.splice(+b.dataset.del,1);gRenderTb()}};
+  $("tbLib").onclick=()=>gOpenLib(name=>{TB.ex.push({name,sets:3,reps:"8–10",rest:90,note:""});gRenderTb()});
+  $("tbCustom").onclick=()=>{const n=prompt("Exercise name");if(n&&n.trim()){TB.ex.push({name:n.trim(),sets:3,reps:"10",rest:90,note:""});gRenderTb()}}}
+$("gTbClose").onclick=()=>{$("gTb").classList.remove("show");document.body.style.overflow=""};
+$("gTbSave").onclick=async()=>{const name=(TB.name||"").trim();const ex=TB.ex.filter(e=>String(e.name||"").trim());
+  if(!name){toast("Give the template a name");return}if(!ex.length){toast("Add at least one exercise");return}if(!ready()){toast("Connect your vault first (⚙)");return}
+  const file=TB.file||`${name.replace(/[\\/:*?"<>|#^[\]]/g," ").replace(/\s+/g," ").trim()}.md`;
+  const md=`---\ntype: gym-template\nname: ${name}\nby: ${TB.by==="Mike"?"Mike":"James"}\n---\n\n# ${name}\n\n| # | Exercise | Sets | Reps | Rest | Notes |\n|---|----------|------|------|------|-------|\n${ex.map((e,i)=>`| ${i+1} | ${String(e.name).trim().replace(/\|/g,"/")} | ${e.sets||3} | ${String(e.reps||"10").replace(/\|/g,"")} | ${e.rest||90} | ${(e.note||"").replace(/\|/g,"/")} |`).join("\n")}\n`;
+  try{await FS.write(`${GYMP.tpl}/${file}`,md);$("gTb").classList.remove("show");document.body.style.overflow="";toast("Template saved");refresh()}catch(e){toast("Couldn't save: "+e.message)}};
+
+/* ---- exercise library (Free Exercise DB) ---- */
+let LIB_PICK=null;
+async function gLib(){if(G.lib)return G.lib;G.libP=G.libP||fetch(GYMP.lib).then(r=>{if(!r.ok)throw new Error("library "+r.status);return r.json()});G.lib=await G.libP;return G.lib}
+function gOpenLib(onPick,query){LIB_PICK=onPick;$("gLibTitle").textContent=onPick?"Add an exercise":"Exercise library";$("gLib").classList.add("show");
+  $("gLibBody").innerHTML='<div class="empty">Loading 870+ exercises…</div>';
+  gLib().then(lib=>{const mus=[...new Set(lib.flatMap(e=>e.primaryMuscles))].sort(),eq=[...new Set(lib.map(e=>e.equipment).filter(Boolean))].sort();
+    $("gLibBody").innerHTML=`<div class="glf"><input type="text" id="glQ" placeholder="Search, e.g. romanian deadlift" value="${esc(query||"")}">
+      <select class="gsel" id="glM"><option value="">All muscles</option>${mus.map(m=>`<option>${esc(m)}</option>`).join("")}</select>
+      <select class="gsel" id="glE"><option value="">All equipment</option>${eq.map(m=>`<option>${esc(m)}</option>`).join("")}</select></div>
+      ${onPick?`<div class="grow" style="margin-bottom:8px"><button class="btn" id="glUse" hidden></button></div>`:""}<div id="glList"></div>`;
+    const run=()=>gLibList(lib);["glQ","glM","glE"].forEach(id=>$(id).addEventListener("input",run));run();if(!onPick&&query)setTimeout(()=>{const f=$("glList").querySelector(".gli");if(f)f.click()},0)})
+  .catch(e=>{$("gLibBody").innerHTML=`<div class="empty">Couldn't load the library (${esc(e.message)}). You can still add a custom exercise.</div>`})}
+function gLibList(lib){const q=gKey($("glQ").value),m=$("glM").value,eq=$("glE").value;const words=q.split(" ").filter(Boolean);
+  let res=lib.filter(e=>(!m||e.primaryMuscles.includes(m))&&(!eq||e.equipment===eq)&&words.every(w=>gKey(e.name).includes(w)));
+  res=res.sort((a,b)=>(gKey(a.name).startsWith(q)?0:1)-(gKey(b.name).startsWith(q)?0:1)||a.name.length-b.name.length).slice(0,60);
+  const use=$("glUse");if(use){const raw=$("glQ").value.trim();use.hidden=!raw;use.textContent=`+ Add "${raw}" as a custom exercise`;use.onclick=()=>gPick(raw)}
+  $("glList").innerHTML=res.length?res.map(e=>`<div class="gli" data-id="${esc(e.id)}"><img loading="lazy" alt="" src="${GYMP.img}${esc(e.images[0]||"")}"><div><div class="ln">${esc(e.name)}</div><div class="lm">${esc(e.primaryMuscles.join(", "))} · ${esc(e.equipment||"other")} · ${esc(e.level)}</div></div></div>`).join("")
+    :'<div class="empty">Nothing matches.</div>';
+  $("glList").querySelectorAll(".gli").forEach(el=>el.onclick=()=>gLibDetail(lib.find(e=>e.id===el.dataset.id)))}
+function gLibDetail(e){$("gLibBody").innerHTML=`<div class="gdet"><button class="gadd" id="glBack">← Back</button><h2 style="font-size:22px;margin:6px 0 4px">${esc(e.name)}</h2>
+  <div class="lm muted" style="text-transform:capitalize">${esc(e.primaryMuscles.join(", "))}${e.secondaryMuscles.length?` · also ${esc(e.secondaryMuscles.join(", "))}`:""} · ${esc(e.equipment||"other")}</div>
+  ${LIB_PICK?`<div class="grow" style="margin:12px 0"><button class="btn primary" id="glAdd" style="min-height:46px">+ Add ${esc(e.name)}</button></div>`:""}
+  <div>${e.images.map(i=>`<img loading="lazy" alt="${esc(e.name)}" src="${GYMP.img}${esc(i)}">`).join("")}</div>
+  <ol>${e.instructions.map(i=>`<li>${esc(i)}</li>`).join("")}</ol></div>`;
+  $("glBack").onclick=()=>gOpenLib(LIB_PICK,e.name.split(" ")[0]);if($("glAdd"))$("glAdd").onclick=()=>gPick(e.name)}
+function gPick(name){const f=LIB_PICK;$("gLib").classList.remove("show");if(f)f(name)}
+$("gLibClose").onclick=()=>$("gLib").classList.remove("show");
+$("gLibBtn").onclick=()=>gOpenLib(null);$("gNewTpl").onclick=()=>gOpenTb(null);
+if(gLoadDraft())setTimeout(()=>{if(location.hash==="#gym")gOpenLog()},300);
 </script>
 </body>
 </html>
