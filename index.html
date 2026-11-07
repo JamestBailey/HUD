@@ -326,12 +326,14 @@ h1{font-weight:700;letter-spacing:-.03em}
 
 .resbox{margin:-2px 0 4px;padding:12px;border-radius:14px;background:#262019;border:1px solid rgba(255,184,107,.45);display:flex;flex-direction:column;gap:8px}
 .resbox label{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}
-.resrow{display:flex;gap:8px}
+.resrow{display:flex;gap:8px;margin-bottom:4px}
+.resbox label{margin-top:2px}
 .resrow input{flex:1;min-width:0;font:700 20px Inter,sans-serif;padding:10px 12px;border-radius:12px;border:1px solid var(--line2);background:var(--bg);color:var(--text)}
 .resrow input:focus{outline:2px solid var(--gold);outline-offset:1px}
 .sgn{width:48px;font:800 22px Inter,sans-serif;border-radius:12px;border:1px solid var(--line2);background:var(--panel2);color:var(--text);cursor:pointer}
 .rsave{font:800 15px Inter,sans-serif;padding:0 18px;border-radius:12px;border:none;background:var(--gold);color:var(--ink);cursor:pointer;min-height:48px}
 .resrow2{display:flex;gap:14px;align-items:center;justify-content:flex-end;flex-wrap:wrap}.resrow2 .lnk{font-size:13px;font-weight:600;color:var(--muted)}
+.rhint{font-size:12px;color:var(--muted);line-height:1.4}
 .rerr{font-size:12px;color:var(--now);margin-right:auto}
 .drill small.rv{opacity:1;font-weight:800;font-size:13px}
 .addres{align-self:flex-start;margin:-2px 0 2px 4px;background:none;border:none;color:var(--gold);font:700 13px Inter,sans-serif;cursor:pointer;padding:6px 4px}
@@ -628,9 +630,19 @@ const nk=s=>String(s||"").toLowerCase().replace(/\s+/g," ").replace(/[()]/g,"").
 let TICKS={},RESULTS={},APPLIED=[],TICKS_LOADED=false;
 async function loadTicks(){try{const j=JSON.parse(await FS.text(PATHS.ticks));TICKS=j.ticks||{};RESULTS=j.results||{};APPLIED=j.applied||[]}catch(e){if(!TICKS_LOADED){TICKS={};RESULTS={}}}TICKS_LOADED=true}
 /* drills whose score goes into the Drill Spreadsheet */
-function resultSpec(k){const [sec,task]=String(k).split("::").map(x=>x.trim().toLowerCase());if(!/yds/.test(sec||""))return null;
-  if(/^completion yardage book/.test(task))return {label:"Attempts to complete",kind:"int",fmt:v=>`${v} attempt${+v===1?"":"s"}`};
-  if(/^strokes gained yardage book/.test(task))return {label:"Strokes gained",kind:"sg",fmt:v=>`SG ${+v>0?"+":""}${v}`};return null}
+function resultSpec(k){const [sec,task]=String(k).split("::").map(x=>(x||"").trim().toLowerCase());
+  const att=v=>`${v} attempt${+v===1?"":"s"}`;
+  if(/yds/.test(sec)){
+    if(/^completion yardage book/.test(task))return {single:true,fields:[{id:"v",label:"Attempts to complete",type:"int",ph:"e.g. 14"}],fmt:att,word:"attempts"};
+    if(/^strokes gained yardage book/.test(task))return {single:true,fields:[{id:"v",label:"Strokes gained",type:"sg",ph:"e.g. 2.5"}],fmt:v=>`SG ${+v>0?"+":""}${v}`,word:"strokes gained"};
+    return null}
+  if(sec==="putting"){
+    if(/^clutch putts/.test(task))return {single:true,fields:[{id:"v",label:"Attempts to hole 6 in a row",type:"int",ph:"e.g. 11"}],fmt:att,word:"attempts"};
+    const slope=[{id:"feel",label:"Slope % · feel",type:"avg",ph:"e.g. 2.1",hint:"Type the average, or every reading with spaces (1.5 3.5 2.5…) and the HUD averages it."},{id:"real",label:"Slope % · real",type:"avg",ph:"e.g. 2.3"}];
+    if(/^9 - 20ft/.test(task))return {fields:slope.concat([{id:"holed",label:"Holed (out of 6)",type:"int0",max:6,ph:"0–6"},{id:"notes",label:"Notes (optional)",type:"text",ph:"e.g. pushes on misses"}]),fmt:v=>`${v.holed}/6 holed · ${v.feel} / ${v.real}`,word:"result"};
+    if(/^<10ft/.test(task))return {fields:slope.concat([{id:"holed",label:"Holed (out of 10)",type:"int0",max:10,ph:"0–10"}]),fmt:v=>`${v.holed}/10 holed · ${v.feel} / ${v.real}`,word:"result"};
+  }
+  return null}
 function getResult(date,k){const r=RESULTS[date]||{};const key=Object.keys(r).find(x=>nk(x)===nk(k));return key?r[key]:null}
 function keyArea(k){const sec=k.split("::")[0].trim().toLowerCase();if(/yds/.test(sec))return "Irons";return SECT[sec]||"Other"}
 function keyLabel(k){const [sec,task]=k.split("::").map(x=>x.trim());if(!/yds/i.test(sec))return task;
@@ -772,11 +784,12 @@ function renderDay(){
         ${drills.map(k=>{const x=doneKeys.get(nk(k));const on=!!x,lock=on&&!x.hud;const spec=resultSpec(k),res=getResult(DSEL,k);
           const entry=ENTRY&&ENTRY.date===DSEL&&nk(ENTRY.k)===nk(k);
           let h=`<button class="drill ${gym?"g":""} ${on?"on":""} ${lock?"lock":""}" data-k="${esc(k)}" ${isFut||lock?"disabled":""}><span class="m">${on?"✓":""}</span><span>${esc(keyLabel(k))}</span>${res?`<small class="rv">${esc(spec?spec.fmt(res.v):res.v)}</small>`:lock?"<small>in Daily To Do</small>":""}</button>`;
-          if(lock&&spec&&!res&&!isFut&&!entry)h+=`<button class="addres" data-add="${esc(k)}">+ add ${spec.kind==="int"?"attempts":"strokes gained"}</button>`;
-          if(entry){h+=`<div class="resbox"><label for="resIn">${spec.label}</label><div class="resrow">
-            ${spec.kind==="sg"?`<button class="sgn" id="resSign" aria-label="Switch plus or minus">${ENTRY.neg?"−":"+"}</button>`:""}
-            <input id="resIn" type="text" inputmode="${spec.kind==="int"?"numeric":"decimal"}" autocomplete="off" placeholder="${spec.kind==="int"?"e.g. 14":"e.g. 2.5"}" value="${esc(ENTRY.val||"")}">
-            <button class="rsave" id="resSave">Save</button></div>
+          if(lock&&spec&&!res&&!isFut&&!entry)h+=`<button class="addres" data-add="${esc(k)}">+ add ${spec.word}</button>`;
+          if(entry){h+=`<div class="resbox">${spec.fields.map((f,fi)=>`${f.hint?`<div class="rhint">${esc(f.hint)}</div>`:""}<label for="res_${f.id}">${f.label}</label><div class="resrow">
+              ${f.type==="sg"?`<button class="sgn" id="resSign" aria-label="Switch plus or minus">${ENTRY.neg?"−":"+"}</button>`:""}
+              <input id="res_${f.id}" data-f="${f.id}" type="text" inputmode="${f.type==="int"||f.type==="int0"?"numeric":f.type==="text"?"text":"decimal"}" autocomplete="off" placeholder="${esc(f.ph)}" value="${esc((ENTRY.vals||{})[f.id]||"")}">
+              ${spec.single?`<button class="rsave" id="resSave">Save</button>`:""}</div>`).join("")}
+            ${spec.single?"":`<button class="rsave" id="resSave" style="align-self:stretch">Save</button>`}
             <div class="resrow2"><span class="rerr" id="resErr"></span>${lock?"":`<button class="lnk" id="resSkip">Tick without a score</button>`}<button class="lnk" id="resCancel">Cancel</button></div></div>`}
           return h}).join("")}
         ${isFut&&drills.length?'<div class="why">Ticks open on the day.</div>':""}</div>`:""}
@@ -790,20 +803,30 @@ function renderDay(){
   $("timeline").innerHTML=html;
   $("timeline").querySelectorAll(".blk").forEach(b=>b.onclick=()=>{const i=+b.dataset.i;OPEN[i]=!OPEN[i];renderDay()});
   $("timeline").querySelectorAll(".drill:not([disabled])").forEach(b=>b.onclick=()=>{const k=b.dataset.k;const ticked=(TICKS[DSEL]||[]).some(x=>nk(x)===nk(k));
-    if(!ticked&&resultSpec(k)){ENTRY={date:DSEL,k,val:"",neg:false};renderDay();setTimeout(()=>{const i=$("resIn");if(i)i.focus()},30)}
+    if(!ticked&&resultSpec(k)){ENTRY={date:DSEL,k,vals:{},neg:false};renderDay();setTimeout(()=>{const i=$("timeline").querySelector(".resbox input");if(i)i.focus()},30)}
     else toggleTick(DSEL,k)});
-  $("timeline").querySelectorAll(".addres").forEach(b=>b.onclick=()=>{ENTRY={date:DSEL,k:b.dataset.add,val:"",neg:false,lockedTick:true};renderDay();setTimeout(()=>{const i=$("resIn");if(i)i.focus()},30)});
-  if(ENTRY&&$("resIn")){const spec=resultSpec(ENTRY.k);
-    $("resIn").oninput=e=>{ENTRY.val=e.target.value};
-    $("resIn").onkeydown=e=>{if(e.key==="Enter")$("resSave").click()};
+  $("timeline").querySelectorAll(".addres").forEach(b=>b.onclick=()=>{ENTRY={date:DSEL,k:b.dataset.add,vals:{},neg:false,lockedTick:true};renderDay();setTimeout(()=>{const i=$("timeline").querySelector(".resbox input");if(i)i.focus()},30)});
+  if(ENTRY&&$("resSave")){const spec=resultSpec(ENTRY.k);const box=$("timeline").querySelector(".resbox");
+    box.querySelectorAll("input").forEach(i=>{i.oninput=e=>{ENTRY.vals[i.dataset.f]=e.target.value};i.onkeydown=e=>{if(e.key==="Enter")$("resSave").click()}});
     if($("resSign"))$("resSign").onclick=()=>{ENTRY.neg=!ENTRY.neg;renderDay()};
     $("resCancel").onclick=()=>{ENTRY=null;renderDay()};
     if($("resSkip"))$("resSkip").onclick=()=>{const k=ENTRY.k;ENTRY=null;toggleTick(DSEL,k)};
-    $("resSave").onclick=()=>{let raw=String($("resIn").value).trim().replace(",",".").replace(/^\+/,"");let neg=ENTRY.neg;if(/^[-−]/.test(raw)){neg=true;raw=raw.slice(1)}
-      const n=Number(raw);let err="";
-      if(raw===""||!isFinite(n))err="Enter a number";else if(spec.kind==="int"&&(!Number.isInteger(n)||n<1||n>999))err="Whole number of attempts, 1 or more";else if(spec.kind==="sg"&&(Math.abs(n)>50))err="That looks too big for strokes gained";
+    $("resSave").onclick=()=>{const out={};let err="";
+      for(const f of spec.fields){let raw=String((box.querySelector(`[data-f="${f.id}"]`)||{}).value||"").trim();
+        if(f.type==="text"){if(raw)out[f.id]=raw.slice(0,200);continue}
+        raw=raw.replace(/,(?=\d)/g,".");
+        if(f.type==="avg"){const nums=raw.split(/[\s;\/]+/).filter(Boolean).map(Number);
+          if(!nums.length||nums.some(n=>!isFinite(n)||n<0||n>20)){err=`${f.label}: enter the average, or each reading separated by spaces`;break}
+          out[f.id]=Math.round(nums.reduce((a,b)=>a+b,0)/nums.length*100)/100;continue}
+        let neg=f.type==="sg"&&ENTRY.neg;raw=raw.replace(/^\+/,"");if(/^[-−]/.test(raw)){neg=true;raw=raw.slice(1)}
+        const n=Number(raw);
+        if(raw===""||!isFinite(n)){err=`${f.label}: enter a number`;break}
+        if(f.type==="int"&&(!Number.isInteger(n)||n<1||n>999)){err=`${f.label}: a whole number, 1 or more`;break}
+        if(f.type==="int0"&&(!Number.isInteger(n)||n<0||n>f.max)){err=`${f.label}: a whole number from 0 to ${f.max}`;break}
+        if(f.type==="sg"&&Math.abs(n)>50){err="That looks too big for strokes gained";break}
+        out[f.id]=f.type==="sg"?Math.round((neg?-n:n)*100)/100:n}
       if(err){$("resErr").textContent=err;return}
-      const v=spec.kind==="sg"?Math.round((neg?-n:n)*100)/100:n;const k=ENTRY.k,date=DSEL;
+      const v=spec.single?out.v:out;const k=ENTRY.k,date=DSEL;
       RESULTS[date]=RESULTS[date]||{};Object.keys(RESULTS[date]).forEach(x=>{if(nk(x)===nk(k))delete RESULTS[date][x]});
       RESULTS[date][k]={v,id:date+"|"+nk(k)+"|"+Date.now().toString(36)};
       const lockedTick=ENTRY.lockedTick;ENTRY=null;
