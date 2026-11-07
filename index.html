@@ -442,6 +442,14 @@ h1{font-weight:700;letter-spacing:-.03em}
 @keyframes gpop{0%{box-shadow:0 0 0 0 rgba(143,209,158,.9)}45%{box-shadow:0 0 0 7px rgba(143,209,158,.35);transform:scale(1.015)}100%{box-shadow:0 0 0 2px rgba(143,209,158,.55);transform:none}}
 @keyframes gringpop{0%{transform:scale(1)}40%{transform:scale(1.25)}100%{transform:scale(1)}}
 @media(prefers-reduced-motion:reduce){.gex.pop,.gex.pop .gring{animation:none}.gex::before,.gring .pr{transition:none}}
+.gres{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#2a1f12;border:1px solid var(--gold);border-radius:14px;padding:10px 14px;margin-bottom:12px;font-size:14px}
+.gres .btn{min-height:42px}.gtpl .gtag.today,.gsess .gtag.today,.gtag.today{background:var(--gold)!important;color:#111!important}
+.glink{background:none;border:none;color:var(--gold);font:600 13px Inter,sans-serif;cursor:pointer;padding:4px}
+.gexl{list-style:none;margin:8px 0 12px;padding:0;counter-reset:g}.gexl li{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-top:1px solid var(--line);font-size:13.5px;counter-increment:g}
+.gexl li span:first-child::before{content:counter(g)". ";color:var(--faint)}
+.gstartbtn{width:100%;justify-content:center;min-height:48px;font-size:15px}
+#p-gym .c8 .gtwrap{grid-template-columns:minmax(0,1fr) minmax(220px,300px)}
+@media(max-width:800px){#p-gym .c8 .gtwrap{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -505,9 +513,8 @@ h1{font-weight:700;letter-spacing:-.03em}
 
   <main class="panel" id="p-gym">
     <div class="grid">
-      <section class="card c8"><div class="ch"><span class="ct">Start a session</span><span class="cm" id="gStartMeta"></span></div><div id="gStart"><div class="empty">Loading…</div></div></section>
+      <section class="card c8"><div class="ch"><span class="ct">Sessions</span><span class="cm"><button class="btn" id="gNewTpl" style="padding:6px 12px">+ New template</button> <button class="btn" id="gLibBtn" style="padding:6px 12px">Exercise library</button></span></div><div id="gStart"><div class="empty">Loading…</div></div></section>
       <section class="card c4"><div class="ch"><span class="ct">This week</span><span class="cm" id="gWeekMeta"></span></div><div id="gWeek"></div></section>
-      <section class="card c12"><div class="ch"><span class="ct">Templates · muscles worked</span><span class="cm"><button class="btn" id="gNewTpl" style="padding:6px 12px">+ New</button> <button class="btn" id="gLibBtn" style="padding:6px 12px">Exercise library</button></span></div><div id="gTpls"></div></section>
       <section class="card c12"><div class="ch"><span class="ct">Progress</span><span class="cm" id="gProgMeta"></span></div><div id="gProg"></div></section>
       <section class="card c12"><div class="ch"><span class="ct">Recent sessions</span><span class="cm" id="gRecMeta"></span></div><div id="gRecent"></div></section>
     </div>
@@ -1237,20 +1244,7 @@ function gPlannedToday(){const t=ymd(new Date());const p=(PLANS||[]).find(x=>x.d
   return (p.blocks||[]).find(b=>/gym|workout|1079|squat|deadlift|s&c/i.test(b.title||""))||null}
 function gMatchTpl(title){if(!title)return null;const t=gKey(title);let best=null,bs=0;
   for(const tp of G.tpls){const words=gKey(tp.name).split(" ");const s=words.filter(w=>t.includes(w)).length/words.length;if(s>bs){bs=s;best=tp}}return bs>=.5?best:null}
-function gRenderStart(){
-  const el=$("gStart");const d=gLoadDraft();
-  if(d){$("gStartMeta").textContent="in progress";const done=d.ex.reduce((a,e)=>a+e.sets.filter(s=>s.done).length,0);
-    el.innerHTML=`<div class="gstart"><div class="gplan"><b>${esc(d.name)}</b> · started ${new Date(d.start).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})} · ${done} sets done</div>
-      <div class="grow"><button class="btn primary" id="gResume" style="min-height:46px">Resume session</button></div></div>`;
-    $("gResume").onclick=()=>gOpenLog();return}
-  const plan=gPlannedToday();const sug=plan?gMatchTpl(plan.title):null;$("gStartMeta").textContent=plan?"planned today":"";
-  const card=t=>`<button class="gtpl ${sug===t?"sug":""}" data-tpl="${esc(t.file)}"><span class="gn">${esc(t.name)}<span class="gtag ${t.by==="Mike"?"mike":"me"}">${t.by==="Mike"?"Mike":"Mine"}</span></span><span class="gm">${t.ex.length} exercises · ${esc(t.ex.slice(0,3).map(e=>e.name).join(", "))}${t.ex.length>3?"…":""}</span></button>`;
-  const order=sug?[sug,...G.tpls.filter(t=>t!==sug)]:G.tpls;
-  el.innerHTML=`<div class="gstart">${plan?`<div class="gplan">Today's plan: <b>${esc(plan.title)}</b>${plan.start?` · ${esc(plan.start)}`:""}${sug?"":" · pick the template that matches"}</div>`:""}
-    ${G.tpls.length?`<div class="gtpls">${order.map(card).join("")}</div>`:'<div class="empty">No templates yet. Make one with <b>+ New</b>, or start an empty session.</div>'}
-    <div class="grow"><button class="btn" id="gEmpty">Empty session</button></div></div>`;
-  el.querySelectorAll("[data-tpl]").forEach(b=>b.onclick=()=>gStart(G.tpls.find(t=>t.file===b.dataset.tpl)));
-  $("gEmpty").onclick=()=>gStart(null)}
+function gRenderStart(){gRenderSessions()}
 function gRenderWeek(){
   const ws=gWeekStart(new Date());const weeks=[];for(let i=7;i>=0;i--){const s=new Date(ws);s.setDate(s.getDate()-7*i);weeks.push({s,n:0,vol:0})}
   for(const h of G.hist){const d=new Date(h.date+"T00:00");const w=weeks.find(w=>d>=w.s&&d<new Date(w.s.getTime()+7*864e5));if(w){w.n++;w.vol+=h.ex.reduce((a,e)=>a+e.sets.reduce((v,x)=>v+(x.kg||0)*x.reps,0),0)}}
@@ -1510,22 +1504,36 @@ function gMapBlock(items,emptyTxt,showMissing){const {m,unk}=gMuscleLoad(items);
       <div class="note" style="margin-top:6px">Numbers = sets aimed mainly at that area.</div>`:`<div class="empty">${emptyTxt}</div>`}
     ${missing.length?`<div class="note"><b style="color:var(--text)">Not trained this week:</b> ${missing.map(k=>GMUS_LABEL[k]).join(", ")}</div>`:""}
     ${unk.length?`<div class="note">Not mapped yet: ${esc(unk.join(", "))}</div>`:""}`}
-function gRenderTpls(){
-  if(!G.lib&&!G.libTry){G.libTry=1;gLib().then(()=>gRenderTpls()).catch(()=>{})}   // library improves mapping for unusual names
-  const list=G.tpls;if(!G.tsel||(G.tsel!=="week"&&!list.find(t=>t.file===G.tsel)))G.tsel=list[0]?.file||"week";
+function gRenderTpls(){gRenderSessions()}
+function gRenderSessions(){
+  if(!G.lib&&!G.libTry){G.libTry=1;gLib().then(()=>gRenderSessions()).catch(()=>{})}   // library improves mapping for unusual names
+  const el=$("gStart");if(!el)return;const d=gLoadDraft(),list=G.tpls;
+  const plan=gPlannedToday(),sug=plan?gMatchTpl(plan.title):null;
+  if(!G.tsel||(G.tsel!=="week"&&!list.find(t=>t.file===G.tsel)))G.tsel=(sug||list[0])?.file||"week";
   const sel=list.find(t=>t.file===G.tsel);
   const ws=gWeekStart(new Date()),wk=G.hist.filter(h=>new Date(h.date+"T00:00")>=ws);
+  const banner=d?`<div class="gres"><div><b>${esc(d.name)}</b> in progress · started ${new Date(d.start).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})} · ${d.ex.reduce((a,e)=>a+e.sets.filter(s=>s.done).length,0)} sets done</div><button class="btn primary" id="gResume">Resume</button></div>`
+    :plan?`<div class="gplan">Today's plan: <b>${esc(plan.title)}</b>${plan.start?` · ${esc(plan.start)}`:""}${sug?"":" · no template matches it yet"}</div>`:"";
+  const row=t=>{const on=G.tsel===t.file;return `<div class="gsess gpick ${on?"on":""}" data-sel="${esc(t.file)}" tabindex="0" role="button" aria-pressed="${on}">
+    <div class="h"><span>${esc(t.name)}<span class="gtag ${t.by==="Mike"?"mike":"me"}">${t.by==="Mike"?"Mike":"Mine"}</span>${sug===t?'<span class="gtag today">Today</span>':""}</span>
+      <span><button data-edit="${esc(t.file)}" class="glink">Edit</button></span></div>
+    ${on?`<ol class="gexl">${t.ex.map(e=>`<li><span>${esc(e.name)}</span><span class="faint">${e.sets} × ${esc(e.reps)}</span></li>`).join("")}</ol>
+      ${d?"":`<button class="btn primary gstartbtn" data-start="${esc(t.file)}">Start ${esc(t.name)}</button>`}`
+      :`<div class="x">${t.ex.length} exercises · ${esc(t.ex.slice(0,3).map(e=>e.name).join(", "))}${t.ex.length>3?"…":""}</div>`}</div>`};
+  const order=sug?[sug,...list.filter(t=>t!==sug)]:list;
   const mapHtml=G.tsel==="week"
     ?gMapBlock(wk.flatMap(h=>h.ex.map(e=>({name:e.name,sets:e.sets.length}))),"No sessions logged this week yet.",true)
     :gMapBlock(sel?sel.ex.map(e=>({name:e.name,sets:+e.sets||3})):[],"No exercises in this template.");
-  $("gTpls").innerHTML=`<div class="gtwrap"><div class="gtlist">${list.length?list.map(t=>`<div class="gsess gpick ${G.tsel===t.file?"on":""}" data-sel="${esc(t.file)}" tabindex="0" role="button" aria-pressed="${G.tsel===t.file}">
-      <div class="h"><span>${esc(t.name)}<span class="gtag ${t.by==="Mike"?"mike":"me"}">${t.by==="Mike"?"Mike":"Mine"}</span></span><span><button class="lnk" data-edit="${esc(t.file)}" style="background:none;border:none;color:var(--gold);font:600 13px Inter,sans-serif;cursor:pointer;padding:4px">Edit</button></span></div>
-      <div class="x">${t.ex.map(e=>`${esc(e.name)} <span class="faint">${e.sets}×${esc(e.reps)}</span>`).join(" · ")}</div></div>`).join(""):'<div class="empty">No templates yet.</div>'}
-      <div class="gsess gpick ${G.tsel==="week"?"on":""}" data-sel="week" tabindex="0" role="button"><div class="h"><span>This week so far</span><span>${wk.length} session${wk.length===1?"":"s"}</span></div><div class="x">What you've actually trained since Monday</div></div></div>
-    <div class="gtmap"><div class="ct" style="margin-bottom:8px">${G.tsel==="week"?"Trained this week":esc(sel?.name||"")}</div>${mapHtml}</div></div>`;
-  $("gTpls").querySelectorAll("[data-sel]").forEach(el=>{const go=ev=>{if(ev.target.closest("[data-edit]"))return;G.tsel=el.dataset.sel;gRenderTpls()};el.onclick=go;el.onkeydown=ev=>{if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();go(ev)}}});
-  $("gTpls").querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>gOpenTb(G.tpls.find(t=>t.file===b.dataset.edit)));
-  $("gTpls").querySelectorAll("[data-m]").forEach(p=>{p.insertAdjacentHTML("afterbegin",`<title>${GMUS_LABEL[p.dataset.m]||p.dataset.m}</title>`)})}
+  $("gStartMeta")&&($("gStartMeta").textContent="");
+  el.innerHTML=`${banner}<div class="gtwrap"><div class="gtlist">${order.length?order.map(row).join(""):'<div class="empty">No templates yet. Make one with <b>+ New template</b>.</div>'}
+      <div class="gsess gpick ${G.tsel==="week"?"on":""}" data-sel="week" tabindex="0" role="button"><div class="h"><span>This week so far</span><span class="faint" style="font-weight:500;font-size:12px">${wk.length} session${wk.length===1?"":"s"}</span></div><div class="x">What you've actually trained since Monday</div></div>
+      ${d?"":'<button class="gadd" id="gEmpty" style="margin-top:4px">+ Start an empty session</button>'}</div>
+    <div class="gtmap"><div class="ct" style="margin-bottom:8px">${G.tsel==="week"?"Trained this week":"Muscles worked"}</div>${mapHtml}</div></div>`;
+  el.querySelectorAll("[data-sel]").forEach(r=>{const go=ev=>{if(ev.target.closest("[data-edit],[data-start]"))return;if(G.tsel===r.dataset.sel)return;G.tsel=r.dataset.sel;gRenderSessions()};r.onclick=go;r.onkeydown=ev=>{if(ev.target===r&&(ev.key==="Enter"||ev.key===" ")){ev.preventDefault();go(ev)}}});
+  el.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>gOpenTb(G.tpls.find(t=>t.file===b.dataset.edit)));
+  el.querySelectorAll("[data-start]").forEach(b=>b.onclick=()=>gStart(G.tpls.find(t=>t.file===b.dataset.start)));
+  if($("gEmpty"))$("gEmpty").onclick=()=>gStart(null);if($("gResume"))$("gResume").onclick=()=>gOpenLog();
+  el.querySelectorAll("[data-m]").forEach(p=>p.insertAdjacentHTML("afterbegin",`<title>${GMUS_LABEL[p.dataset.m]||p.dataset.m}</title>`))}
 
 /* ---- logger: progress ring per exercise; green fill when every set is done ---- */
 const GRING=2*Math.PI*15;
