@@ -517,6 +517,16 @@ h1{font-weight:700;letter-spacing:-.03em}
 .phb.y{background:var(--lav);border-color:var(--lav);color:var(--ink)}.phb.n{background:rgba(255,138,101,.16);border-color:rgba(255,138,101,.5);color:#ff8a65}
 .ptsum{display:flex;gap:14px;flex-wrap:wrap;justify-content:space-between;font-size:12px;color:var(--muted);padding:6px 4px 2px;border-top:1px solid var(--line);margin-top:4px}.ptsum b{color:var(--text)}
 .drill small.draft{opacity:1;color:var(--gold);font-weight:700}
+
+.gwkb button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;height:100%;background:none;border:none;padding:0 1px;cursor:pointer;font:inherit;border-radius:8px;position:relative}
+.gwkb button em{font-style:normal;font-size:10px;font-weight:800;color:var(--muted);min-height:12px}
+.gwkb button:hover i{filter:brightness(1.15)}.gwkb button.on i{outline:2px solid var(--text);outline-offset:2px}.gwkb button.on span{color:var(--text)}
+.gwkb i.hit{background:var(--lav)}
+.gwkb{height:86px}
+.gwkd{margin-top:12px;background:var(--panel2);border-radius:14px;padding:10px 14px;animation:gfade .2s ease}
+.gwkd .h{display:flex;justify-content:space-between;align-items:center}.gwkd .h b{font-size:15px}.gwkd .s{font-size:12.5px;color:var(--muted);margin:2px 0 6px}
+.gwkd .r{display:grid;grid-template-columns:62px 1fr;gap:10px;padding:8px 0;border-top:1px solid var(--line);font-size:13px}.gwkd .r>span{color:var(--gold);font-weight:700}
+@keyframes gfade{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 </style>
 </head>
 <body>
@@ -1632,17 +1642,30 @@ function gNextGym(){const t=ymd(new Date());const doneToday=G.hist.some(h=>h.dat
   for(const p of (PLANS||[]).slice().sort((a,b)=>a.date<b.date?-1:1)){if(p.date<t||(p.date===t&&doneToday))continue;
     const b=(p.blocks||[]).find(b=>/gym|workout|1079|squat|deadlift|s&c/i.test(b.title||""));if(b)return {date:p.date,b}}return null}
 function gRenderWeek(){
-  const ws=gWeekStart(new Date());const weeks=[];for(let i=7;i>=0;i--){const s=new Date(ws);s.setDate(s.getDate()-7*i);weeks.push({s,n:0})}
-  for(const h of G.hist){const d=new Date(h.date+"T00:00");const w=weeks.find(w=>d>=w.s&&d<new Date(w.s.getTime()+7*864e5));if(w)w.n++}
+  const ws=gWeekStart(new Date());const weeks=[];for(let i=7;i>=0;i--){const s=new Date(ws);s.setDate(s.getDate()-7*i);weeks.push({s,n:0,list:[]})}
+  for(const h of G.hist){const d=new Date(h.date+"T00:00");const w=weeks.find(w=>d>=w.s&&d<new Date(w.s.getTime()+7*864e5));if(w){w.n++;w.list.push(h)}}
   const cur=weeks[7];const mx=Math.max(GYMP.weekTarget,...weeks.map(w=>w.n));const nx=gNextGym();const left=Math.max(0,GYMP.weekTarget-cur.n);
   $("gWeekMeta").textContent=`target ${GYMP.weekTarget}`;
   const tday=ymd(new Date()),tmw=ymd(new Date(Date.now()+864e5));
   const when=nx?(nx.date===tday?"Today":nx.date===tmw?"Tomorrow":new Date(nx.date+"T00:00").toLocaleDateString("en-GB",{weekday:"short",day:"numeric"})):"";
+  const sel=G.wsel;
   $("gWeek").innerHTML=`<div class="gbig">${cur.n}<small>of ${GYMP.weekTarget} done</small></div>
     <div class="sub2" style="margin-top:8px">${left?`${left} to go this week`:'<span class="ok">Week\'s target hit ✓</span>'}</div>
     ${nx?`<div class="gnext"><span>Next</span><b>${esc(when)}${nx.b.start?" · "+esc(nx.b.start):""}</b><div>${esc(nx.b.title)}</div></div>`:`<div class="gnext"><span>Next</span><div class="faint">No gym session in the plan yet</div></div>`}
-    <div class="gwk" role="img" aria-label="Sessions per week, last 8 weeks">${weeks.map((w,i)=>`<div title="Week of ${fmtDay(w.s)}: ${w.n} session${w.n===1?"":"s"}"><i class="${w.n?"":"dim"}" style="height:${Math.max(4,w.n/mx*100)}%"></i><span>${i===7?"Now":w.s.getDate()+"/"+(w.s.getMonth()+1)}</span></div>`).join("")}</div>
-    <div class="note" style="margin-top:8px">Sessions per week, last 8 weeks</div>`}
+    <div class="gwk gwkb" role="group" aria-label="Sessions per week, last 8 weeks. Tap a week for details.">${weeks.map((w,i)=>`<button data-w="${i}" class="${sel===i?"on":""}" aria-pressed="${sel===i}" aria-label="Week of ${fmtDay(w.s)}: ${w.n} session${w.n===1?"":"s"}">
+      <em>${w.n||""}</em><i class="${w.n?"":"dim"} ${w.n>=GYMP.weekTarget?"hit":""}" style="height:${Math.max(4,w.n/mx*100)}%"></i><span>${i===7?"Now":w.s.getDate()+"/"+(w.s.getMonth()+1)}</span></button>`).join("")}</div>
+    <div class="note" style="margin-top:8px">${sel==null?"Sessions per week, last 8 weeks · tap a bar for details":""}</div>
+    <div id="gWkDet"></div>`;
+  const det=()=>{const el=$("gWkDet");if(G.wsel==null){el.innerHTML="";return}const w=weeks[G.wsel],we=new Date(w.s.getTime()+6*864e5);
+    const vol=x=>x.ex.reduce((a,e)=>a+e.sets.reduce((v,s)=>v+(s.kg||0)*s.reps,0),0),sets=x=>x.ex.reduce((a,e)=>a+e.sets.length,0);
+    const tv=w.list.reduce((a,x)=>a+vol(x),0),ts=w.list.reduce((a,x)=>a+sets(x),0);
+    el.innerHTML=`<div class="gwkd"><div class="h"><b>${G.wsel===7?"This week":"Week of "+fmtDay(w.s)}</b><button class="gx" id="gWkX" aria-label="Close">×</button></div>
+      <div class="s">${fmtDay(w.s)} – ${fmtDay(we)} · <span class="${w.n>=GYMP.weekTarget?"ok":w.n?"warn":"faint"}">${w.n} of ${GYMP.weekTarget} sessions</span>${w.n?` · ${ts} sets · ${Math.round(tv).toLocaleString("en-GB")} kg`:""}</div>
+      ${w.list.length?w.list.map(x=>`<div class="r"><span>${new Date(x.date+"T00:00").toLocaleDateString("en-GB",{weekday:"short",day:"numeric"})}</span><div><b>${esc(x.title)}</b><div class="faint">${x.ex.length} exercises · ${sets(x)} sets · ${Math.round(vol(x)).toLocaleString("en-GB")} kg${x.fm&&x.fm.duration_min?` · ${esc(x.fm.duration_min)} min`:""}</div></div></div>`).join("")
+        :`<div class="faint" style="font-size:13px;padding:6px 0">${G.wsel===7?"Nothing logged yet this week.":"No sessions logged that week."}</div>`}</div>`;
+    $("gWkX").onclick=()=>{G.wsel=null;gRenderWeek()}};
+  $("gWeek").querySelectorAll("[data-w]").forEach(b=>b.onclick=()=>{const i=+b.dataset.w;G.wsel=G.wsel===i?null:i;gRenderWeek()});
+  det()}
 
 /* ---- bodyweight: Monday weigh-in → 20 Gym/Weight & Calorie Tracking/Weight Log.md ---- */
 const WLOG="20 Gym/Weight & Calorie Tracking/Weight Log.md";
