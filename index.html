@@ -505,6 +505,18 @@ h1{font-weight:700;letter-spacing:-.03em}
 .rms.pop .wtick,.blk.w.pop .wtick{animation:gringpop .5s cubic-bezier(.3,1.6,.5,1)}
 .wtick{transition:background .25s,border-color .25s}
 @media(prefers-reduced-motion:reduce){.rms.pop,.blk.w.pop,.rms.pop .wtick,.blk.w.pop .wtick{animation:none}.rms::before,.blk.w::before{transition:none}}
+
+/* per-putt table */
+.ptab{background:var(--bg);border:1px solid var(--line2);border-radius:14px;padding:8px;margin-bottom:8px}
+.pth,.ptr{display:grid;grid-template-columns:24px 1fr 1fr 1fr 54px;gap:6px;align-items:center}
+.pth{font-size:10px;font-weight:800;letter-spacing:.03em;white-space:nowrap;text-transform:uppercase;color:var(--faint);padding:2px 0 6px}.pth span{text-align:center}
+.ptr{margin-bottom:6px}.ptr .pn{font-size:12px;font-weight:800;color:var(--faint);text-align:center}
+.ptr input{width:100%;min-width:0;font:700 16px Inter,sans-serif;text-align:center;padding:9px 4px;border-radius:10px;border:1px solid var(--line2);background:#222;color:var(--text);min-height:42px}
+.ptr input:focus{outline:2px solid var(--gold);border-color:transparent}
+.phb{min-height:42px;border-radius:10px;border:1px solid var(--line2);background:#222;color:var(--faint);font:800 17px Inter,sans-serif;cursor:pointer;transition:background .2s,color .2s}
+.phb.y{background:var(--lav);border-color:var(--lav);color:var(--ink)}.phb.n{background:rgba(255,138,101,.16);border-color:rgba(255,138,101,.5);color:#ff8a65}
+.ptsum{display:flex;gap:14px;flex-wrap:wrap;justify-content:space-between;font-size:12px;color:var(--muted);padding:6px 4px 2px;border-top:1px solid var(--line);margin-top:4px}.ptsum b{color:var(--text)}
+.drill small.draft{opacity:1;color:var(--gold);font-weight:700}
 </style>
 </head>
 <body>
@@ -841,8 +853,8 @@ function resultSpec(k){const [sec,task]=String(k).split("::").map(x=>(x||"").tri
   if(sec==="putting"){
     if(/^clutch putts/.test(task))return {single:true,fields:[{id:"v",label:"Attempts to hole 6 in a row",type:"int",ph:"e.g. 11"}],fmt:att,word:"attempts"};
     const slope=[{id:"feel",label:"Slope % · feel",type:"avg",ph:"e.g. 2.1",hint:"Type the average, or every reading with spaces (1.5 3.5 2.5…) and the HUD averages it."},{id:"real",label:"Slope % · real",type:"avg",ph:"e.g. 2.3"}];
-    if(/^9 - 20ft/.test(task))return {fields:slope.concat([{id:"holed",label:"Holed (out of 6)",type:"int0",max:6,ph:"0–6"},{id:"notes",label:"Notes (optional)",type:"text",ph:"e.g. pushes on misses"}]),fmt:v=>`${v.holed}/6 holed · ${v.feel} / ${v.real}`,word:"result"};
-    if(/^<10ft/.test(task))return {fields:slope.concat([{id:"holed",label:"Holed (out of 10)",type:"int0",max:10,ph:"0–10"}]),fmt:v=>`${v.holed}/10 holed · ${v.feel} / ${v.real}`,word:"result"};
+    if(/^9 - 20ft/.test(task))return {table:{rows:6},fields:[{id:"notes",label:"Notes (optional)",type:"text",ph:"e.g. pushes on misses"}],fmt:v=>`${v.holed}/6 holed · ${v.feel} / ${v.real}`,word:"putts"};
+    if(/^<10ft/.test(task))return {table:{rows:10},fields:[],fmt:v=>`${v.holed}/10 holed · ${v.feel} / ${v.real}`,word:"putts"};
   }
   return null}
 function getResult(date,k){const r=RESULTS[date]||{};const key=Object.keys(r).find(x=>nk(x)===nk(k));return key?r[key]:null}
@@ -945,7 +957,7 @@ let DSEL=null,OPEN={},READY=null,PREVDONE={};
 function weekDates(){const t=day0(new Date());const mon=new Date(t.getFullYear(),t.getMonth(),t.getDate()-((t.getDay()+6)%7));return Array.from({length:7},(_,i)=>new Date(mon.getFullYear(),mon.getMonth(),mon.getDate()+i))}
 function renderDay(){
   if(!$("timeline"))return;
-  const t=day0(new Date()),tk=ymd(t);const dates=weekDates();if(!DSEL)DSEL=tk;
+  const t=day0(new Date()),tk=ymd(t);const dates=weekDates();if(!DSEL)DSEL=tk;rdRestore(dates);
   const sel=new Date(DSEL+"T00:00");const isToday=DSEL===tk,isFut=sel>t;
   const pd=(PR&&PR.days||[]).find(d=>ymd(d.date)===DSEL);
   const doneKeys=new Map((pd?pd.done:[]).filter(x=>x.key).map(x=>[x.key,x]));
@@ -956,6 +968,7 @@ function renderDay(){
     const have=new Set((plan&&plan.blocks||[]).map(b=>b.start));const extra=ev.filter(e=>!have.has(e.start));
     if(extra.length)plan=Object.assign({date:DSEL},plan||{},{blocks:((plan&&plan.blocks)||[]).concat(extra).sort((a,b)=>(a.start||"")<(b.start||"")?-1:1)})}
   const blocks=(plan&&plan.blocks)||[];
+  if(ENTRY&&ENTRY.date===DSEL)blocks.forEach((b,i)=>{if((b.drills||[]).some(x=>nk(x)===nk(ENTRY.k)))OPEN[i]=true});
   // strip
   const L=["MON","TUE","WED","THU","FRI","SAT","SUN"];
   $("dStrip").innerHTML=dates.map((d,i)=>{const k=ymd(d),p=(PR&&PR.days||[]).find(x=>ymd(x.date)===k),pl=(PLANDAYS||[]).find(x=>x.date===k);
@@ -985,13 +998,13 @@ function renderDay(){
       ${OPEN[i]?`<div class="bx">${b.why?`<div class="why">${esc(b.why)}</div>`:b.fixed?'<div class="why">From your calendar.</div>':""}
         ${drills.map(k=>{const x=doneKeys.get(nk(k));const on=!!x,lock=on&&!x.hud;const spec=resultSpec(k),res=getResult(DSEL,k);
           const entry=ENTRY&&ENTRY.date===DSEL&&nk(ENTRY.k)===nk(k);
-          let h=`<button class="drill ${gym?"g":""} ${on?"on":""} ${lock?"lock":""}" data-k="${esc(k)}" ${isFut||lock?"disabled":""}><span class="m">${on?"✓":""}</span><span>${esc(keyLabel(k))}</span>${res?`<small class="rv">${esc(spec?spec.fmt(res.v):res.v)}</small>`:lock?"<small>in Daily To Do</small>":""}</button>`;
+          let h=`<button class="drill ${gym?"g":""} ${on?"on":""} ${lock?"lock":""}" data-k="${esc(k)}" ${isFut||lock?"disabled":""}><span class="m">${on?"✓":""}</span><span>${esc(keyLabel(k))}</span>${res?`<small class="rv">${esc(spec?spec.fmt(res.v):res.v)}</small>`:!entry&&!on&&rdAll()[rdKey(DSEL,k)]?'<small class="draft">draft saved</small>':lock?"<small>in Daily To Do</small>":""}</button>`;
           if(lock&&spec&&!res&&!isFut&&!entry)h+=`<button class="addres" data-add="${esc(k)}">+ add ${spec.word}</button>`;
-          if(entry){h+=`<div class="resbox">${spec.fields.map((f,fi)=>`${f.hint?`<div class="rhint">${esc(f.hint)}</div>`:""}<label for="res_${f.id}">${f.label}</label><div class="resrow">
+          if(entry){h+=`<div class="resbox">${spec.table?ptHtml(spec):""}${spec.fields.map((f,fi)=>`${f.hint?`<div class="rhint">${esc(f.hint)}</div>`:""}<label for="res_${f.id}">${f.label}</label><div class="resrow">
               ${f.type==="sg"?`<button class="sgn" id="resSign" aria-label="Switch plus or minus">${ENTRY.neg?"−":"+"}</button>`:""}
               <input id="res_${f.id}" data-f="${f.id}" type="text" inputmode="${f.type==="int"||f.type==="int0"?"numeric":f.type==="text"?"text":"decimal"}" autocomplete="off" placeholder="${esc(f.ph)}" value="${esc((ENTRY.vals||{})[f.id]||"")}">
               ${spec.single?`<button class="rsave" id="resSave">Save</button>`:""}</div>`).join("")}
-            ${spec.single?"":`<button class="rsave" id="resSave" style="align-self:stretch">Save</button>`}
+            ${spec.single?"":`<button class="rsave" id="resSave" style="align-self:stretch">Save${spec.table?" all putts":""}</button>`}
             <div class="resrow2"><span class="rerr" id="resErr"></span>${lock?"":`<button class="lnk" id="resSkip">Tick without a score</button>`}<button class="lnk" id="resCancel">Cancel</button></div></div>`}
           return h}).join("")}
         ${isFut&&drills.length?'<div class="why">Ticks open on the day.</div>':""}</div>`:""}
@@ -1011,15 +1024,18 @@ function renderDay(){
   if(sel.getDay()===1&&WEIGHTS){wBindDay(DSEL);if(WJUST===DSEL){WJUST=null;const b=$("timeline").querySelector(".blk.w");if(b)animDone(b)}}
   $("timeline").querySelectorAll(".blk").forEach(b=>b.onclick=()=>{const i=+b.dataset.i;OPEN[i]=!OPEN[i];renderDay()});
   $("timeline").querySelectorAll(".drill:not([disabled])").forEach(b=>b.onclick=()=>{const k=b.dataset.k;const ticked=(TICKS[DSEL]||[]).some(x=>nk(x)===nk(k));
-    if(!ticked&&resultSpec(k)){ENTRY={date:DSEL,k,vals:{},neg:false};renderDay();setTimeout(()=>{const i=$("timeline").querySelector(".resbox input");if(i)i.focus()},30)}
+    if(!ticked&&resultSpec(k)){openEntry(DSEL,k);renderDay();setTimeout(()=>{const i=$("timeline").querySelector(".resbox input");if(i)i.focus()},30)}
     else toggleTick(DSEL,k)});
-  $("timeline").querySelectorAll(".addres").forEach(b=>b.onclick=()=>{ENTRY={date:DSEL,k:b.dataset.add,vals:{},neg:false,lockedTick:true};renderDay();setTimeout(()=>{const i=$("timeline").querySelector(".resbox input");if(i)i.focus()},30)});
+  $("timeline").querySelectorAll(".addres").forEach(b=>b.onclick=()=>{openEntry(DSEL,b.dataset.add,{lockedTick:true});renderDay();setTimeout(()=>{const i=$("timeline").querySelector(".resbox input");if(i)i.focus()},30)});
   if(ENTRY&&$("resSave")){const spec=resultSpec(ENTRY.k);const box=$("timeline").querySelector(".resbox");
-    box.querySelectorAll("input").forEach(i=>{i.oninput=e=>{ENTRY.vals[i.dataset.f]=e.target.value};i.onkeydown=e=>{if(e.key==="Enter")$("resSave").click()}});
-    if($("resSign"))$("resSign").onclick=()=>{ENTRY.neg=!ENTRY.neg;renderDay()};
-    $("resCancel").onclick=()=>{ENTRY=null;renderDay()};
-    if($("resSkip"))$("resSkip").onclick=()=>{const k=ENTRY.k;ENTRY=null;toggleTick(DSEL,k)};
+    box.querySelectorAll("input[data-f]").forEach(i=>{i.oninput=e=>{ENTRY.vals[i.dataset.f]=e.target.value;rdSave()};i.onkeydown=e=>{if(e.key==="Enter")$("resSave").click()}});
+    if(spec.table)ptBind(box,spec);
+    if($("resSign"))$("resSign").onclick=()=>{ENTRY.neg=!ENTRY.neg;rdSave();renderDay()};
+    $("resCancel").onclick=()=>{if(rdHasData(ENTRY)&&!confirm("Discard what you've entered for this drill?"))return;rdClear(ENTRY.date,ENTRY.k);ENTRY=null;renderDay()};
+    if($("resSkip"))$("resSkip").onclick=()=>{const k=ENTRY.k;rdClear(ENTRY.date,k);ENTRY=null;toggleTick(DSEL,k)};
     $("resSave").onclick=()=>{const out={};let err="";
+      if(spec.table){const pt=ptCollect(spec);if(pt.err)err=pt.err;else Object.assign(out,pt.out)}
+      if(!err)
       for(const f of spec.fields){let raw=String((box.querySelector(`[data-f="${f.id}"]`)||{}).value||"").trim();
         if(f.type==="text"){if(raw)out[f.id]=raw.slice(0,200);continue}
         raw=raw.replace(/,(?=\d)/g,".");
@@ -1037,7 +1053,7 @@ function renderDay(){
       const v=spec.single?out.v:out;const k=ENTRY.k,date=DSEL;
       RESULTS[date]=RESULTS[date]||{};Object.keys(RESULTS[date]).forEach(x=>{if(nk(x)===nk(k))delete RESULTS[date][x]});
       RESULTS[date][k]={v,id:date+"|"+nk(k)+"|"+Date.now().toString(36)};
-      const lockedTick=ENTRY.lockedTick;ENTRY=null;
+      const lockedTick=ENTRY.lockedTick;ENTRY=null;rdClear(date,k);
       const list=(TICKS[date]||[]).slice();if(!lockedTick&&!list.some(x=>nk(x)===nk(k))){list.push(k);TICKS[date]=list}
       renderPractice();saveTicks()}}
 }
@@ -1765,6 +1781,53 @@ function renderReview(j){REVIEWS=(j&&j.reviews||[]).slice().sort((a,b)=>a.week_s
 /* shared "done" animation: overlay sweeps in, ring pulses, tick pops (same feel as a finished exercise) */
 function animDone(el){el.classList.remove("done","pop");void el.offsetWidth;el.classList.add("done","pop");
   try{navigator.vibrate&&navigator.vibrate([30,40,60])}catch(e){}setTimeout(()=>el.classList.remove("pop"),700)}
+
+/* ---- per-putt table for the 9–20ft and <10ft drills; entries survive the phone locking or the tab reloading ---- */
+const RD="hud_rdrafts";let RD_DONE=false;
+function rdAll(){try{return JSON.parse(ls.get(RD,"{}"))||{}}catch(e){return {}}}
+function rdKey(d,k){return d+"|"+nk(k)}
+function rdHasData(E){if(!E)return false;const v=E.vals||{};return Object.keys(v).some(x=>x==="rows"?(v.rows||[]).some(r=>r&&(r.feel||r.real||r.ft||r.holed!=null)):String(v[x]||"").trim()!=="")}
+function rdSave(){if(!ENTRY)return;const a=rdAll(),key=rdKey(ENTRY.date,ENTRY.k);
+  if(rdHasData(ENTRY))a[key]={vals:ENTRY.vals,neg:ENTRY.neg,ts:Date.now()};else delete a[key];
+  for(const x of Object.keys(a))if(Date.now()-(a[x].ts||0)>14*864e5)delete a[x];   // old drafts expire after 2 weeks
+  ls.set(RD,JSON.stringify(a));ls.set("hud_ropen",JSON.stringify({date:ENTRY.date,k:ENTRY.k,lockedTick:!!ENTRY.lockedTick}))}
+function rdClear(d,k){const a=rdAll();delete a[rdKey(d,k)];ls.set(RD,JSON.stringify(a));ls.set("hud_ropen","null")}
+function openEntry(date,k,extra){const d=rdAll()[rdKey(date,k)];ENTRY=Object.assign({date,k,vals:d?JSON.parse(JSON.stringify(d.vals)):{},neg:d?!!d.neg:false},extra||{});
+  ls.set("hud_ropen",JSON.stringify({date,k,lockedTick:!!(extra&&extra.lockedTick)}))}
+function rdRestore(dates){if(RD_DONE||ENTRY)return;RD_DONE=true;
+  try{const o=JSON.parse(ls.get("hud_ropen","null"));if(!o||!rdAll()[rdKey(o.date,o.k)])return;if(!dates.some(d=>ymd(d)===o.date))return;
+    DSEL=o.date;openEntry(o.date,o.k,o.lockedTick?{lockedTick:true}:null);setTimeout(()=>toast("Restored your unsaved entries"),400)}catch(e){}}
+function ptHtml(spec){const n=spec.table.rows,rows=ENTRY.vals.rows||[];const hc=v=>v===true?"y":v===false?"n":"";
+  return `<div class="ptab" role="table" aria-label="Putt by putt">
+    <div class="pth" role="row"><span>#</span><span>Feel %</span><span>Real %</span><span>ft</span><span>Holed</span></div>
+    ${Array.from({length:n},(_,i)=>{const r=rows[i]||{};return `<div class="ptr" role="row" data-r="${i}"><span class="pn">${i+1}</span>
+      <input data-c="feel" type="text" inputmode="decimal" autocomplete="off" value="${esc(r.feel||"")}" aria-label="Putt ${i+1} feel %">
+      <input data-c="real" type="text" inputmode="decimal" autocomplete="off" value="${esc(r.real||"")}" aria-label="Putt ${i+1} real %">
+      <input data-c="ft" type="text" inputmode="decimal" autocomplete="off" value="${esc(r.ft||"")}" aria-label="Putt ${i+1} feet">
+      <button class="phb ${hc(r.holed)}" data-h="${i}" aria-label="Putt ${i+1} holed">${r.holed===true?"✓":r.holed===false?"✗":"–"}</button></div>`}).join("")}
+    <div class="ptsum" id="ptSum"></div></div><div class="rhint" style="margin:-2px 0 8px">Tap <b>Holed</b> to switch ✓ holed → ✗ missed → – blank. Saved on this phone as you type.</div>`}
+function ptSum(spec){const rows=ENTRY.vals.rows||[];const num=x=>{const n=Number(String(x??"").replace(",","."));return String(x??"").trim()!==""&&isFinite(n)?n:null};
+  const fe=rows.map(r=>r&&num(r.feel)).filter(x=>x!=null),re=rows.map(r=>r&&num(r.real)).filter(x=>x!=null),ho=rows.filter(r=>r&&r.holed===true).length;
+  const avg=a=>a.length?(Math.round(a.reduce((x,y)=>x+y,0)/a.length*100)/100):"–";
+  const el=$("ptSum");if(el)el.innerHTML=`<span>Holed <b>${ho} / ${spec.table.rows}</b></span><span>Avg feel <b>${avg(fe)}</b></span><span>Avg real <b>${avg(re)}</b></span>`}
+function ptBind(box,spec){const rows=ENTRY.vals.rows=ENTRY.vals.rows||[];const inputs=[...box.querySelectorAll(".ptr input")];
+  inputs.forEach((i,idx)=>{const r=+i.closest(".ptr").dataset.r,c=i.dataset.c;
+    i.oninput=e=>{(rows[r]=rows[r]||{})[c]=e.target.value.replace(",",".");rdSave();ptSum(spec)};
+    i.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();const nx=inputs[idx+1];if(nx)nx.focus();else i.blur()}}});
+  box.querySelectorAll("[data-h]").forEach(b=>b.onclick=()=>{const r=+b.dataset.h,o=rows[r]=rows[r]||{};o.holed=o.holed===true?false:o.holed===false?null:true;
+    b.className="phb "+(o.holed===true?"y":o.holed===false?"n":"");b.textContent=o.holed===true?"✓":o.holed===false?"✗":"–";rdSave();ptSum(spec)});
+  ptSum(spec)}
+function ptCollect(spec){const rows=ENTRY.vals.rows||[];const putts=[];
+  for(let r=0;r<spec.table.rows;r++){const o=rows[r]||{};const num=x=>{const s=String(x??"").trim().replace(",",".");if(s==="")return null;const n=Number(s);return isFinite(n)?n:NaN};
+    const p={feel:num(o.feel),real:num(o.real),ft:num(o.ft),holed:o.holed===true?true:o.holed===false?false:null};
+    if([p.feel,p.real,p.ft].some(Number.isNaN))return {err:`Putt ${r+1}: numbers only`};
+    if((p.feel!=null&&(p.feel<0||p.feel>20))||(p.real!=null&&(p.real<0||p.real>20)))return {err:`Putt ${r+1}: slope % looks too big`};
+    if(p.ft!=null&&(p.ft<0||p.ft>100))return {err:`Putt ${r+1}: ft looks wrong`};
+    if(p.feel!=null||p.real!=null||p.ft!=null||p.holed!=null)putts.push(Object.assign({n:r+1},p))}
+  const fe=putts.map(p=>p.feel).filter(x=>x!=null),re=putts.map(p=>p.real).filter(x=>x!=null);
+  if(!fe.length||!re.length)return {err:"Enter at least one Feel % and one Real %"};
+  const avg=a=>Math.round(a.reduce((x,y)=>x+y,0)/a.length*100)/100;
+  return {out:{feel:avg(fe),real:avg(re),holed:putts.filter(p=>p.holed===true).length,putts}}}
 </script>
 </body>
 </html>
