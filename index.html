@@ -450,6 +450,23 @@ h1{font-weight:700;letter-spacing:-.03em}
 .gstartbtn{width:100%;justify-content:center;min-height:48px;font-size:15px}
 #p-gym .c8 .gtwrap{grid-template-columns:minmax(0,1fr) minmax(220px,300px)}
 @media(max-width:800px){#p-gym .c8 .gtwrap{grid-template-columns:1fr}}
+
+/* key lifts */
+.glifts{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:10px;margin-bottom:16px}
+.glift{font:inherit;color:var(--text);text-align:left;cursor:pointer;background:var(--panel2);border:1px solid var(--line2);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.glift:hover{border-color:var(--muted)}.glift.on{border-color:var(--gold);background:#2a1f12}.glift.stall{border-color:rgba(255,138,101,.55)}
+.glift .gln{font-size:13px;font-weight:700;line-height:1.3;min-height:34px}.glift .glv{font-size:12px;color:var(--muted)}.glift .glv b{font-size:20px;color:var(--text);letter-spacing:-.02em}
+.glift svg{display:block;margin:2px 0}.glift .glc{font-size:11.5px;font-weight:600}
+.gdetail{border-top:1px solid var(--line);padding-top:14px}
+.gnext{margin-top:14px;background:var(--panel2);border-radius:14px;padding:10px 12px;font-size:13px;line-height:1.45}
+.gnext span{display:block;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}.gnext b{font-size:15px}.gnext div{color:var(--muted)}
+/* weigh-in */
+.wentry{margin-top:14px}.wentry label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px}
+.wentry .resrow,.blk.w .resrow{display:flex;gap:8px}.wentry input,.blk.w input{flex:1;max-width:220px;font:700 18px Inter,sans-serif;padding:10px 12px;border-radius:12px;border:1px solid var(--line2);background:var(--bg);color:var(--text);min-height:46px}
+.blk.w{display:block;cursor:default;background:#1d2621;border:1px solid rgba(143,209,158,.35)}.blk.w.done{background:#173022}
+.blk.w .bt{color:var(--lav)}.wrow{display:flex;align-items:center;gap:12px;margin-top:6px}
+.wtick{width:34px;height:34px;flex:none;border-radius:10px;border:2px solid var(--lav);background:none;color:var(--ink);font:800 17px Inter,sans-serif;cursor:pointer}
+.wtick.on{background:var(--lav)}
 </style>
 </head>
 <body>
@@ -515,7 +532,8 @@ h1{font-weight:700;letter-spacing:-.03em}
     <div class="grid">
       <section class="card c8"><div class="ch"><span class="ct">Sessions</span><span class="cm"><button class="btn" id="gNewTpl" style="padding:6px 12px">+ New template</button> <button class="btn" id="gLibBtn" style="padding:6px 12px">Exercise library</button></span></div><div id="gStart"><div class="empty">Loading…</div></div></section>
       <section class="card c4"><div class="ch"><span class="ct">This week</span><span class="cm" id="gWeekMeta"></span></div><div id="gWeek"></div></section>
-      <section class="card c12"><div class="ch"><span class="ct">Progress</span><span class="cm" id="gProgMeta"></span></div><div id="gProg"></div></section>
+      <section class="card c12"><div class="ch"><span class="ct">Key lifts</span><span class="cm" id="gProgMeta"></span></div><div id="gProg"></div></section>
+      <section class="card c12"><div class="ch"><span class="ct">Bodyweight</span><span class="cm" id="gWeightMeta"></span></div><div id="gWeight"><div class="empty">Loading…</div></div></section>
       <section class="card c12"><div class="ch"><span class="ct">Recent sessions</span><span class="cm" id="gRecMeta"></span></div><div id="gRecent"></div></section>
     </div>
   </main>
@@ -894,7 +912,7 @@ function renderDay(){
   let plan=(PLANDAYS||[]).find(x=>x.date===DSEL);
   // calendar events (today) that the plan doesn't already include
   if(isToday&&CAL.length){const hm=d=>`${pad(d.getHours())}:${pad(d.getMinutes())}`;
-    const ev=CAL.filter(e=>!e.allDay&&+day0(e.s)===+t&&!/^◆/.test(e.title)).map(e=>({start:hm(e.s),end:hm(e.e),title:e.title,fixed:true}));
+    const ev=CAL.filter(e=>!e.allDay&&+day0(e.s)===+t&&!/^◆/.test(e.title)&&!/weigh/i.test(e.title)).map(e=>({start:hm(e.s),end:hm(e.e),title:e.title,fixed:true}));
     const have=new Set((plan&&plan.blocks||[]).map(b=>b.start));const extra=ev.filter(e=>!have.has(e.start));
     if(extra.length)plan=Object.assign({date:DSEL},plan||{},{blocks:((plan&&plan.blocks)||[]).concat(extra).sort((a,b)=>(a.start||"")<(b.start||"")?-1:1)})}
   const blocks=(plan&&plan.blocks)||[];
@@ -914,7 +932,7 @@ function renderDay(){
   const curIdx=isToday?blocks.findIndex(b=>mins(b.start)<=nowM&&mins(b.end||b.start)>nowM):-1;
   if(!Object.keys(OPEN).length&&isToday){const o=curIdx>=0?curIdx:nextIdx;if(o>=0&&(blocks[o].drills||[]).length)OPEN[o]=true}
   const used=new Set();
-  let html="";
+  let html=(sel.getDay()===1&&WEIGHTS)?wBlockHtml(DSEL):"";
   blocks.forEach((b,i)=>{
     if(isToday&&i===nextIdx&&curIdx<0)html+=`<div class="nowl"><span>NOW</span><i></i></div>`;
     const drills=(b.drills||[]);drills.forEach(k=>used.add(nk(k)));
@@ -945,6 +963,7 @@ function renderDay(){
   if(!blocks.length&&!extra.length)html+=`<div class="also"><div class="faint">${isFut||isToday?"Nothing planned. The plan arrives the evening before.":"Nothing logged this day."}</div></div>`;
   if(plan&&plan.note&&!isFut)html+=`<div class="note" style="margin-top:4px">${esc(plan.note)}</div>`;
   $("timeline").innerHTML=html;
+  if(sel.getDay()===1&&WEIGHTS)wBindDay(DSEL);
   $("timeline").querySelectorAll(".blk").forEach(b=>b.onclick=()=>{const i=+b.dataset.i;OPEN[i]=!OPEN[i];renderDay()});
   $("timeline").querySelectorAll(".drill:not([disabled])").forEach(b=>b.onclick=()=>{const k=b.dataset.k;const ticked=(TICKS[DSEL]||[]).some(x=>nk(x)===nk(k));
     if(!ticked&&resultSpec(k)){ENTRY={date:DSEL,k,vals:{},neg:false};renderDay();setTimeout(()=>{const i=$("timeline").querySelector(".resbox input");if(i)i.focus()},30)}
@@ -1128,7 +1147,7 @@ $("relinkBtn").onclick=()=>{$("settings").classList.remove("show");connect()};
 function showTab(t){if(!document.getElementById("p-"+t))t="today";
   document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("on",p.id==="p-"+t));
   document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));
-  if(t==="gym")setTimeout(()=>{try{G.byEx&&gRenderProg()}catch(e){}},0);ls.set("hud_tab",t);if(location.hash!=="#"+t)history.replaceState(null,"","#"+t);window.scrollTo(0,0)}
+  if(t==="gym")setTimeout(()=>{try{G.byEx&&gRenderProg();gRenderWeight()}catch(e){}},0);ls.set("hud_tab",t);if(location.hash!=="#"+t)history.replaceState(null,"","#"+t);window.scrollTo(0,0)}
 document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
 document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>showTab(b.dataset.go));
 showTab((location.hash||"").slice(1)||ls.get("hud_tab","today"));
@@ -1214,7 +1233,8 @@ async function loadGym(){
   try{const list=(await FS.list(GYMP.tpl)).filter(f=>f.kind==="file"&&/\.md$/.test(f.name));
     tpls=await Promise.all(list.map(async f=>{const p=`${GYMP.tpl}/${f.name}`;delete G.cache[p];return gParseTpl(await gText(p),f.name)}))}catch(e){}
   tpls.sort((a,b)=>(a.by===b.by?0:a.by==="Mike"?-1:1)||a.name.localeCompare(b.name));
-  return {hist:recent,tpls}}
+  const weights=await loadWeights();
+  return {hist:recent,tpls,weights}}
 function gIndex(){const by={};
   for(const s of G.hist)for(const e of s.ex){const sets=e.sets.filter(x=>x.reps>0);if(!sets.length)continue;
     const top=sets.reduce((a,b)=>((b.kg||0)>(a.kg||0)||((b.kg||0)===(a.kg||0)&&b.reps>a.reps))?b:a);
@@ -1239,52 +1259,12 @@ function gSuggest(name,tplEx){
 
 /* ---- render: Gym tab ---- */
 const gWeekStart=d=>{const x=day0(d);x.setDate(x.getDate()-((x.getDay()+6)%7));return x};
-function renderGym(r){G.hist=r.hist;G.tpls=r.tpls;gIndex();gRenderStart();gRenderWeek();gRenderProg();gRenderRecent();gRenderTpls()}
+function renderGym(r){G.hist=r.hist;G.tpls=r.tpls;WEIGHTS=r.weights||[];gIndex();gRenderStart();gRenderWeek();gRenderProg();gRenderWeight();gRenderRecent();try{renderDay()}catch(e){}}
 function gPlannedToday(){const t=ymd(new Date());const p=(PLANS||[]).find(x=>x.date===t);if(!p)return null;
   return (p.blocks||[]).find(b=>/gym|workout|1079|squat|deadlift|s&c/i.test(b.title||""))||null}
 function gMatchTpl(title){if(!title)return null;const t=gKey(title);let best=null,bs=0;
   for(const tp of G.tpls){const words=gKey(tp.name).split(" ");const s=words.filter(w=>t.includes(w)).length/words.length;if(s>bs){bs=s;best=tp}}return bs>=.5?best:null}
 function gRenderStart(){gRenderSessions()}
-function gRenderWeek(){
-  const ws=gWeekStart(new Date());const weeks=[];for(let i=7;i>=0;i--){const s=new Date(ws);s.setDate(s.getDate()-7*i);weeks.push({s,n:0,vol:0})}
-  for(const h of G.hist){const d=new Date(h.date+"T00:00");const w=weeks.find(w=>d>=w.s&&d<new Date(w.s.getTime()+7*864e5));if(w){w.n++;w.vol+=h.ex.reduce((a,e)=>a+e.sets.reduce((v,x)=>v+(x.kg||0)*x.reps,0),0)}}
-  const cur=weeks[7],prev=weeks[6];const mx=Math.max(GYMP.weekTarget,...weeks.map(w=>w.n));
-  $("gWeekMeta").textContent=`target ${GYMP.weekTarget}`;
-  const dv=prev.vol?Math.round((cur.vol-prev.vol)/prev.vol*100):null;
-  $("gWeek").innerHTML=`<div class="gbig">${cur.n}<small>/ ${GYMP.weekTarget} sessions</small></div>
-    <div class="sub2" style="margin-top:8px">${Math.round(cur.vol).toLocaleString("en-GB")} kg lifted${dv!=null?` · <span class="${dv>=0?"ok":"warn"}">${dv>=0?"+":""}${dv}% vs last week</span>`:""}</div>
-    <div class="gwk" role="img" aria-label="Sessions per week, last 8 weeks">${weeks.map((w,i)=>`<div title="Week of ${fmtDay(w.s)}: ${w.n} session${w.n===1?"":"s"}"><i class="${w.n?"":"dim"}" style="height:${Math.max(4,w.n/mx*100)}%"></i><span>${i===7?"Now":w.s.getDate()+"/"+(w.s.getMonth()+1)}</span></div>`).join("")}</div>`}
-function gRenderProg(){
-  const keys=Object.keys(G.byEx).sort((a,b)=>G.byEx[b].rows.length-G.byEx[a].rows.length||G.byEx[a].name.localeCompare(G.byEx[b].name));
-  if(!keys.length){$("gProg").innerHTML='<div class="empty">Log a session and your progress shows here.</div>';$("gProgMeta").textContent="";return}
-  if(!G.byEx[G.sel])G.sel=keys[0];const X=G.byEx[G.sel],rows=X.rows;$("gProgMeta").textContent=`${rows.length} session${rows.length===1?"":"s"}`;
-  const bw=rows.every(r=>!r.top.kg);const val=r=>bw?r.top.reps:r.top.kg;const unit=bw?"reps":"kg";
-  const best=rows.reduce((a,b)=>val(b)>val(a)?b:a);const bestE=rows.reduce((m,r)=>Math.max(m,r.e1rm||0),0);
-  const W=Math.max(300,Math.min(1240,($("gProg").clientWidth||640))),H=W<500?170:220,P={l:38,r:14,t:14,b:26};const vs=rows.map(val);let lo=Math.min(...vs),hi=Math.max(...vs);if(lo===hi){lo-=lo?lo*.1:1;hi+=hi?hi*.1:1}
-  const pad2=(hi-lo)*.15;lo=Math.max(0,lo-pad2);hi+=pad2;
-  const x=i=>rows.length===1?(P.l+W-P.r)/2:P.l+i*(W-P.l-P.r)/(rows.length-1),y=v=>P.t+(1-(v-lo)/(hi-lo))*(H-P.t-P.b);
-  const ticks=[lo,(lo+hi)/2,hi];
-  const svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(X.name)}: top set ${unit} per session">
-    ${ticks.map(t=>`<line x1="${P.l}" x2="${W-P.r}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)" stroke-width="1"/><text x="${P.l-8}" y="${y(t)+4}" text-anchor="end" font-size="11" fill="var(--faint)">${Math.round(t*10)/10}</text>`).join("")}
-    ${rows.length>1?`<polyline fill="none" stroke="var(--gold)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" points="${rows.map((r,i)=>x(i)+","+y(val(r))).join(" ")}"/>`:""}
-    ${rows.map((r,i)=>`<circle cx="${x(i)}" cy="${y(val(r))}" r="5" fill="var(--gold)" stroke="var(--panel)" stroke-width="2"/>`).join("")}
-    ${rows.map((r,i)=>(i===0||i===rows.length-1||rows.length<=6)?`<text x="${x(i)}" y="${H-6}" text-anchor="middle" font-size="11" fill="var(--faint)">${new Date(r.date+"T00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short"})}</text>`:"").join("")}
-    ${rows.map((r,i)=>`<rect data-i="${i}" x="${x(i)-Math.max(12,(W-P.l-P.r)/rows.length/2)}" y="0" width="${Math.max(24,(W-P.l-P.r)/rows.length)}" height="${H}" fill="transparent"/>`).join("")}</svg>`;
-  $("gProg").innerHTML=`<div class="grow"><select class="gsel" id="gSel">${keys.map(k=>`<option value="${esc(k)}" ${k===G.sel?"selected":""}>${esc(G.byEx[k].name)} (${G.byEx[k].rows.length})</option>`).join("")}</select>
-      <span class="faint" style="font-size:12px">Top set ${unit} per session</span></div>
-    <div class="gchart" id="gChart">${svg}<div class="gtip" id="gTip"></div></div>
-    <div class="gstats"><div><span>Last top set</span><b>${bw?rows.at(-1).top.reps+" reps":gFmtKg(rows.at(-1).top.kg)+" kg × "+rows.at(-1).top.reps}</b></div>
-      <div><span>Best</span><b>${bw?best.top.reps+" reps":gFmtKg(best.top.kg)+" kg × "+best.top.reps}</b></div>
-      <div><span>Est. 1-rep max</span><b>${bestE?gFmtKg(Math.round(bestE))+" kg":"–"}</b></div></div>
-    <div class="ghist">${rows.slice(-6).reverse().map(r=>`<div class="r"><span>${fmtDay(new Date(r.date+"T00:00"))}</span><span>${r.sets.map(s=>s.reps).join(" / ")} @ ${r.bw&&!r.top.kg?"bodyweight":[...new Set(r.sets.map(s=>gFmtKg(s.kg)))].join(" / ")+" kg"} <span class="faint">· ${esc(r.session)}</span></span></div>`).join("")}</div>
-    <div class="note">Est. 1-rep max uses the Epley formula on sets of 12 reps or fewer — a guide for tracking, not a number to test.</div>`;
-  window.addEventListener("resize",()=>{clearTimeout(G.rz);G.rz=setTimeout(()=>{if($("p-gym").classList.contains("on"))gRenderProg()},200)},{once:true});
-  $("gSel").onchange=e=>{G.sel=e.target.value;ls.set("hud_gym_sel",G.sel);gRenderProg()};
-  const tip=$("gTip"),ch=$("gChart");
-  ch.querySelectorAll("rect[data-i]").forEach(rc=>{const show=()=>{const i=+rc.dataset.i,r=rows[i];const box=ch.getBoundingClientRect(),sc=box.width/W;
-    tip.innerHTML=`<b>${fmtDay(new Date(r.date+"T00:00"))}</b> · ${bw?r.top.reps+" reps":gFmtKg(r.top.kg)+" kg × "+r.top.reps}<br><span class="faint">${r.sets.map(s=>s.reps).join("/")} reps${r.e1rm?" · e1RM "+Math.round(r.e1rm)+" kg":""}</span>`;
-    tip.style.left=x(i)*sc+"px";tip.style.top=y(val(r))*sc+"px";tip.style.opacity=1};
-    rc.addEventListener("mouseenter",show);rc.addEventListener("touchstart",show,{passive:true});rc.addEventListener("mouseleave",()=>tip.style.opacity=0)})}
 function gRenderRecent(){const s=G.hist.slice(-8).reverse();$("gRecMeta").textContent=G.hist.length?`${G.hist.length} logged`:"";
   $("gRecent").innerHTML=s.length?s.map(h=>{const sets=h.ex.reduce((a,e)=>a+e.sets.length,0),vol=h.ex.reduce((a,e)=>a+e.sets.reduce((v,x)=>v+(x.kg||0)*x.reps,0),0);
     return `<div class="gsess"><div class="h"><span>${esc(h.title)}</span><span>${fmtDay(new Date(h.date+"T00:00"))} · ${esc(h.folder)}</span></div>
@@ -1548,6 +1528,137 @@ function gUpdateEx(i,justDone){const e=G.draft.ex[i],card=$("gLogBody").querySel
   const was=card.classList.contains("complete");card.classList.toggle("complete",all);
   if(all&&!was&&justDone){card.classList.remove("pop");void card.offsetWidth;card.classList.add("pop");try{navigator.vibrate&&navigator.vibrate([30,40,60])}catch(e){}}
   if(!all)card.classList.remove("pop")}
+
+/* ---- key lifts: one sparkline per exercise, e1RM by default, PRs, stall flags ---- */
+function gMetric(rows){const e1=rows.every(r=>r.e1rm);const bw=rows.every(r=>!r.top.kg);
+  return e1?{id:"e1",unit:"kg",label:"Est. 1-rep max",v:r=>r.e1rm}:bw?{id:"reps",unit:"reps",label:"Top-set reps",v:r=>r.top.reps}:{id:"top",unit:"kg",label:"Top-set weight",v:r=>r.top.kg}}
+function gStall(rows,v){if(rows.length<4)return false;const prior=v(rows[rows.length-4]);return Math.max(...rows.slice(-3).map(v))<=prior*1.005}
+function gChange(rows,v){if(rows.length<2)return null;const last=rows[rows.length-1],cut=new Date(new Date(last.date+"T00:00").getTime()-28*864e5);
+  const base=rows.find(r=>new Date(r.date+"T00:00")>=cut&&r!==last)||rows[rows.length-2];const a=v(base),b=v(last);return a?{pct:Math.round((b-a)/a*1000)/10,since:base.date}:null}
+function gSpark(rows,v,w=120,h=34){const vs=rows.map(v);let lo=Math.min(...vs),hi=Math.max(...vs);if(lo===hi){lo-=1;hi+=1}
+  const x=i=>rows.length===1?w/2:3+i*(w-6)/(rows.length-1),y=val=>3+(1-(val-lo)/(hi-lo))*(h-6);
+  return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" aria-hidden="true">${rows.length>1?`<polyline fill="none" stroke="var(--gold)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" points="${rows.map((r,i)=>x(i)+","+y(v(r))).join(" ")}"/>`:""}<circle cx="${x(rows.length-1)}" cy="${y(vs.at(-1))}" r="3.5" fill="var(--gold)"/></svg>`}
+function gKeyLifts(){const inTpl=new Set(G.tpls.flatMap(t=>t.ex.map(e=>e.key)));
+  return Object.keys(G.byEx).filter(k=>inTpl.has(k)||G.byEx[k].rows.length>=2)
+    .sort((a,b)=>(inTpl.has(b)-inTpl.has(a))||G.byEx[b].rows.length-G.byEx[a].rows.length||G.byEx[a].name.localeCompare(G.byEx[b].name))}
+function gRenderProg(){
+  const keys=gKeyLifts();
+  if(!keys.length){$("gProg").innerHTML='<div class="empty">Log a session and your progress shows here.</div>';$("gProgMeta").textContent="";return}
+  if(!G.byEx[G.sel])G.sel=keys[0];
+  const stalled=keys.filter(k=>{const r=G.byEx[k].rows;return gStall(r,gMetric(r).v)});
+  $("gProgMeta").textContent=stalled.length?`${stalled.length} stalled`:`${keys.length} lifts`;
+  const tiles=keys.map(k=>{const X=G.byEx[k],r=X.rows,M=gMetric(r),ch=gChange(r,M.v),st=gStall(r,M.v);const last=M.v(r.at(-1));
+    return `<button class="glift ${k===G.sel?"on":""} ${st?"stall":""}" data-k="${esc(k)}"><div class="gln">${esc(X.name)}</div>
+      <div class="glv"><b>${gFmtKg(Math.round(last*10)/10)}</b> ${M.unit}${M.id==="e1"?' <span class="faint">e1RM</span>':""}</div>${gSpark(r,M.v)}
+      <div class="glc">${st?'<span class="warn">Stalled · raise with Mike</span>':ch?`<span class="${ch.pct>0?"ok":ch.pct<0?"warn":"faint"}">${ch.pct>0?"▲":ch.pct<0?"▼":"="} ${Math.abs(ch.pct)}%</span> <span class="faint">since ${fmtDay(new Date(ch.since+"T00:00"))}</span>`:'<span class="faint">1 session so far</span>'}</div></button>`}).join("");
+  const X=G.byEx[G.sel],rows=X.rows,M0=gMetric(rows);const mode=G.pmode==="top"&&M0.id==="e1"?"top":M0.id;
+  const M=mode==="top"?{id:"top",unit:"kg",label:"Top-set weight",v:r=>r.top.kg}:M0;const v=M.v;
+  const W=Math.max(300,Math.min(1240,($("gProg").clientWidth||640))),H=W<500?170:210,P={l:38,r:14,t:16,b:26};
+  const vs=rows.map(v);let lo=Math.min(...vs),hi=Math.max(...vs);if(lo===hi){lo-=lo?lo*.08:1;hi+=hi?hi*.08:1}const pd=(hi-lo)*.18;lo=Math.max(0,lo-pd);hi+=pd;
+  const x=i=>rows.length===1?(P.l+W-P.r)/2:P.l+i*(W-P.l-P.r)/(rows.length-1),y=val=>P.t+(1-(val-lo)/(hi-lo))*(H-P.t-P.b);
+  let best=-1;const pr=rows.map(r=>{const b=v(r)>best;if(b)best=v(r);return b});
+  const tk=[lo,(lo+hi)/2,hi];
+  const svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(X.name)}: ${M.label} per session">
+    ${tk.map(t=>`<line x1="${P.l}" x2="${W-P.r}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)"/><text x="${P.l-8}" y="${y(t)+4}" text-anchor="end" font-size="11" fill="var(--faint)">${Math.round(t)}</text>`).join("")}
+    ${rows.length>1?`<polyline fill="none" stroke="var(--gold)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" points="${rows.map((r,i)=>x(i)+","+y(v(r))).join(" ")}"/>`:""}
+    ${rows.map((r,i)=>pr[i]&&i>0?`<circle cx="${x(i)}" cy="${y(v(r))}" r="9" fill="none" stroke="var(--lav)" stroke-width="2"/>`:"").join("")}
+    ${rows.map((r,i)=>`<circle cx="${x(i)}" cy="${y(v(r))}" r="5" fill="var(--gold)" stroke="var(--panel)" stroke-width="2"/>`).join("")}
+    ${rows.map((r,i)=>(i===0||i===rows.length-1||rows.length<=6)?`<text x="${x(i)}" y="${H-6}" text-anchor="middle" font-size="11" fill="var(--faint)">${new Date(r.date+"T00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short"})}</text>`:"").join("")}
+    ${rows.map((r,i)=>`<rect data-i="${i}" x="${x(i)-Math.max(12,(W-P.l-P.r)/rows.length/2)}" y="0" width="${Math.max(24,(W-P.l-P.r)/rows.length)}" height="${H}" fill="transparent"/>`).join("")}</svg>`;
+  const bestRow=rows.reduce((a,b)=>v(b)>v(a)?b:a);
+  $("gProg").innerHTML=`<div class="glifts">${tiles}</div>
+    <div class="gdetail"><div class="grow" style="justify-content:space-between"><div><b style="font-size:16px">${esc(X.name)}</b> <span class="faint" style="font-size:12px">· ${M.label} per session</span></div>
+      ${M0.id==="e1"?`<div class="gseg"><button data-pm="e1" class="${mode==="e1"?"on":""}">Est. 1RM</button><button data-pm="top" class="${mode==="top"?"on":""}">Top set</button></div>`:""}</div>
+    <div class="gchart" id="gChart">${svg}<div class="gtip" id="gTip"></div></div>
+    <div class="gleg" style="justify-content:flex-start"><span><i style="background:var(--gold);border-radius:50%"></i>Session</span><span><i style="border:2px solid var(--lav);background:none;border-radius:50%;width:12px;height:12px;box-sizing:border-box"></i>New best</span></div>
+    <div class="gstats"><div><span>Last top set</span><b>${rows.at(-1).top.kg?gFmtKg(rows.at(-1).top.kg)+" kg × "+rows.at(-1).top.reps:rows.at(-1).top.reps+" reps"}</b></div>
+      <div><span>Best ${M.id==="reps"?"set":M.id==="e1"&&mode==="e1"?"e1RM":"set"}</span><b>${M.id==="reps"?bestRow.top.reps+" reps":mode==="e1"?gFmtKg(Math.round(bestRow.e1rm))+" kg":gFmtKg(bestRow.top.kg)+" kg × "+bestRow.top.reps}</b></div>
+      <div><span>Sessions</span><b>${rows.length}</b></div></div>
+    <div class="ghist">${rows.slice(-6).reverse().map(r=>`<div class="r"><span>${fmtDay(new Date(r.date+"T00:00"))}</span><span>${r.sets.map(s=>s.reps).join(" / ")} @ ${r.bw&&!r.top.kg?"bodyweight":[...new Set(r.sets.map(s=>gFmtKg(s.kg)))].join(" / ")+" kg"}${r.e1rm?` <span class="faint">· e1RM ${Math.round(r.e1rm)}</span>`:""}</span></div>`).join("")}</div>
+    <div class="note">Est. 1-rep max (Epley) combines weight and reps, so 28 kg × 8 and 26 kg × 10 count as about the same strength. A guide for tracking, not a number to test. "Stalled" = no improvement in the last 3 sessions.</div></div>`;
+  $("gProg").querySelectorAll(".glift").forEach(b=>b.onclick=()=>{G.sel=b.dataset.k;ls.set("hud_gym_sel",G.sel);gRenderProg();const d=$("gProg").querySelector(".gdetail");if(d&&window.innerWidth<800)d.scrollIntoView({behavior:"smooth",block:"start"})});
+  $("gProg").querySelectorAll("[data-pm]").forEach(b=>b.onclick=()=>{G.pmode=b.dataset.pm;gRenderProg()});
+  const tip=$("gTip"),ch=$("gChart");
+  ch.querySelectorAll("rect[data-i]").forEach(rc=>{const show=()=>{const i=+rc.dataset.i,r=rows[i];const sc=ch.getBoundingClientRect().width/W;
+    tip.innerHTML=`<b>${fmtDay(new Date(r.date+"T00:00"))}</b> · ${r.top.kg?gFmtKg(r.top.kg)+" kg × "+r.top.reps:r.top.reps+" reps"}${pr[i]&&i>0?' · <span class="ok">new best</span>':""}<br><span class="faint">${r.sets.map(s=>s.reps).join("/")} reps${r.e1rm?" · e1RM "+Math.round(r.e1rm)+" kg":""}</span>`;
+    tip.style.left=x(i)*sc+"px";tip.style.top=y(v(r))*sc+"px";tip.style.opacity=1};
+    rc.addEventListener("mouseenter",show);rc.addEventListener("touchstart",show,{passive:true});rc.addEventListener("mouseleave",()=>tip.style.opacity=0)});
+  if(!G.rzOn){G.rzOn=1;window.addEventListener("resize",()=>{clearTimeout(G.rz);G.rz=setTimeout(()=>{if($("p-gym").classList.contains("on")){gRenderProg();gRenderWeight()}},200)})}}
+
+/* ---- this week: done / target + next planned gym session ---- */
+function gNextGym(){const t=ymd(new Date());const doneToday=G.hist.some(h=>h.date===t);
+  for(const p of (PLANS||[]).slice().sort((a,b)=>a.date<b.date?-1:1)){if(p.date<t||(p.date===t&&doneToday))continue;
+    const b=(p.blocks||[]).find(b=>/gym|workout|1079|squat|deadlift|s&c/i.test(b.title||""));if(b)return {date:p.date,b}}return null}
+function gRenderWeek(){
+  const ws=gWeekStart(new Date());const weeks=[];for(let i=7;i>=0;i--){const s=new Date(ws);s.setDate(s.getDate()-7*i);weeks.push({s,n:0})}
+  for(const h of G.hist){const d=new Date(h.date+"T00:00");const w=weeks.find(w=>d>=w.s&&d<new Date(w.s.getTime()+7*864e5));if(w)w.n++}
+  const cur=weeks[7];const mx=Math.max(GYMP.weekTarget,...weeks.map(w=>w.n));const nx=gNextGym();const left=Math.max(0,GYMP.weekTarget-cur.n);
+  $("gWeekMeta").textContent=`target ${GYMP.weekTarget}`;
+  const tday=ymd(new Date()),tmw=ymd(new Date(Date.now()+864e5));
+  const when=nx?(nx.date===tday?"Today":nx.date===tmw?"Tomorrow":new Date(nx.date+"T00:00").toLocaleDateString("en-GB",{weekday:"short",day:"numeric"})):"";
+  $("gWeek").innerHTML=`<div class="gbig">${cur.n}<small>of ${GYMP.weekTarget} done</small></div>
+    <div class="sub2" style="margin-top:8px">${left?`${left} to go this week`:'<span class="ok">Week\'s target hit ✓</span>'}</div>
+    ${nx?`<div class="gnext"><span>Next</span><b>${esc(when)}${nx.b.start?" · "+esc(nx.b.start):""}</b><div>${esc(nx.b.title)}</div></div>`:`<div class="gnext"><span>Next</span><div class="faint">No gym session in the plan yet</div></div>`}
+    <div class="gwk" role="img" aria-label="Sessions per week, last 8 weeks">${weeks.map((w,i)=>`<div title="Week of ${fmtDay(w.s)}: ${w.n} session${w.n===1?"":"s"}"><i class="${w.n?"":"dim"}" style="height:${Math.max(4,w.n/mx*100)}%"></i><span>${i===7?"Now":w.s.getDate()+"/"+(w.s.getMonth()+1)}</span></div>`).join("")}</div>
+    <div class="note" style="margin-top:8px">Sessions per week, last 8 weeks</div>`}
+
+/* ---- bodyweight: Monday weigh-in → 20 Gym/Weight & Calorie Tracking/Weight Log.md ---- */
+const WLOG="20 Gym/Weight & Calorie Tracking/Weight Log.md";
+let WEIGHTS=null,WENTRY=null;
+async function loadWeights(){let t="";try{delete G.cache[WLOG];t=await gText(WLOG)}catch(e){return []}
+  return gTable(t).map(r=>({date:(gCol(r,/date/).match(/\d{4}-\d{2}-\d{2}/)||[])[0],kg:gNum(gCol(r,/weight|kg/)),note:gCol(r,/note/)})).filter(r=>r.date&&r.kg).sort((a,b)=>a.date<b.date?-1:1)}
+function wMonday(d){return ymd(gWeekStart(d||new Date()))}
+function wFor(date){return (WEIGHTS||[]).find(w=>w.date===date)}
+async function wSave(date,kg){
+  const list=(await loadWeights()).filter(w=>w.date!==date);list.push({date,kg,note:""});list.sort((a,b)=>a.date<b.date?-1:1);
+  const md=`---\ntype: weight-log\nunit: kg\n---\n\n# Weight log\n\nWeigh-in every **Monday morning**, same conditions each time (after the loo, before breakfast). Logged from the HUD; Claude can add rows too.\n\n| Date | Weight (kg) | Note |\n|------|-------------|------|\n${list.map(w=>`| ${w.date} | ${gFmtKg(w.kg)} | ${(w.note||"").replace(/\|/g,"/")} |`).join("\n")}\n`;
+  await FS.write(WLOG,md);G.cache[WLOG]=md;WEIGHTS=list}
+function wParse(raw){const n=Number(String(raw||"").replace(",",".").replace(/kg/i,"").trim());return isFinite(n)&&n>=30&&n<=200?Math.round(n*10)/10:null}
+function gRenderWeight(){const el=$("gWeight");if(!el)return;const W=WEIGHTS||[];const mon=wMonday(),have=wFor(mon);
+  const last=W.at(-1);const cut=new Date(Date.now()-28*864e5);const base=W.find(w=>new Date(w.date+"T00:00")>=cut&&w!==last);
+  $("gWeightMeta").textContent=W.length?`${W.length} weigh-ins`:"";
+  const entry=`<div class="wentry"><label for="wIn">${have?`This week (${fmtDay(new Date(mon+"T00:00"))})`:`This week's weigh-in`}</label><div class="resrow">
+      <input id="wIn" type="text" inputmode="decimal" autocomplete="off" placeholder="e.g. 68.4" value="${have?esc(gFmtKg(have.kg)):""}"><button class="rsave" id="wSave">${have?"Update":"Save"}</button></div><span class="rerr" id="wErr"></span></div>`;
+  if(!W.length){el.innerHTML=`<div class="empty">No weigh-ins yet. Monday mornings appear on your Today tab with a box for your weight.</div>${entry}`;wBind(mon);return}
+  const Wd=Math.max(300,Math.min(1240,(el.clientWidth||640))),H=Wd<500?170:200,P={l:40,r:14,t:16,b:26};
+  const vs=W.map(w=>w.kg);let lo=Math.min(...vs),hi=Math.max(...vs);if(hi-lo<2){const m=(hi+lo)/2;lo=m-1;hi=m+1}const pd=(hi-lo)*.15;lo-=pd;hi+=pd;
+  const t0=new Date(W[0].date+"T00:00").getTime(),t1=Math.max(t0+864e5,new Date(W.at(-1).date+"T00:00").getTime());
+  const x=d=>W.length===1?(P.l+Wd-P.r)/2:P.l+(new Date(d+"T00:00").getTime()-t0)/(t1-t0)*(Wd-P.l-P.r),y=v=>P.t+(1-(v-lo)/(hi-lo))*(H-P.t-P.b);
+  const tk=[lo+pd,(lo+hi)/2,hi-pd];const lbl=[0,Math.floor((W.length-1)/2),W.length-1].filter((v,i,a)=>a.indexOf(v)===i);
+  const svg=`<svg viewBox="0 0 ${Wd} ${H}" width="${Wd}" height="${H}" role="img" aria-label="Bodyweight by week">
+    ${tk.map(t=>`<line x1="${P.l}" x2="${Wd-P.r}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)"/><text x="${P.l-8}" y="${y(t)+4}" text-anchor="end" font-size="11" fill="var(--faint)">${(Math.round(t*2)/2).toFixed(1)}</text>`).join("")}
+    ${W.length>1?`<polyline fill="none" stroke="var(--gold)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" points="${W.map(w=>x(w.date)+","+y(w.kg)).join(" ")}"/>`:""}
+    ${W.map(w=>`<circle cx="${x(w.date)}" cy="${y(w.kg)}" r="4.5" fill="var(--gold)" stroke="var(--panel)" stroke-width="2"/>`).join("")}
+    ${lbl.map(i=>`<text x="${x(W[i].date)}" y="${H-6}" text-anchor="${i===0&&W.length>1?"start":i===W.length-1&&W.length>1?"end":"middle"}" font-size="11" fill="var(--faint)">${new Date(W[i].date+"T00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short"})}</text>`).join("")}
+    ${W.map((w,i)=>`<rect data-i="${i}" x="${x(w.date)-12}" y="0" width="24" height="${H}" fill="transparent"/>`).join("")}</svg>`;
+  const d4=base?Math.round((last.kg-base.kg)*10)/10:null,dAll=Math.round((last.kg-W[0].kg)*10)/10;
+  el.innerHTML=`<div class="gstats" style="margin-top:0"><div><span>Latest</span><b>${gFmtKg(last.kg)} kg</b></div>
+      <div><span>4 weeks</span><b>${d4==null?"–":(d4>0?"+":"")+gFmtKg(d4)+" kg"}</b></div>
+      <div><span>Since ${new Date(W[0].date+"T00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short"})}</span><b>${(dAll>0?"+":"")+gFmtKg(dAll)} kg</b></div></div>
+    <div class="gchart" id="wChart">${svg}<div class="gtip" id="wTip"></div></div>
+    ${have?"":`<div class="note" style="color:var(--gold2)">${new Date().getDay()===1?"Today's":"This week's"} weigh-in hasn't been logged yet.</div>`}${entry}
+    ${W.some(w=>w.date<"2026-11-01")?'<div class="note">Aug–Sep weights come from your calorie tracking sheet.</div>':""}`;
+  const tip=$("wTip"),ch=$("wChart");ch.querySelectorAll("rect[data-i]").forEach(rc=>{const show=()=>{const w=W[+rc.dataset.i];const sc=ch.getBoundingClientRect().width/Wd;
+    tip.innerHTML=`<b>${fmtDay(new Date(w.date+"T00:00"))}</b> · ${gFmtKg(w.kg)} kg`;tip.style.left=x(w.date)*sc+"px";tip.style.top=y(w.kg)*sc+"px";tip.style.opacity=1};
+    rc.addEventListener("mouseenter",show);rc.addEventListener("touchstart",show,{passive:true});rc.addEventListener("mouseleave",()=>tip.style.opacity=0)});
+  wBind(mon)}
+function wBind(mon){const i=$("wIn"),b=$("wSave");if(!i||!b)return;i.onkeydown=e=>{if(e.key==="Enter")b.click()};
+  b.onclick=async()=>{const kg=wParse(i.value);if(!kg){$("wErr").textContent="Enter your weight in kg, e.g. 68.4";return}
+    if(!ready()){toast("Connect your vault first (⚙)");return}b.disabled=true;
+    try{await wSave(mon,kg);toast(`Weigh-in saved: ${gFmtKg(kg)} kg`);gRenderWeight();renderDay()}catch(e){$("wErr").textContent="Couldn't save: "+e.message}finally{b.disabled=false}}}
+/* Monday 07:05 weigh-in block on the Today timeline */
+function wBlockHtml(date){const w=wFor(date),fut=date>ymd(new Date()),open=WENTRY===date;
+  return `<div class="tl-row"><div class="tl-t">07:05</div><div class="tl-b"><div class="blk w ${w?"done":""}"><div class="bt"><span>WEIGH-IN</span><span>Monday</span></div>
+    <div class="wrow"><button class="wtick ${w?"on":""}" id="wTick" ${fut?"disabled":""} aria-label="${w?"Weigh-in logged":"Log weigh-in"}">${w?"✓":""}</button>
+      <div class="bn" style="flex:1">${w?`${gFmtKg(w.kg)} kg`:"Weigh yourself"}${w?"":`<div class="why" style="margin:2px 0 0">After the loo, before breakfast</div>`}</div></div>
+    ${!fut&&(open||!w)?`<div class="resrow" style="margin-top:10px"><input id="wInDay" type="text" inputmode="decimal" autocomplete="off" placeholder="Weight in kg" value="${w?esc(gFmtKg(w.kg)):""}"><button class="rsave" id="wSaveDay">${w?"Update":"Save"}</button></div><span class="rerr" id="wErrDay"></span>`:""}
+    ${w&&!open&&!fut?`<button class="lnk" id="wEdit" style="margin-top:6px">Edit</button>`:""}</div></div></div>`}
+function wBindDay(date){const i=$("wInDay"),b=$("wSaveDay");if($("wEdit"))$("wEdit").onclick=()=>{WENTRY=date;renderDay();setTimeout(()=>$("wInDay")&&$("wInDay").focus(),30)};
+  if($("wTick"))$("wTick").onclick=()=>{if(i)i.focus();else{WENTRY=date;renderDay();setTimeout(()=>$("wInDay")&&$("wInDay").focus(),30)}};
+  if(!i||!b)return;i.onkeydown=e=>{if(e.key==="Enter")b.click()};
+  b.onclick=async()=>{const kg=wParse(i.value);if(!kg){$("wErrDay").textContent="Enter your weight in kg, e.g. 68.4";return}
+    if(!ready()){toast("Connect your vault first (⚙)");return}b.disabled=true;
+    try{await wSave(date,kg);WENTRY=null;toast(`Weigh-in saved: ${gFmtKg(kg)} kg`);renderDay();gRenderWeight()}catch(e){$("wErrDay").textContent="Couldn't save: "+e.message;b.disabled=false}}}
 </script>
 </body>
 </html>
