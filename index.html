@@ -689,6 +689,7 @@ const PATHS={
   gym:"20 Gym",
   whoop:"90 System/Data/whoop.json",
   ticks:"90 System/Data/ticks.json",
+  puttlog:"10 Golf/Planning/Winter Plan 2026/Putting Drill Log.md",
   plan:"90 System/Data/plan.json",
   comps:"10 Golf/Competitions/Schedule.md",
   inbox:"00 Inbox"
@@ -846,7 +847,7 @@ async function loadPractice(){
     const i=d.done.findIndex(x=>x.area==="Gym"&&/^workout$/i.test(x.task));
     if(i>=0)d.done.splice(i,1);else{d.n++;areas.Gym++}   // a logged workout counts even if the box wasn't ticked
     g.forEach((w,j)=>d.done.push({area:"Gym",task:w.title,band:w.coach,ticked:i>=0||j>0}))}
-  await loadTicks();
+  await loadTicks();await loadPuttLog();
   return {days,areas,tasks,total:days.reduce((a,d)=>a+d.n,0)}
 }
 /* ---- ticks made on the HUD (90 System/Data/ticks.json), merged on top of Daily To Do ---- */
@@ -1835,7 +1836,20 @@ function openEntry(date,k,extra){const d=rdAll()[rdKey(date,k)];ENTRY=Object.ass
 /* saved scores kept on this phone, so a ticked drill can be reopened and checked even after the sync job has copied it to the Drill Spreadsheet */
 const RV="hud_rsaved";
 function resvAll(){try{return JSON.parse(ls.get(RV,"{}"))||{}}catch(e){return {}}}
-function resvGet(d,k){return resvAll()[rdKey(d,k)]||null}
+function resvGet(d,k){return resvAll()[rdKey(d,k)]||plogGet(d,k)}
+/* per-putt rows the sync job writes to Putting Drill Log.md: lets a synced 9–20ft / <10ft drill reopen on any device */
+let PLOG={};
+async function loadPuttLog(){try{const t=await FS.text(PATHS.puttlog);const m={};
+  t.split("\n").forEach(l=>{const c=l.trim().replace(/^\|/,"").replace(/\|$/,"").split("|").map(x=>x.trim());
+    if(c.length<7||!/^\d{4}-\d{2}-\d{2}$/.test(c[0]))return;const n=parseInt(c[2],10);if(!n)return;
+    const num=x=>x===""?null:(isFinite(Number(x))?Number(x):null);const key=c[0]+"|"+c[1].toLowerCase();
+    (m[key]=m[key]||{})[n]={n,feel:num(c[3]),real:num(c[4]),ft:num(c[5]),holed:c[6]==="✓"?true:c[6]==="✗"?false:null}});
+  PLOG=m}catch(e){}}
+function plogGet(d,k){const t=String(k).split("::")[1]||"";const g=/^\s*9 - 20ft/i.test(t)?"9 - 20ft":/^\s*<10ft/i.test(t)?"<10ft":null;
+  if(!g)return null;const rows=PLOG[d+"|"+g.toLowerCase()];if(!rows)return null;
+  const putts=Object.values(rows).sort((a,b)=>a.n-b.n);const avg=a=>a.length?Math.round(a.reduce((x,y)=>x+y,0)/a.length*100)/100:null;
+  const v={feel:avg(putts.map(p=>p.feel).filter(x=>x!=null)),real:avg(putts.map(p=>p.real).filter(x=>x!=null)),holed:putts.filter(p=>p.holed===true).length,putts};
+  const spec=resultSpec(k);if(!spec)return null;const o=valsFromV(spec,v);return {v,vals:o.vals,neg:o.neg,fromLog:true}}
 function resvSet(d,k,o){const a=resvAll();a[rdKey(d,k)]=Object.assign(o,{ts:Date.now()});
   for(const x of Object.keys(a))if(Date.now()-(a[x].ts||0)>60*864e5)delete a[x];   // keep 60 days
   ls.set(RV,JSON.stringify(a))}
