@@ -690,6 +690,7 @@ const PATHS={
   whoop:"90 System/Data/whoop.json",
   ticks:"90 System/Data/ticks.json",
   puttlog:"10 Golf/Planning/Winter Plan 2026/Putting Drill Log.md",
+  dresults:"90 System/Data/drill_results.json",
   plan:"90 System/Data/plan.json",
   comps:"10 Golf/Competitions/Schedule.md",
   inbox:"00 Inbox"
@@ -852,7 +853,7 @@ async function loadPractice(){
     if(i<0){d.n++;areas.Gym++;d.done.push({area:"Gym",task:"Workout",key:WK,auto:true});i=d.done.length-1}
     const e=d.done[i];e.key=WK;e.task=g[0].title;e.band=g[0].coach;
     g.slice(1).forEach(w=>d.done.push({area:"Gym",task:w.title,band:w.coach}))}
-  await loadTicks();await loadPuttLog();
+  await loadTicks();await loadPuttLog();await loadDrillLog();
   return {days,areas,tasks,total:days.reduce((a,d)=>a+d.n,0)}
 }
 /* ---- ticks made on the HUD (90 System/Data/ticks.json), merged on top of Daily To Do ---- */
@@ -1849,7 +1850,12 @@ function openEntry(date,k,extra){const d=rdAll()[rdKey(date,k)];ENTRY=Object.ass
 /* saved scores kept on this phone, so a ticked drill can be reopened and checked even after the sync job has copied it to the Drill Spreadsheet */
 const RV="hud_rsaved";
 function resvAll(){try{return JSON.parse(ls.get(RV,"{}"))||{}}catch(e){return {}}}
-function resvGet(d,k){return resvAll()[rdKey(d,k)]||plogGet(d,k)}
+function resvGet(d,k){return resvAll()[rdKey(d,k)]||plogGet(d,k)||dlogGet(d,k)}
+/* scores the sync job copied to the Drill Spreadsheet (90 System/Data/drill_results.json): shown on any device, after ticks.json is cleared */
+let DLOG={};
+async function loadDrillLog(){try{DLOG=(JSON.parse(await FS.text(PATHS.dresults))||{}).results||{}}catch(e){}}
+function dlogGet(d,k){const day=DLOG[d];if(!day)return null;const key=Object.keys(day).find(x=>nk(x)===nk(k));if(key==null)return null;
+  const spec=resultSpec(k);if(!spec)return null;const v=day[key];const o=valsFromV(spec,v);return {v,vals:o.vals,neg:o.neg,fromLog:true}}
 /* per-putt rows the sync job writes to Putting Drill Log.md: lets a synced 9–20ft / <10ft drill reopen on any device */
 let PLOG={};
 async function loadPuttLog(){try{const t=await FS.text(PATHS.puttlog);const m={};
