@@ -1006,16 +1006,17 @@ function renderDay(){
       <button class="blk ${cls} ${drills.length&&dn===drills.length?"alldone":""}" data-i="${i}" data-dk="${esc(drills.map(nk).join("|"))}" aria-expanded="${!!OPEN[i]}"><div class="bt"><span>${esc((tag||(b.fixed?"Fixed":"Session")).toUpperCase())}</span><span>${esc(b.start||"")}${b.end?"–"+esc(b.end):""}</span></div>
         <div class="bn">${esc(title)}</div>${drills.length?`<div class="bp">${dn} / ${drills.length} drills ${dn===drills.length?"✓":""}</div>`:""}</button>
       ${OPEN[i]?`<div class="bx">${b.why?`<div class="why">${esc(b.why)}</div>`:b.fixed?'<div class="why">From your calendar.</div>':""}
-        ${drills.map(k=>{const x=doneKeys.get(nk(k));const on=!!x,lock=on&&!x.hud;const spec=resultSpec(k),res=getResult(DSEL,k);
+        ${drills.map(k=>{const x=doneKeys.get(nk(k));const on=!!x,lock=on&&!x.hud;const spec=resultSpec(k),res=getResult(DSEL,k)||(spec?resvGet(DSEL,k):null);
           const entry=ENTRY&&ENTRY.date===DSEL&&nk(ENTRY.k)===nk(k);
-          let h=`<button class="drill ${gym?"g":""} ${on?"on":""} ${lock?"lock":""}" data-k="${esc(k)}" ${isFut||lock?"disabled":""}><span class="m">${on?"✓":""}</span><span>${esc(keyLabel(k))}</span>${res?`<small class="rv">${esc(spec?spec.fmt(res.v):res.v)}</small>`:!entry&&!on&&rdAll()[rdKey(DSEL,k)]?'<small class="draft">draft saved</small>':lock?"<small>in Daily To Do</small>":""}</button>`;
+          let h=`<button class="drill ${gym?"g":""} ${on?"on":""} ${lock?"lock":""}" data-k="${esc(k)}" ${isFut||(lock&&!(spec&&res))?"disabled":""}><span class="m">${on?"✓":""}</span><span>${esc(keyLabel(k))}</span>${res?`<small class="rv">${esc(spec?spec.fmt(res.v):res.v)}</small>`:!entry&&!on&&rdAll()[rdKey(DSEL,k)]?'<small class="draft">draft saved</small>':lock?"<small>in Daily To Do</small>":""}</button>`;
           if(lock&&spec&&!res&&!isFut&&!entry)h+=`<button class="addres" data-add="${esc(k)}">+ add ${spec.word}</button>`;
           if(entry){h+=`<div class="resbox">${spec.table?ptHtml(spec):""}${spec.fields.map((f,fi)=>`${f.hint?`<div class="rhint">${esc(f.hint)}</div>`:""}<label for="res_${f.id}">${f.label}</label><div class="resrow">
               ${f.type==="sg"?`<button class="sgn" id="resSign" aria-label="Switch plus or minus">${ENTRY.neg?"−":"+"}</button>`:""}
               <input id="res_${f.id}" data-f="${f.id}" type="text" inputmode="${f.type==="int"||f.type==="int0"?"numeric":f.type==="text"?"text":"decimal"}" autocomplete="off" placeholder="${esc(f.ph)}" value="${esc((ENTRY.vals||{})[f.id]||"")}">
-              ${spec.single?`<button class="rsave" id="resSave">Save</button>`:""}</div>`).join("")}
-            ${spec.single?"":`<button class="rsave" id="resSave" style="align-self:stretch">Save${spec.table?" all putts":""}</button>`}
-            <div class="resrow2"><span class="rerr" id="resErr"></span>${lock?"":`<button class="lnk" id="resSkip">Tick without a score</button>`}<button class="lnk" id="resCancel">Cancel</button></div></div>`}
+              ${spec.single&&!ENTRY.readonly?`<button class="rsave" id="resSave">${ENTRY.viewing?"Update":"Save"}</button>`:""}</div>`).join("")}
+            ${spec.single||ENTRY.readonly?"":`<button class="rsave" id="resSave" style="align-self:stretch">${ENTRY.viewing?"Save changes":"Save"+(spec.table?" all putts":"")}</button>`}
+            ${ENTRY.readonly?'<div class="rhint">Already copied to the Drill Spreadsheet. View only.</div>':""}
+            <div class="resrow2"><span class="rerr" id="resErr"></span>${ENTRY.viewing?(ENTRY.readonly?"":`<button class="lnk" id="resUntick">Untick drill</button>`):lock?"":`<button class="lnk" id="resSkip">Tick without a score</button>`}<button class="lnk" id="resCancel">${ENTRY.viewing?"Close":"Cancel"}</button></div></div>`}
           return h}).join("")}
         ${isFut&&drills.length?'<div class="why">Ticks open on the day.</div>':""}</div>`:""}
     </div></div>`});
@@ -1034,14 +1035,20 @@ function renderDay(){
   if(sel.getDay()===1&&WEIGHTS){wBindDay(DSEL);if(WJUST===DSEL){WJUST=null;const b=$("timeline").querySelector(".blk.w");if(b)animDone(b)}}
   $("timeline").querySelectorAll(".blk").forEach(b=>b.onclick=()=>{const i=+b.dataset.i;OPEN[i]=!OPEN[i];renderDay()});
   $("timeline").querySelectorAll(".drill:not([disabled])").forEach(b=>b.onclick=()=>{const k=b.dataset.k;const ticked=(TICKS[DSEL]||[]).some(x=>nk(x)===nk(k));
+    const dx=doneKeys.get(nk(k)),locked=!!dx&&!dx.hud;
+    if((ticked||locked)&&resultSpec(k)){if(ENTRY&&ENTRY.date===DSEL&&nk(ENTRY.k)===nk(k)){if(ENTRY.dirty&&!confirm("Discard your changes? The saved version stays."))return;rdClear(DSEL,k);ENTRY=null}else openSaved(DSEL,k,locked);renderDay();return}
     if(!ticked&&resultSpec(k)){openEntry(DSEL,k);renderDay();setTimeout(()=>{const i=$("timeline").querySelector(".resbox input");if(i)i.focus()},30)}
     else toggleTick(DSEL,k)});
   $("timeline").querySelectorAll(".addres").forEach(b=>b.onclick=()=>{openEntry(DSEL,b.dataset.add,{lockedTick:true});renderDay();setTimeout(()=>{const i=$("timeline").querySelector(".resbox input");if(i)i.focus()},30)});
+  if(ENTRY&&ENTRY.readonly&&$("resCancel")){const spec=resultSpec(ENTRY.k);const box=$("timeline").querySelector(".resbox");
+    box.querySelectorAll("input,.phb,#resSign").forEach(i=>i.disabled=true);if(spec.table)ptSum(spec);
+    $("resCancel").onclick=()=>{ENTRY=null;renderDay()}}
   if(ENTRY&&$("resSave")){const spec=resultSpec(ENTRY.k);const box=$("timeline").querySelector(".resbox");
     box.querySelectorAll("input[data-f]").forEach(i=>{i.oninput=e=>{ENTRY.vals[i.dataset.f]=e.target.value;rdSave()};i.onkeydown=e=>{if(e.key==="Enter")$("resSave").click()}});
     if(spec.table)ptBind(box,spec);
     if($("resSign"))$("resSign").onclick=()=>{ENTRY.neg=!ENTRY.neg;rdSave();renderDay()};
-    $("resCancel").onclick=()=>{if(rdHasData(ENTRY)&&!confirm("Discard what you've entered for this drill?"))return;rdClear(ENTRY.date,ENTRY.k);ENTRY=null;renderDay()};
+    $("resCancel").onclick=()=>{if(ENTRY.viewing?ENTRY.dirty&&!confirm("Discard your changes? The saved version stays."):rdHasData(ENTRY)&&!confirm("Discard what you've entered for this drill?"))return;rdClear(ENTRY.date,ENTRY.k);ENTRY=null;renderDay()};
+    if($("resUntick"))$("resUntick").onclick=()=>{if(!confirm("Untick this drill? Its saved score will be removed."))return;const k=ENTRY.k;rdClear(ENTRY.date,k);resvDel(DSEL,k);ENTRY=null;toggleTick(DSEL,k)};
     if($("resSkip"))$("resSkip").onclick=()=>{const k=ENTRY.k;rdClear(ENTRY.date,k);ENTRY=null;toggleTick(DSEL,k)};
     $("resSave").onclick=()=>{const out={};let err="";
       if(spec.table){const pt=ptCollect(spec);if(pt.err)err=pt.err;else Object.assign(out,pt.out)}
@@ -1063,6 +1070,7 @@ function renderDay(){
       const v=spec.single?out.v:out;const k=ENTRY.k,date=DSEL;
       RESULTS[date]=RESULTS[date]||{};Object.keys(RESULTS[date]).forEach(x=>{if(nk(x)===nk(k))delete RESULTS[date][x]});
       RESULTS[date][k]={v,id:date+"|"+nk(k)+"|"+Date.now().toString(36)};
+      resvSet(date,k,{v,vals:JSON.parse(JSON.stringify(ENTRY.vals||{})),neg:!!ENTRY.neg});
       const lockedTick=ENTRY.lockedTick;ENTRY=null;rdClear(date,k);
       const list=(TICKS[date]||[]).slice();if(!lockedTick&&!list.some(x=>nk(x)===nk(k))){list.push(k);TICKS[date]=list}
       renderPractice();saveTicks()}}
@@ -1817,13 +1825,31 @@ const RD="hud_rdrafts";let RD_DONE=false;
 function rdAll(){try{return JSON.parse(ls.get(RD,"{}"))||{}}catch(e){return {}}}
 function rdKey(d,k){return d+"|"+nk(k)}
 function rdHasData(E){if(!E)return false;const v=E.vals||{};return Object.keys(v).some(x=>x==="rows"?(v.rows||[]).some(r=>r&&(r.feel||r.real||r.ft||r.holed!=null)):String(v[x]||"").trim()!=="")}
-function rdSave(){if(!ENTRY)return;const a=rdAll(),key=rdKey(ENTRY.date,ENTRY.k);
+function rdSave(){if(!ENTRY)return;ENTRY.dirty=true;const a=rdAll(),key=rdKey(ENTRY.date,ENTRY.k);
   if(rdHasData(ENTRY))a[key]={vals:ENTRY.vals,neg:ENTRY.neg,ts:Date.now()};else delete a[key];
   for(const x of Object.keys(a))if(Date.now()-(a[x].ts||0)>14*864e5)delete a[x];   // old drafts expire after 2 weeks
   ls.set(RD,JSON.stringify(a));ls.set("hud_ropen",JSON.stringify({date:ENTRY.date,k:ENTRY.k,lockedTick:!!ENTRY.lockedTick}))}
 function rdClear(d,k){const a=rdAll();delete a[rdKey(d,k)];ls.set(RD,JSON.stringify(a));ls.set("hud_ropen","null")}
 function openEntry(date,k,extra){const d=rdAll()[rdKey(date,k)];ENTRY=Object.assign({date,k,vals:d?JSON.parse(JSON.stringify(d.vals)):{},neg:d?!!d.neg:false},extra||{});
   ls.set("hud_ropen",JSON.stringify({date,k,lockedTick:!!(extra&&extra.lockedTick)}))}
+/* saved scores kept on this phone, so a ticked drill can be reopened and checked even after the sync job has copied it to the Drill Spreadsheet */
+const RV="hud_rsaved";
+function resvAll(){try{return JSON.parse(ls.get(RV,"{}"))||{}}catch(e){return {}}}
+function resvGet(d,k){return resvAll()[rdKey(d,k)]||null}
+function resvSet(d,k,o){const a=resvAll();a[rdKey(d,k)]=Object.assign(o,{ts:Date.now()});
+  for(const x of Object.keys(a))if(Date.now()-(a[x].ts||0)>60*864e5)delete a[x];   // keep 60 days
+  ls.set(RV,JSON.stringify(a))}
+function resvDel(d,k){const a=resvAll();delete a[rdKey(d,k)];ls.set(RV,JSON.stringify(a))}
+function valsFromV(spec,v){const vals={};let neg=false;
+  if(spec.single){const f=spec.fields[0];const n=Number(v);if(f.type==="sg"&&n<0){neg=true;vals[f.id]=String(-n)}else vals[f.id]=String(v??"");return {vals,neg}}
+  if(spec.table){vals.rows=[];(v.putts||[]).forEach(p=>{vals.rows[(p.n||1)-1]={feel:p.feel==null?"":String(p.feel),real:p.real==null?"":String(p.real),ft:p.ft==null?"":String(p.ft),holed:p.holed}})}
+  for(const f of spec.fields)if(v&&v[f.id]!=null)vals[f.id]=String(v[f.id]);
+  return {vals,neg}}
+function openSaved(date,k,locked){const spec=resultSpec(k);const c=resvGet(date,k),res=getResult(date,k);
+  let vals={},neg=false;
+  if(c&&c.vals&&(!res||JSON.stringify(c.v)===JSON.stringify(res.v))){vals=JSON.parse(JSON.stringify(c.vals));neg=!!c.neg}
+  else if(res||c){const o=valsFromV(spec,(res||c).v);vals=o.vals;neg=o.neg}
+  ENTRY={date,k,vals,neg,viewing:true,lockedTick:true,readonly:locked&&!!(res||c)}}
 function rdRestore(dates){if(RD_DONE||ENTRY)return;RD_DONE=true;
   try{const o=JSON.parse(ls.get("hud_ropen","null"));if(!o||!rdAll()[rdKey(o.date,o.k)])return;if(!dates.some(d=>ymd(d)===o.date))return;
     DSEL=o.date;openEntry(o.date,o.k,o.lockedTick?{lockedTick:true}:null);setTimeout(()=>toast("Restored your unsaved entries"),400)}catch(e){}}
