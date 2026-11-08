@@ -319,7 +319,7 @@ h1{font-weight:700;letter-spacing:-.03em}
 .blk.alldone.still::before{animation:none}.blk.pop{animation:gpop .5s cubic-bezier(.3,1.5,.5,1)}
 @keyframes gsweep{from{transform:scaleX(0);transform-origin:left}to{transform:scaleX(1);transform-origin:left}}
 @media(prefers-reduced-motion:reduce){.drill.pop,.drill.pop .m,.blk.pop{animation:none}.drill::before{transition:none}.blk.alldone::before{animation:none}}
-.drill.lock{cursor:default}
+.drill.lock{cursor:pointer}
 .drill:disabled{opacity:.45;cursor:default}.drill.lock:disabled{opacity:1}
 .tside .tile{grid-area:auto}
 @media(max-width:700px){#greet{display:none}.sub{font-size:13px;font-weight:600;color:var(--text)}}
@@ -852,8 +852,8 @@ async function loadPractice(){
 }
 /* ---- ticks made on the HUD (90 System/Data/ticks.json), merged on top of Daily To Do ---- */
 const nk=s=>String(s||"").toLowerCase().replace(/\s+/g," ").replace(/[()]/g,"").trim();
-let TICKS={},RESULTS={},APPLIED=[],TICKS_LOADED=false;
-async function loadTicks(){try{const j=JSON.parse(await FS.text(PATHS.ticks));TICKS=j.ticks||{};RESULTS=j.results||{};APPLIED=j.applied||[];resvCache()}catch(e){if(!TICKS_LOADED){TICKS={};RESULTS={}}}TICKS_LOADED=true}
+let TICKS={},UNTICKS={},RESULTS={},APPLIED=[],TICKS_LOADED=false;
+async function loadTicks(){try{const j=JSON.parse(await FS.text(PATHS.ticks));TICKS=j.ticks||{};UNTICKS=j.unticks||{};RESULTS=j.results||{};APPLIED=j.applied||[];resvCache()}catch(e){if(!TICKS_LOADED){TICKS={};UNTICKS={};RESULTS={}}}TICKS_LOADED=true}
 /* drills whose score goes into the Drill Spreadsheet */
 function resultSpec(k){const [sec,task]=String(k).split("::").map(x=>(x||"").trim().toLowerCase());
   const att=v=>`${v} attempt${+v===1?"":"s"}`;
@@ -875,7 +875,10 @@ function keyLabel(k){const [sec,task]=k.split("::").map(x=>x.trim());if(!/yds/i.
 function mergeTicks(raw){if(!raw)return raw;const p=JSON.parse(JSON.stringify(raw,(k,v)=>v));p.days=raw.days.map(d=>Object.assign({},d,{done:d.done.slice()}));p.areas=Object.assign({},raw.areas);p.total=raw.total;
   for(const d of p.days){const have=new Set(d.done.map(x=>x.key).filter(Boolean));
     for(const k of (TICKS[ymd(d.date)]||[])){if(have.has(nk(k)))continue;const ar=keyArea(k),[sec,task]=k.split("::").map(x=>x.trim());
-      d.done.push({area:ar,task,band:/yds/i.test(sec)?sec:null,key:nk(k),hud:true});d.n++;p.total++;if(p.areas[ar]!=null)p.areas[ar]++}}
+      d.done.push({area:ar,task,band:/yds/i.test(sec)?sec:null,key:nk(k),hud:true});d.n++;p.total++;if(p.areas[ar]!=null)p.areas[ar]++}
+    // unticked on the HUD: hide straight away; the sync job clears the ✓ in Daily To Do
+    const un=new Set((UNTICKS[ymd(d.date)]||[]).map(nk));
+    if(un.size)d.done=d.done.filter(x=>{if(!x.key||!un.has(x.key))return true;d.n--;p.total--;if(p.areas[x.area]!=null)p.areas[x.area]--;return false})}
   return p}
 let TSAVE=Promise.resolve();
 function saveTicks(){
@@ -884,7 +887,7 @@ function saveTicks(){
     let cur={};try{cur=JSON.parse(await FS.text(PATHS.ticks))}catch(e){}
     const applied=new Set([...(cur.applied||[]),...APPLIED]);
     for(const d of Object.keys(RESULTS)){for(const k of Object.keys(RESULTS[d]))if(applied.has(RESULTS[d][k].id))delete RESULTS[d][k];if(!Object.keys(RESULTS[d]).length)delete RESULTS[d]}
-    const body=JSON.stringify({note:"Drills ticked and scores entered on the Daily HUD. A GitHub job copies them into Daily To Do and the Drill Spreadsheet within a few minutes, then clears them here.",ticks:TICKS,results:RESULTS,applied:[...applied].slice(-300),...(cur.failed?{failed:cur.failed}:{})},null,1);
+    const body=JSON.stringify({note:"Drills ticked and scores entered on the Daily HUD. A GitHub job copies them into Daily To Do and the Drill Spreadsheet within a few minutes, then clears them here.",ticks:TICKS,unticks:UNTICKS,results:RESULTS,applied:[...applied].slice(-300),...(cur.failed?{failed:cur.failed}:{})},null,1);
     await FS.write(PATHS.ticks,body)}).then(()=>toast("Saved · syncing to your spreadsheets")).catch(e=>toast("Couldn't save: "+e.message));return TSAVE}
 async function loadWorkouts(){const out=[];
   try{for(const c of (await FS.list(PATHS.gym)).filter(e=>e.kind==="directory"))
@@ -1009,15 +1012,15 @@ function renderDay(){
       ${OPEN[i]?`<div class="bx">${b.why?`<div class="why">${esc(b.why)}</div>`:b.fixed?'<div class="why">From your calendar.</div>':""}
         ${drills.map(k=>{const x=doneKeys.get(nk(k));const on=!!x,lock=on&&!x.hud;const spec=resultSpec(k),res=getResult(DSEL,k)||(spec?resvGet(DSEL,k):null);
           const entry=ENTRY&&ENTRY.date===DSEL&&nk(ENTRY.k)===nk(k);
-          let h=`<button class="drill ${gym?"g":""} ${on?"on":""} ${lock?"lock":""}" data-k="${esc(k)}" ${isFut||(lock&&!(spec&&res))?"disabled":""}><span class="m">${on?"✓":""}</span><span>${esc(keyLabel(k))}</span>${res?`<small class="rv">${esc(spec?spec.fmt(res.v):res.v)}</small>`:!entry&&!on&&rdAll()[rdKey(DSEL,k)]?'<small class="draft">draft saved</small>':lock?"<small>in Daily To Do</small>":""}</button>`;
+          let h=`<button class="drill ${gym?"g":""} ${on?"on":""} ${lock?"lock":""}" data-k="${esc(k)}" ${isFut?"disabled":""}><span class="m">${on?"✓":""}</span><span>${esc(keyLabel(k))}</span>${res?`<small class="rv">${esc(spec?spec.fmt(res.v):res.v)}</small>`:!entry&&!on&&rdAll()[rdKey(DSEL,k)]?'<small class="draft">draft saved</small>':lock?"<small>in Daily To Do</small>":""}</button>`;
           if(lock&&spec&&!res&&!isFut&&!entry)h+=`<button class="addres" data-add="${esc(k)}">+ add ${spec.word}</button>`;
           if(entry){h+=`<div class="resbox">${spec.table?ptHtml(spec):""}${spec.fields.map((f,fi)=>`${f.hint?`<div class="rhint">${esc(f.hint)}</div>`:""}<label for="res_${f.id}">${f.label}</label><div class="resrow">
               ${f.type==="sg"?`<button class="sgn" id="resSign" aria-label="Switch plus or minus">${ENTRY.neg?"−":"+"}</button>`:""}
               <input id="res_${f.id}" data-f="${f.id}" type="text" inputmode="${f.type==="int"||f.type==="int0"?"numeric":f.type==="text"?"text":"decimal"}" autocomplete="off" placeholder="${esc(f.ph)}" value="${esc((ENTRY.vals||{})[f.id]||"")}">
               ${spec.single&&!ENTRY.readonly?`<button class="rsave" id="resSave">${ENTRY.viewing?"Update":"Save"}</button>`:""}</div>`).join("")}
             ${spec.single||ENTRY.readonly?"":`<button class="rsave" id="resSave" style="align-self:stretch">${ENTRY.viewing?"Save changes":"Save"+(spec.table?" all putts":"")}</button>`}
-            ${ENTRY.readonly?'<div class="rhint">Already copied to the Drill Spreadsheet. View only.</div>':""}
-            <div class="resrow2"><span class="rerr" id="resErr"></span>${ENTRY.viewing?(ENTRY.readonly?"":`<button class="lnk" id="resUntick">Untick drill</button>`):lock?"":`<button class="lnk" id="resSkip">Tick without a score</button>`}<button class="lnk" id="resCancel">${ENTRY.viewing?"Close":"Cancel"}</button></div></div>`}
+            ${ENTRY.readonly?`<div class="rhint">${rdHasData(ENTRY)?"Already copied to the Drill Spreadsheet. View only.":"Score (if any) is in the Drill Spreadsheet."}</div>`:""}
+            <div class="resrow2"><span class="rerr" id="resErr"></span>${ENTRY.viewing?`<button class="lnk" id="resUntick">Untick drill</button>`:lock?"":`<button class="lnk" id="resSkip">Tick without a score</button>`}<button class="lnk" id="resCancel">${ENTRY.viewing?"Close":"Cancel"}</button></div></div>`}
           return h}).join("")}
         ${isFut&&drills.length?'<div class="why">Ticks open on the day.</div>':""}</div>`:""}
     </div></div>`});
@@ -1043,7 +1046,8 @@ function renderDay(){
   $("timeline").querySelectorAll(".addres").forEach(b=>b.onclick=()=>{openEntry(DSEL,b.dataset.add,{lockedTick:true});renderDay();setTimeout(()=>{const i=$("timeline").querySelector(".resbox input");if(i)i.focus()},30)});
   if(ENTRY&&ENTRY.readonly&&$("resCancel")){const spec=resultSpec(ENTRY.k);const box=$("timeline").querySelector(".resbox");
     box.querySelectorAll("input,.phb,#resSign").forEach(i=>i.disabled=true);if(spec.table)ptSum(spec);
-    $("resCancel").onclick=()=>{ENTRY=null;renderDay()}}
+    $("resCancel").onclick=()=>{ENTRY=null;renderDay()};
+    $("resUntick").onclick=()=>{if(!confirm("Untick this drill? It's cleared in Daily To Do too."))return;const k=ENTRY.k;ENTRY=null;toggleTick(DSEL,k)}}
   if(ENTRY&&$("resSave")){const spec=resultSpec(ENTRY.k);const box=$("timeline").querySelector(".resbox");
     box.querySelectorAll("input[data-f]").forEach(i=>{i.oninput=e=>{ENTRY.vals[i.dataset.f]=e.target.value;rdSave()};i.onkeydown=e=>{if(e.key==="Enter")$("resSave").click()}});
     if(spec.table)ptBind(box,spec);
@@ -1077,8 +1081,12 @@ function renderDay(){
       renderPractice();saveTicks()}}
 }
 let ENTRY=null;
-function toggleTick(date,k){const list=(TICKS[date]||[]).slice();const i=list.findIndex(x=>nk(x)===nk(k));
-  if(i>=0){list.splice(i,1);if(RESULTS[date])Object.keys(RESULTS[date]).forEach(x=>{if(nk(x)===nk(k))delete RESULTS[date][x]})}else list.push(k);if(list.length)TICKS[date]=list;else delete TICKS[date];
+function isDone(date,k){const d=PR&&PR.days.find(x=>ymd(x.date)===date);return !!d&&d.done.some(x=>x.key===nk(k))}
+function toggleTick(date,k){const on=isDone(date,k)||(TICKS[date]||[]).some(x=>nk(x)===nk(k));
+  const T=(TICKS[date]||[]).filter(x=>nk(x)!==nk(k)),U=(UNTICKS[date]||[]).filter(x=>nk(x)!==nk(k));
+  if(on){U.push(k);if(RESULTS[date])Object.keys(RESULTS[date]).forEach(x=>{if(nk(x)===nk(k))delete RESULTS[date][x]});resvDel(date,k)}   // untick: here and in Daily To Do
+  else T.push(k);
+  if(T.length)TICKS[date]=T;else delete TICKS[date];if(U.length)UNTICKS[date]=U;else delete UNTICKS[date];
   renderPractice();saveTicks()}
 
 /* ============ COMPETITION COUNTDOWN ============ */
@@ -1867,7 +1875,7 @@ function openSaved(date,k,locked){const spec=resultSpec(k);const c=resvGet(date,
   let vals={},neg=false;
   if(c&&c.vals&&(!res||JSON.stringify(c.v)===JSON.stringify(res.v))){vals=JSON.parse(JSON.stringify(c.vals));neg=!!c.neg}
   else if(res||c){const o=valsFromV(spec,(res||c).v);vals=o.vals;neg=o.neg}
-  ENTRY={date,k,vals,neg,viewing:true,lockedTick:true,readonly:locked&&!!(res||c)}}
+  ENTRY={date,k,vals,neg,viewing:true,lockedTick:true,readonly:!!locked}}
 function rdRestore(dates){if(RD_DONE||ENTRY)return;RD_DONE=true;
   try{const o=JSON.parse(ls.get("hud_ropen","null"));if(!o||!rdAll()[rdKey(o.date,o.k)])return;if(!dates.some(d=>ymd(d)===o.date))return;
     DSEL=o.date;openEntry(o.date,o.k,o.lockedTick?{lockedTick:true}:null);setTimeout(()=>toast("Restored your unsaved entries"),400)}catch(e){}}
