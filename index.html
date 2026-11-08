@@ -844,9 +844,14 @@ async function loadPractice(){
   /* gym sessions logged as notes: 20 Gym/<coach>/YYYY-MM-DD - Workout - <Session>.md */
   const gym=await loadWorkouts();
   for(const d of days){const g=gym.filter(w=>w.date===ymd(d.date));if(!g.length)continue;
-    const i=d.done.findIndex(x=>x.area==="Gym"&&/^workout$/i.test(x.task));
-    if(i>=0)d.done.splice(i,1);else{d.n++;areas.Gym++}   // a logged workout counts even if the box wasn't ticked
-    g.forEach((w,j)=>d.done.push({area:"Gym",task:w.title,band:w.coach,ticked:i>=0||j>0}))}
+    // a logged workout = the "Gym :: Workout" drill is done. Keep (or create) the KEYED entry so the
+    // timeline tick matches it; previously the ✓ entry was spliced out and replaced by keyless ones,
+    // so the Workout tick looked unticked on every reload.
+    const WK=nk("Gym :: Workout");
+    let i=d.done.findIndex(x=>x.key===WK||(x.area==="Gym"&&/^workout$/i.test(x.task)));
+    if(i<0){d.n++;areas.Gym++;d.done.push({area:"Gym",task:"Workout",key:WK,auto:true});i=d.done.length-1}
+    const e=d.done[i];e.key=WK;e.task=g[0].title;e.band=g[0].coach;
+    g.slice(1).forEach(w=>d.done.push({area:"Gym",task:w.title,band:w.coach}))}
   await loadTicks();await loadPuttLog();
   return {days,areas,tasks,total:days.reduce((a,d)=>a+d.n,0)}
 }
