@@ -852,7 +852,7 @@ async function loadPractice(){
 /* ---- ticks made on the HUD (90 System/Data/ticks.json), merged on top of Daily To Do ---- */
 const nk=s=>String(s||"").toLowerCase().replace(/\s+/g," ").replace(/[()]/g,"").trim();
 let TICKS={},RESULTS={},APPLIED=[],TICKS_LOADED=false;
-async function loadTicks(){try{const j=JSON.parse(await FS.text(PATHS.ticks));TICKS=j.ticks||{};RESULTS=j.results||{};APPLIED=j.applied||[]}catch(e){if(!TICKS_LOADED){TICKS={};RESULTS={}}}TICKS_LOADED=true}
+async function loadTicks(){try{const j=JSON.parse(await FS.text(PATHS.ticks));TICKS=j.ticks||{};RESULTS=j.results||{};APPLIED=j.applied||[];resvCache()}catch(e){if(!TICKS_LOADED){TICKS={};RESULTS={}}}TICKS_LOADED=true}
 /* drills whose score goes into the Drill Spreadsheet */
 function resultSpec(k){const [sec,task]=String(k).split("::").map(x=>(x||"").trim().toLowerCase());
   const att=v=>`${v} attempt${+v===1?"":"s"}`;
@@ -1839,6 +1839,10 @@ function resvGet(d,k){return resvAll()[rdKey(d,k)]||null}
 function resvSet(d,k,o){const a=resvAll();a[rdKey(d,k)]=Object.assign(o,{ts:Date.now()});
   for(const x of Object.keys(a))if(Date.now()-(a[x].ts||0)>60*864e5)delete a[x];   // keep 60 days
   ls.set(RV,JSON.stringify(a))}
+function resvCache(){try{const a=resvAll();let ch=false;   // copy scores loaded from the vault, so they stay viewable here after the sync job clears them
+  for(const d of Object.keys(RESULTS||{}))for(const k of Object.keys(RESULTS[d]||{})){const key=rdKey(d,k),r=RESULTS[d][k];
+    if(!a[key]||JSON.stringify(a[key].v)!==JSON.stringify(r.v)){const spec=resultSpec(k);if(!spec)continue;const o=valsFromV(spec,r.v);a[key]={v:r.v,vals:o.vals,neg:o.neg,ts:Date.now()};ch=true}}
+  if(ch)ls.set(RV,JSON.stringify(a))}catch(e){}}
 function resvDel(d,k){const a=resvAll();delete a[rdKey(d,k)];ls.set(RV,JSON.stringify(a))}
 function valsFromV(spec,v){const vals={};let neg=false;
   if(spec.single){const f=spec.fields[0];const n=Number(v);if(f.type==="sg"&&n<0){neg=true;vals[f.id]=String(-n)}else vals[f.id]=String(v??"");return {vals,neg}}
