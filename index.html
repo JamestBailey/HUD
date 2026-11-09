@@ -602,6 +602,7 @@ h1{font-weight:700;letter-spacing:-.03em}
     <button data-tab="today" class="on"><span class="ti">◉</span>Today</button>
     <button data-tab="week"><span class="ti">▦</span>Week</button>
     <button data-tab="golf"><span class="ti">⚑</span>Golf</button>
+    <button data-tab="prep"><span class="ti">✈</span>Prep</button>
     <button data-tab="gym"><span class="ti">◆</span>Gym</button>
     <button data-tab="money"><span class="ti">£</span>Money</button>
   </nav>
@@ -618,7 +619,7 @@ h1{font-weight:700;letter-spacing:-.03em}
         <section class="tile t-sand b-ready"><div class="tl"><span>Recovery · Whoop</span><span id="rdMeta"></span></div><div id="ready"></div></section>
         <div class="tpair">
           <button class="tile t-lav b-sess" data-go="week"><div class="tl"><span>This week</span><span>›</span></div><div id="sessMini"></div></button>
-          <button class="tile t-dark b-event" data-go="golf"><div class="tl"><span>Next event</span><span>›</span></div><div id="evMini"></div></button>
+          <button class="tile t-dark b-event" data-go="prep"><div class="tl"><span>Next event</span><span>›</span></div><div id="evMini"></div></button>
         </div>
         <button class="tile t-dark b-money" data-go="money"><div class="tl"><span>Money</span><span>›</span></div><div id="moneyMini"></div></button>
       </div>
@@ -636,6 +637,11 @@ h1{font-weight:700;letter-spacing:-.03em}
   <main class="panel" id="p-golf">
     <div class="grid">
       <section class="card c12"><div class="ch"><span class="ct">Golf review · strokes gained</span><span class="cm" id="grMeta"></span></div><div id="greview"><div class="empty">Loading your scoring…</div></div></section>
+    </div>
+  </main>
+
+  <main class="panel" id="p-prep">
+    <div class="grid">
       <section class="card c12"><div class="ch"><span class="ct">Road to the next event</span><span class="cm" id="evMeta"></span></div><div id="event"></div></section>
       <section class="card c12"><div class="ch"><span class="ct">Coaching focus</span><span class="cm">latest per coach</span></div><div id="coaching"></div></section>
       <section class="card c12"><div class="ch"><span class="ct">Strokes gained · yardage book</span><span class="cm" id="trMeta"></span></div><div id="trend"></div></section>
@@ -1398,7 +1404,7 @@ $("relinkBtn").onclick=()=>{$("settings").classList.remove("show");connect()};
 function showTab(t){if(!document.getElementById("p-"+t))t="today";
   document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("on",p.id==="p-"+t));
   document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));
-  if(t==="golf")setTimeout(()=>{try{grRender()}catch(e){}try{COMPS.length&&renderComps({ev:COMPS,ms:MILES,txt:COMPS_TXT})}catch(e){}},0);if(t==="gym")setTimeout(()=>{try{G.byEx&&gRenderProg();gRenderWeight()}catch(e){}},0);ls.set("hud_tab",t);if(location.hash!=="#"+t)history.replaceState(null,"","#"+t);window.scrollTo(0,0)}
+  if(t==="golf")setTimeout(()=>{try{grRender()}catch(e){}},0);if(t==="prep")setTimeout(()=>{try{COMPS.length&&renderComps({ev:COMPS,ms:MILES,txt:COMPS_TXT})}catch(e){}},0);if(t==="gym")setTimeout(()=>{try{G.byEx&&gRenderProg();gRenderWeight()}catch(e){}},0);ls.set("hud_tab",t);if(location.hash!=="#"+t)history.replaceState(null,"","#"+t);window.scrollTo(0,0)}
 document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
 document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>showTab(b.dataset.go));
 showTab((location.hash||"").slice(1)||ls.get("hud_tab","today"));
