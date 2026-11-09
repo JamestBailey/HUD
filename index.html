@@ -453,6 +453,9 @@ h1{font-weight:700;letter-spacing:-.03em}
 .wg-now{position:absolute;left:0;right:0;height:2px;background:var(--now);z-index:4}.wg-now:before{content:"";position:absolute;left:-4px;top:-3px;width:8px;height:8px;border-radius:50%;background:var(--now)}
 .wg-det{margin-top:14px;border-radius:16px;padding:14px 16px;background:var(--panel2);border:1px solid var(--c);display:flex;flex-direction:column;gap:8px;animation:fade .25s ease}
 .wg-dt{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.wg-dt b{display:block;font-size:17px;margin-top:3px}.wg-dt small{font-size:12.5px;color:var(--muted)}.wg-tag{font-size:11px;font-weight:800;letter-spacing:.1em;color:var(--c)}
+.wg-ins{background:var(--panel);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.wg-ih{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.wg-ih b{font-size:14px}.wg-fb{font-size:10px;font-weight:800;letter-spacing:.1em;padding:3px 7px;border-radius:6px;background:#2a1f12;color:var(--gold)}
+.wg-ig{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.wg-ig div{background:var(--panel2);border-radius:10px;padding:8px 10px}.wg-ig span{display:block;font-size:10.5px;font-weight:800;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}.wg-ig b{font-size:17px}.wg-ig small{display:block;font-size:11px;color:var(--muted)}
 .wg-why{font-size:14px;color:#d6d3cc;line-height:1.5}.wg-drs{display:flex;flex-wrap:wrap;gap:6px}.wg-drs span{font-size:12px;font-weight:700;padding:5px 9px;border-radius:8px;background:var(--panel)}
 .wg-pills{display:flex;gap:8px;overflow-x:auto;margin-top:14px;padding-bottom:2px}
 .wg-pill{flex:none;display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;font:inherit;color:var(--text);cursor:pointer;border-radius:14px;padding:10px 12px;min-width:104px;min-height:44px;background:var(--panel2);border:1px solid transparent;transition:border-color .2s,background .2s}
@@ -1069,6 +1072,24 @@ const WG_PCOL={high:"#ffb86b",med:"#7da0d6",low:"#9aa0a6",body:"#6fc5c0",fixed:"
 const WG_PNAME={high:"Priority 1 · biggest leaks",med:"Priority 2",low:"Maintain",body:"Body",fixed:"Fixed"};
 function wgArea(k){k=nk(k);if(/^irons|yds ::/.test(k))return"app";if(/^off the tee/.test(k))return"ott";if(/^chipping/.test(k))return"atg";if(/^putting/.test(k))return"putt";if(/^playing/.test(k))return"play";if(/^gym/.test(k))return"gym";return null}
 function wgMins(b){if(!b.start||!b.end)return 0;const f=t=>{const[h,m]=t.split(":").map(Number);return h*60+m};return Math.max(0,f(b.end)-f(b.start))}
+let TREND=null;
+/* plain-English "why this block" for the Week tab detail panel — built from live data, not the planner's shorthand */
+function wgClean(t){return String(t||"").replace(/\s*\([^)]*\.(json|md|xlsx)\)/gi,"").replace(/\b[\w ]+\.(json|md|xlsx)\b/gi,"your scoring").replace(/\s+/g," ").trim()}
+function wgInsight(x){const out=[];
+  const bandKeys=[...new Set(x.drills.map(d=>{const m=String(d).match(/^\s*(>?\s*\d+)\s*(?:-\s*(\d+))?\s*yds\s*::/i);if(!m)return null;
+    const a=m[1].replace(/\s/g,"");return a.startsWith(">")?"200plus":m[2]?a+"_"+m[2]:null}).filter(Boolean))];
+  const D=GR.d;
+  bandKeys.forEach(k=>{const nm={"200plus":">200 yds","160_200":"160–200 yds","100_160":"100–160 yds","40_100":"40–100 yds"}[k]||k;
+    if(D&&D.last10.bands[k]&&D.tour[k]){const b=D.last10.bands[k],t=D.tour[k],g=b.att?Math.round(b.made/b.att*100):null,focus=D.last10.focus===k;
+      out.push(`<div class="wg-ins"><div class="wg-ih">${focus?'<span class="wg-fb">YOUR FOCUS BAND</span>':""}<b>${nm} · last 10 rounds</b></div>
+        <div class="wg-ig"><div><span>GIR</span><b>${g==null?"–":g+"%"}</b><small>Tour ${t.gir}%</small></div><div><span>Proximity</span><b>${b.prox?b.prox.toFixed(1)+" ft":"–"}</b><small>Tour ${t.prox} ft</small></div><div><span>Faced a round</span><b>${b.rounds?(b.att/b.rounds).toFixed(1):"–"}</b><small>shots</small></div></div>
+        <div class="wg-why">${focus?"This band costs you the most against Tour level, so it goes first at Driffield.":"Second-priority band this week."} ${b.prox&&t.prox?`You're finishing ${(b.prox-t.prox).toFixed(1)} ft further from the pin than a Tour player`+(g!=null?` and hitting ${t.gir-g>0?(t.gir-g)+" points fewer":"as many"} greens.`:"."):""}</div></div>`)}
+    const tb=(TREND||[]).find(z=>z.name.replace(/\s/g,"").toLowerCase()===nm.replace("–","-").replace(/\s/g,"").toLowerCase().replace("yds","yds")||z.name.replace(/\s|yds/gi,"")===nm.replace(/[\s–]|yds/gi,"").replace(/(\d+)(\d{3})$/,"$1-$2"));
+    const tb2=tb||(TREND||[]).find(z=>z.name.replace(/[^\d>]/g,"")===nm.replace(/[^\d>]/g,""));
+    if(tb2){const l=tb2.pts.at(-1);out.push(`<div class="wg-why">Driffield yardage book (strokes gained drill): ${l?`last session ${(l.v>0?"+":"")+l.v.toFixed(2)} on ${l.d.toLocaleDateString("en-GB",{day:"numeric",month:"short"})}${tb2.pts.length>1?`, ${tb2.pts.length} sessions logged`:""}. Beat it.`:"no sessions logged yet — this one sets your baseline."}</div>`)}});
+  if(!bandKeys.length&&x.b.why)out.push(`<div class="wg-why">${esc(wgClean(x.b.why))}</div>`);
+  else if(bandKeys.length&&x.drills.length){out.push(`<div class="wg-why faint">${x.drills.length===2?"10 min warm-up, then Completion (30 min) and Strokes Gained (30 min).":esc(wgClean(x.b.why))}</div>`)}
+  return out.join("")}
 /* split from scoring (season + last 10 blend, 15% floor) — same rule as the planner and the Golf tab */
 function wgScoring(){const D=GR.d;if(!D)return null;const ks=["app","ott","atg","putt"];
   const lost=ks.map(k=>Math.max(0,-((D.season[k]??0)+(D.last10[k]??0))/2)),tl=lost.reduce((a,x)=>a+x,0)||1;
@@ -1118,7 +1139,7 @@ function renderWeekGrid(){const el=$("practice");if(!el)return;
   const pk=selX?prio(selX.a):"high";
   const det=selX?`<div class="wg-det" style="--c:${WG_PCOL[pk]}"><div class="wg-dt"><div><div class="wg-tag">${WG_PNAME[pk].toUpperCase()}${selX.a!=="fixed"?" · "+WG_AREA[selX.a].toUpperCase()+(selX.a2?" + "+WG_AREA[selX.a2].toUpperCase():""):""}</div>
       <b>${esc(selX.b.title)}</b><small>${selD.d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"short"})} · ${esc(selX.b.start)}–${esc(selX.b.end||"")}${selX.m?" · "+selX.m+" min":""}</small></div>${selX.done?'<span class="ok">✓ Done</span>':""}</div>
-      ${selX.b.why?`<div class="wg-why">${esc(selX.b.why)}</div>`:""}
+      ${wgInsight(selX)}
       ${selX.drills.length?`<div class="wg-drs">${selX.drills.map(x=>`<span>${esc(keyLabel(x))}</span>`).join("")}</div>`:""}</div>`:`<div class="note">Tap a block for why it's there and its drills.</div>`;
   const P=PR,target=+ls.get("hud_target","25")||25;
   el.innerHTML=`${P?`<div class="wg-stats"><div><span>Sessions</span><b>${P.total}</b><small>/ ${target}</small></div><div><span>Gym</span><b>${P.areas.Gym}</b><small>/ 3</small></div><div><span>Rounds played</span><b>${P.areas.Playing||0}</b><small>this week</small></div></div>`:""}
@@ -1427,7 +1448,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-gr-per],[d
 function grHov(){grRender()}
 
 async function loadTrendFocus(){try{const j=JSON.parse(await FS.text(PATHS.rounds));return (j.focus_band||{}).recent||(j.focus_band||{}).season||null}catch(e){return null}}
-function renderTrend(bands){
+function renderTrend(bands){TREND=bands;
   if(!bands.length){$("trend").innerHTML='<div class="empty">No Yardage Chart tab found.</div>';return}
   const fkey=bands.focus?bands.focus.replace("plus","+").replace("_","-"):"";const isF=nm=>{const k=nm.replace(/yds?/i,"").replace(/\s/g,"");return fkey&&(k===fkey||k===">"+fkey.replace("+",""))};
   const n=bands.reduce((a,b)=>a+b.pts.length,0);$("trMeta").textContent=`${n} session${n===1?"":"s"} logged`;
