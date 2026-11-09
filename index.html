@@ -419,6 +419,42 @@ h1{font-weight:700;letter-spacing:-.03em}
 .gdet ol{padding-left:20px;margin-top:10px}.gdet li{margin:6px 0;color:#d0d0d0;line-height:1.5}
 @media(max-width:1100px){#p-gym .c6{grid-column:span 12}}
 #p-gym .ch{flex-wrap:wrap;gap:8px}
+/* Prep · Mission control */
+.mc-side{display:flex;flex-direction:column;gap:20px;min-width:0}
+@media(max-width:1100px){#p-prep .c7,#p-prep .c5{grid-column:span 12}}
+.mc-hero{display:flex;flex-wrap:wrap;gap:22px;align-items:center}
+.mc-digits{display:flex;gap:6px}.mc-digits span{width:74px;height:98px;border-radius:16px;background:var(--panel2);border:1px solid var(--line2);display:grid;place-items:center;font-size:68px;font-weight:800;letter-spacing:-.04em;font-variant-numeric:tabular-nums;position:relative;overflow:hidden}
+.mc-digits span:after{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:var(--bg)}
+.mc-ev{flex:1 1 300px;display:flex;flex-direction:column;gap:5px;align-items:flex-start}.mc-k{font-size:12px;font-weight:800;letter-spacing:.1em;color:var(--muted)}.mc-name{font-size:21px;font-weight:800}
+.mc-evbtn{margin-top:6px;font:700 13px Inter,sans-serif;color:var(--gold);background:#2a1f12;border:1px solid rgba(255,184,107,.38);border-radius:10px;padding:8px 12px;min-height:40px;cursor:pointer}
+.mc-evlist{margin-top:14px;padding:6px 14px;background:var(--panel2);border-radius:14px}
+.mc-phases{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:20px}
+.mc-ph{text-align:left;font:inherit;color:var(--text);cursor:pointer;border-radius:16px;padding:13px 14px;min-height:44px;background:var(--panel2);border:1px solid var(--line);transition:border-color .2s,background .2s,transform .2s}
+.mc-ph:hover{transform:translateY(-2px)}.mc-ph.on{background:#2a1f12;border-color:var(--gold)}
+.mc-phn{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:800}.mc-phn i{width:10px;height:10px;border-radius:50%;background:var(--line2)}
+.mc-ph.cur .mc-phn i{background:var(--gold);animation:mcpulse 2s ease-out infinite}
+@keyframes mcpulse{0%{box-shadow:0 0 0 0 rgba(255,184,107,.55)}70%{box-shadow:0 0 0 10px rgba(255,184,107,0)}100%{box-shadow:0 0 0 0 rgba(255,184,107,0)}}
+.mc-phs{font-size:12px;font-weight:600;color:var(--muted);margin-top:4px}
+.mc-bar{height:8px;border-radius:5px;background:rgba(255,255,255,.07);overflow:hidden;margin-top:10px}.mc-bar b{display:block;height:100%;width:0;border-radius:5px;background:var(--gold);transition:width .9s cubic-bezier(.3,.8,.3,1)}.mc-bar b.neg{background:#e08a3c}
+.mc-phtxt{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap;margin-top:12px;background:var(--panel2);border-radius:14px;padding:13px 15px;font-size:15px;font-weight:600;line-height:1.5}.mc-phtxt>span:last-child{flex:1 1 260px}
+.mc-tag{font-size:11px;font-weight:800;letter-spacing:.1em;padding:5px 8px;border-radius:7px;background:#2a1f12;color:var(--gold)}
+.mc-mh{display:flex;align-items:center;gap:16px;margin-bottom:10px}.mc-h2{font-size:20px;font-weight:800}
+.mc-ring{transition:stroke-dashoffset 1s cubic-bezier(.3,.8,.3,1)}
+.mc-spark{position:absolute;width:7px;height:7px;border-radius:50%;pointer-events:none;z-index:2;animation:mcburst .7s ease-out forwards}
+@keyframes mcburst{0%{transform:translate(0,-50%) scale(1);opacity:1}100%{transform:translate(var(--dx),calc(-50% + var(--dy))) scale(.3);opacity:0}}
+.mc-coach{border-radius:16px;margin:0 -8px;transition:background .2s}.mc-coach.on{background:var(--panel2)}
+.mc-cb{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font:inherit;color:var(--text);background:none;border:none;padding:10px 8px;min-height:52px;cursor:pointer}
+.mc-cn{flex:1;min-width:0}.mc-cn b{display:block;font-size:15px}.mc-cn small{display:block;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mc-cd{text-align:right}.mc-cd b{display:block;font-size:18px;font-weight:800}.mc-cd small{font-size:11px;color:var(--muted)}
+.mc-cx{padding:0 12px 12px 64px}.mc-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}.mc-chips span{font-size:12px;font-weight:700;padding:5px 9px;border-radius:8px;background:var(--panel)}
+.mc-open{display:inline-block;margin-top:8px;font-size:13px;font-weight:700;color:var(--gold)}
+.mc-drills{display:flex;flex-direction:column;gap:6px}
+.mc-dr{display:grid;grid-template-columns:minmax(120px,1fr) minmax(0,1.4fr) 62px;gap:12px;align-items:center;border-radius:12px;padding:9px 10px;margin:0 -10px;border:1px solid transparent}
+.mc-dr.f{background:#2a1f12;border-color:rgba(255,184,107,.45)}.mc-dr b{font-size:14px}.mc-dr small{display:block;font-size:11.5px;color:var(--muted);font-weight:600}.mc-dr.f small{color:var(--gold)}
+.mc-dr .mc-bar{margin:0}.mc-dr:not(.f) .mc-bar b:not(.neg){background:#6b8f74}.mc-dv{text-align:right;font-weight:800;font-size:15px}
+@media(max-width:600px){.mc-digits span{width:60px;height:80px;font-size:54px}.mc-phases{grid-template-columns:repeat(2,minmax(0,1fr))}.mc-cx{padding-left:12px}}
+@media(prefers-reduced-motion:reduce){.mc-ph.cur .mc-phn i,.mc-spark{animation:none}.mc-bar b,.mc-ring{transition:none}}
+
 /* Golf review (cockpit) */
 .gr-tabs{display:flex;gap:4px;overflow-x:auto;background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:4px;margin-bottom:16px;scrollbar-width:none}
 .gr-tabs button{flex:none;display:flex;flex-direction:column;align-items:center;min-width:62px;min-height:46px;padding:6px 12px;border:none;border-radius:10px;background:none;color:var(--muted);font:inherit;cursor:pointer;transition:background .2s,color .2s}
@@ -642,9 +678,12 @@ h1{font-weight:700;letter-spacing:-.03em}
 
   <main class="panel" id="p-prep">
     <div class="grid">
-      <section class="card c12"><div class="ch"><span class="ct">Road to the next event</span><span class="cm" id="evMeta"></span></div><div id="event"></div></section>
-      <section class="card c12"><div class="ch"><span class="ct">Coaching focus</span><span class="cm">latest per coach</span></div><div id="coaching"></div></section>
-      <section class="card c12"><div class="ch"><span class="ct">Strokes gained · yardage book</span><span class="cm" id="trMeta"></span></div><div id="trend"></div></section>
+      <section class="card c12"><div class="ch"><span class="ct">Mission control</span><span class="cm" id="evMeta"></span></div><div id="event"></div></section>
+      <section class="card c7 mc-col"><div id="miles"></div></section>
+      <div class="c5 mc-side">
+        <section class="card"><div class="ch"><span class="ct">Coaches · last seen</span><span class="cm">tap for focus</span></div><div id="coaching"></div></section>
+        <section class="card"><div class="ch"><span class="ct">Driffield yardage book</span><span class="cm" id="trMeta"></span></div><div id="trend"></div></section>
+      </div>
     </div>
   </main>
 
@@ -1293,17 +1332,18 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-gr-per],[d
   if(b.dataset.grPer){GR.per=b.dataset.grPer;GR.hov=null}else if(b.dataset.grSel){GR.sel=b.dataset.grSel;GR.hov=null}else{GR.hov=+b.dataset.grHov;return grHov()}grRender()});
 function grHov(){grRender()}
 
+async function loadTrendFocus(){try{const j=JSON.parse(await FS.text(PATHS.rounds));return (j.focus_band||{}).recent||(j.focus_band||{}).season||null}catch(e){return null}}
 function renderTrend(bands){
   if(!bands.length){$("trend").innerHTML='<div class="empty">No Yardage Chart tab found.</div>';return}
+  const fkey=bands.focus?bands.focus.replace("plus","+").replace("_","-"):"";const isF=nm=>{const k=nm.replace(/yds?/i,"").replace(/\s/g,"");return fkey&&(k===fkey||k===">"+fkey.replace("+",""))};
   const n=bands.reduce((a,b)=>a+b.pts.length,0);$("trMeta").textContent=`${n} session${n===1?"":"s"} logged`;
-  const has=bands.filter(b=>b.pts.length),none=bands.filter(b=>!b.pts.length);
-  $("trend").innerHTML=`<div class="bands">${has.map(b=>{const last=b.pts.at(-1),prev=b.pts.at(-2);
-    const ch=last&&prev?last.v-prev.v:null;
-    return `<div class="band"><div class="bn">${esc(b.name)}</div><div class="bv">${last?(last.v>0?"+":"")+last.v.toFixed(2):"–"}</div>
-      <div class="cm">${last?`${b.pts.length} · ${ch===null?"first session":(ch>=0?`<span class="ok">▲ ${ch.toFixed(2)}</span>`:`<span class="bad">▼ ${Math.abs(ch).toFixed(2)}</span>`)}`:"no sessions yet"}</div>${spark(b.pts)}</div>`}).join("")}</div>
-    ${!has.length?'<div class="empty">No yardage-book sessions logged yet.</div>':""}
-    ${none.length?`<div class="nodata">No sessions yet: ${none.map(b=>esc(b.name)).join(" · ")}</div>`:""}
-    ${n<3&&has.length?'<div class="note">A trend line appears from the 2nd session in each band.</div>':""}`;
+  const fb=bands.find(b=>isF(b.name));
+  $("trend").innerHTML=`<div class="mc-drills">${bands.map(b=>{const last=b.pts.at(-1),prev=b.pts.at(-2),ch=last&&prev?last.v-prev.v:null,f=isF(b.name);
+    return `<div class="mc-dr${f?" f":""}"><div><b>${esc(b.name.replace(/\s*-\s*/,"–").replace("yds"," yds"))}</b><small>${f?"FOCUS BAND · ":""}${b.pts.length?`${b.pts.length} session${b.pts.length===1?"":"s"}${ch===null?"":ch>=0?` · <span class="ok">▲ ${ch.toFixed(2)}</span>`:` · <span class="bad">▼ ${Math.abs(ch).toFixed(2)}</span>`}`:"none yet"}</small></div>
+      <div class="mc-bar"><b data-w="${last?Math.max(3,Math.min(100,Math.abs(last.v)/5*100)).toFixed(1):0}%" class="${last&&last.v<0?"neg":""}"></b></div>
+      <div class="mc-dv${last?"":" faint"}">${last?(last.v>0?"+":"")+last.v.toFixed(2):"–"}</div></div>`}).join("")}</div>
+    <div class="note">Strokes gained per session, latest. ${fb&&!fb.pts.length?`Your focus band from scoring (${esc(fb.name.replace(/\s*-\s*/,"–").replace("yds"," yds"))}) has no sessions logged yet.`:"Trend arrows appear from the 2nd session in a band."}</div>`;
+  mcAnim();return;
 }
 
 /* ============ COACHING FOCUS (lesson notes in the vault) ============ */
@@ -1322,17 +1362,24 @@ async function loadCoaching(){
     out.push({coach:c,best})}
   return out
 }
-function renderCoaching(list){
+function renderCoaching(list){MC.coachList=list;
   const vault=ROOT?ROOT.name:"Second Brain";
   list=list.slice().sort((x,y)=>(y.best?y.best.date:"")>(x.best?x.best.date:"")?1:-1);
+  if(MC.coach===undefined)MC.coach=list[0]?list[0].coach:"";
+  const C=2*Math.PI*18;
   $("coaching").innerHTML=list.length?list.map(({coach,best})=>{
     const link=best?`obsidian://open?vault=${encodeURIComponent(vault)}&file=${encodeURIComponent(`${PATHS.coaching}/${coach}/${best.sub}/${best.file.replace(/\.md$/,"")}`)}`:"#";
-    const age=best?dayDiff(new Date(),new Date(best.date)):null;
-    return `<div class="coach"><a href="${link}"><div class="who">${esc(coach)}</div><div class="when">${best?`${best.sub.replace("Lesson ","")} · ${new Date(best.date).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:age>300?"numeric":undefined})}`:"Nothing logged yet"}</div></a>
-      <div>${!best?'<span class="faint">—</span>'
-        :best.work.length?`<ul class="work">${best.work.map(w=>`<li>${esc(w)}</li>`).join("")}</ul>`
-        :`${best.focus.map(f=>`<span class="pill">${esc(f)}</span>`).join("")}<div class="cm ${age<=21?"warn":"faint"}" style="margin-top:6px">${best.sub==="Lesson Objectives"?`No lesson notes written up for this lesson — tell Claude what ${esc(coach.split(" ")[0])} said and this becomes your to-work-on list.`:"No working-on list in these notes yet — ask Claude to add one."}</div>`}</div></div>`}).join(""):'<div class="empty">No coach folders found.</div>';
-}
+    const age=best?Math.max(0,dayDiff(day0(new Date()),new Date(best.date+"T00:00"))):null;
+    const col=age==null?"var(--line2)":age<=14?"var(--lav)":age<=42?"var(--amber)":"#e08a3c";
+    const frac=age==null?0:Math.max(.06,1-age/70),open=MC.coach===coach;
+    return `<div class="mc-coach${open?" on":""}"><button class="mc-cb" data-mc-coach="${esc(coach)}" aria-expanded="${open}">
+        <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="18" fill="none" stroke="var(--line)" stroke-width="5"/><circle class="mc-ring" cx="22" cy="22" r="18" fill="none" stroke="${col}" stroke-width="5" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}" data-off="${(C*(1-frac)).toFixed(1)}" transform="rotate(-90 22 22)"/></svg>
+        <div class="mc-cn"><b>${esc(coach)}</b><small>${best?(best.focus.slice(0,2).map(esc).join(" · ")||best.sub):"Nothing logged yet"}</small></div>
+        <div class="mc-cd"><b style="color:${col}">${age==null?"–":age}</b><small>${age==null?"":"days ago"}</small></div></button>
+      ${open&&best?`<div class="mc-cx">${best.focus.length?`<div class="mc-chips">${best.focus.map(f=>`<span>${esc(f)}</span>`).join("")}</div>`:""}
+        ${best.work.length?`<ul class="work">${best.work.map(w=>`<li>${esc(w)}</li>`).join("")}</ul>`:`<div class="cm">${best.sub==="Lesson Objectives"?`No lesson notes written up yet — tell Claude what ${esc(coach.split(" ")[0])} said and this becomes your to-work-on list.`:"No working-on list in these notes yet."}</div>`}
+        <a class="mc-open" href="${link}">Open ${best.sub.replace("Lesson ","").toLowerCase()} · ${new Date(best.date+"T00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short"})} ›</a></div>`:""}</div>`}).join(""):'<div class="empty">No coach folders found.</div>';
+  mcAnim()}
 
 /* ============ CALENDAR (Google Apps Script link) ============ */
 async function loadCalendar(){
@@ -1360,7 +1407,7 @@ async function refresh(){
   await Promise.all([
     safe(loadSpending,renderSpending,"spend","the Spending Tracker"),
     safe(loadPractice,renderPractice,"practice","Daily To Do"),
-    safe(loadTrend,renderTrend,"trend","the Drill Spreadsheet"),
+    safe(async()=>{const b=await loadTrend();b.focus=await loadTrendFocus();return b},renderTrend,"trend","the Drill Spreadsheet"),
     safe(loadRounds,renderRounds,"greview","the scoring data"),
     safe(loadCoaching,renderCoaching,"coaching","coach folders"),
     safe(loadCalendar,renderCalendar,"cal","your calendar"),
@@ -1404,7 +1451,7 @@ $("relinkBtn").onclick=()=>{$("settings").classList.remove("show");connect()};
 function showTab(t){if(!document.getElementById("p-"+t))t="today";
   document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("on",p.id==="p-"+t));
   document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));
-  if(t==="golf")setTimeout(()=>{try{grRender()}catch(e){}},0);if(t==="prep")setTimeout(()=>{try{COMPS.length&&renderComps({ev:COMPS,ms:MILES,txt:COMPS_TXT})}catch(e){}},0);if(t==="gym")setTimeout(()=>{try{G.byEx&&gRenderProg();gRenderWeight()}catch(e){}},0);ls.set("hud_tab",t);if(location.hash!=="#"+t)history.replaceState(null,"","#"+t);window.scrollTo(0,0)}
+  if(t==="golf")setTimeout(()=>{try{grRender()}catch(e){}},0);if(t==="prep")setTimeout(()=>{try{MC.rolled=false;COMPS.length&&renderComps({ev:COMPS,ms:MILES,txt:COMPS_TXT})}catch(e){}},0);if(t==="gym")setTimeout(()=>{try{G.byEx&&gRenderProg();gRenderWeight()}catch(e){}},0);ls.set("hud_tab",t);if(location.hash!=="#"+t)history.replaceState(null,"","#"+t);window.scrollTo(0,0)}
 document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
 document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>showTab(b.dataset.go));
 showTab((location.hash||"").slice(1)||ls.get("hud_tab","today"));
@@ -1952,15 +1999,40 @@ function renderComps(r){if(MPENDING&&r.ms&&r.ms!==MILES){const cur=new Map(MILES
   $("evMini").innerHTML=`<div class="num">${n<=0?"Now":n}<small>${n<=0?"":"days"}</small></div><div class="sub2">${esc(e.name)}<br><span class="faint">${fmtDay(s)}${e.venue?" · "+esc(e.venue):""}</span></div><div style="margin-top:auto"><span class="chip">${phase[0]}</span></div>`;
   const block=up.filter(x=>x.tour&&x.tour===e.tour);const last=block.length?block.at(-1):e;
   const open=MILES.filter(m=>!m.done),over=open.filter(m=>m.due<ymd(t));
-  $("event").innerHTML=`<div class="road">
-    <div class="rhead"><div><div class="days2">${n<=0?"Now":n}</div><div class="muted">${n<=0?"in play":n===1?"day to go":"days to go"}</div></div>
-      <div style="flex:1;min-width:200px"><div style="font-weight:700;font-size:16px">${esc(e.name)}</div><div class="cm">${fmtDay(s)}${e.end!==e.start?" – "+fmtDay(new Date(e.end+"T00:00")):""}${e.venue?" · "+esc(e.venue):""}</div>
-        <span class="phase ${phase[1]}">${phase[0]}</span><div class="note" style="margin-top:6px">${phase[2]}</div></div>
-      ${block.length>1?`<div class="rblock"><b>${block.length}</b> events<br><span class="faint">to ${fmtDay(new Date(last.end+"T00:00"))}</span></div>`:""}</div>
-    <div class="rstrip" id="rStrip"></div>
-    <div class="rgrid"><div><div class="fh">Prep milestones${open.length?` · ${open.length} to do`:""}${over.length?` · <span class="warn">${over.length} overdue</span>`:""}</div><div id="rMiles"></div></div>
-      <div><div class="fh">Events</div>${up.slice(0,8).map(x=>`<div class="comp"><span class="d">${fmtDay(new Date(x.start+"T00:00"))}</span><div>${esc(x.name)}${x.venue?`<div class="v">${esc(x.venue)}</div>`:""}</div></div>`).join("")}</div></div></div>`;
-  roadStrip(t,e,last);roadMiles()}
+  // phases, worked back from the first tee: Build → Sharpen (28 days out) → Taper (7 days out) → Events
+  const lastEnd=new Date(last.end+"T00:00"),sh=addD(28),tp=addD(7);
+  const PH=[{k:"b",n:"Build",a:null,b:sh,txt:"More than 28 days out. Scoring decides where practice time goes, and swing changes are fine."},
+    {k:"s",n:"Sharpen",a:sh,b:tp,txt:"At least a third of time on-course and in pressure games, less technical change. Equipment locked in."},
+    {k:"w",n:"Taper",a:tp,b:s,txt:"Short, confidence-building sessions in every area. No swing changes, low gym strain."},
+    {k:"e",n:"Events",a:s,b:new Date(lastEnd.getTime()+864e5),txt:`${block.length>1?block.length+" events":"The event"} to ${fmtDay(lastEnd)}. Recovery first between rounds; practise only to stay sharp.`}];
+  const cur=PH.find(p=>(!p.a||t>=p.a)&&t<p.b)||PH[3];const sel=PH.find(p=>p.k===MC.ph)||cur;
+  const dig=String(Math.max(0,n)).padStart(2,"0").split("");
+  $("event").innerHTML=`<div class="mc-hero">
+      <div class="mc-digits" aria-label="${n} days to go" data-n="${Math.max(0,n)}">${dig.map(d=>`<span>${d}</span>`).join("")}</div>
+      <div class="mc-ev"><div class="mc-k">${n<=0?"IN PLAY":"DAYS TO FIRST TEE"}</div><div class="mc-name">${esc(e.name)}</div>
+        <div class="cm">${fmtDay(s)}${e.end!==e.start?" – "+fmtDay(new Date(e.end+"T00:00")):""}${e.venue?" · "+esc(e.venue):""}</div>
+        ${block.length>1?`<button class="mc-evbtn" data-mc-evs aria-expanded="${MC.evs}">${block.length} events to ${fmtDay(lastEnd)} <span>${MC.evs?"▴":"▾"}</span></button>`:""}</div></div>
+    ${MC.evs?`<div class="mc-evlist">${up.slice(0,8).map(x=>`<div class="comp"><span class="d">${fmtDay(new Date(x.start+"T00:00"))}</span><div>${esc(x.name)}${x.venue?`<div class="v">${esc(x.venue)}</div>`:""}</div></div>`).join("")}</div>`:""}
+    <div class="mc-phases">${PH.map(p=>{const isCur=p===cur,past=t>=p.b,left=dayDiff(p.b,t),toStart=p.a?dayDiff(p.a,t):0;
+      const len=p.a?dayDiff(p.b,p.a):null,prog=past?100:isCur&&len?Math.max(4,(1-left/len)*100):0;
+      const sub=past?"done":isCur?`${left} day${left===1?"":"s"} left`:`starts ${fmtDay(p.a)}`;
+      return `<button class="mc-ph${p===sel?" on":""}${isCur?" cur":""}" data-mc-ph="${p.k}" aria-pressed="${p===sel}"><div class="mc-phn"><i></i>${p.n}</div><div class="mc-phs">${sub}</div>${p.a||past?`<div class="mc-bar"><b data-w="${prog.toFixed(1)}%"></b></div>`:""}</button>`}).join("")}</div>
+    <div class="mc-phtxt"><span class="mc-tag">${sel===cur?"NOW · ":""}${sel.n.toUpperCase()}</span><span>${sel.txt}</span></div>`;
+  const nx=open[0],frac=MILES.length?(MILES.length-open.length)/MILES.length:0,C=2*Math.PI*30;
+  $("miles").innerHTML=`<div class="mc-mh"><svg width="74" height="74" viewBox="0 0 74 74" role="img" aria-label="${MILES.length-open.length} of ${MILES.length} milestones done"><circle cx="37" cy="37" r="30" fill="none" stroke="var(--line)" stroke-width="8"/><circle class="mc-ring" cx="37" cy="37" r="30" fill="none" stroke="var(--lav)" stroke-width="8" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C*(1-MC.ring)).toFixed(1)}" data-off="${(C*(1-frac)).toFixed(1)}" transform="rotate(-90 37 37)"/><text x="37" y="42" text-anchor="middle" font-size="16" font-weight="800" fill="var(--text)">${MILES.length-open.length}/${MILES.length}</text></svg>
+      <div><div class="mc-h2">Prep milestones</div><div class="cm">${open.length?`${open.length} to do${over.length?` · <span class="warn">${over.length} overdue</span>`:""}${nx?` · next: ${esc(nx.item.split(" (")[0])}, ${fmtDay(new Date(nx.due+"T00:00"))}`:""}`:"All done"}</div></div></div>
+    <div id="rMiles"></div>`;MC.ring=frac;
+  roadMiles();mcAnim()}
+const MC={ph:null,evs:false,ring:0,rolled:false};
+function mcAnim(){requestAnimationFrame(()=>requestAnimationFrame(()=>{
+  document.querySelectorAll("#p-prep [data-w]").forEach(x=>x.style.width=x.dataset.w);
+  document.querySelectorAll("#p-prep .mc-ring[data-off]").forEach(x=>x.setAttribute("stroke-dashoffset",x.dataset.off));
+  const dg=document.querySelector("#event .mc-digits");if(!dg||MC.rolled||matchMedia("(prefers-reduced-motion: reduce)").matches||!$("p-prep").classList.contains("on"))return;MC.rolled=true;
+  const n=+dg.dataset.n,from=Math.min(99,n+30),t0=performance.now(),sp=[...dg.children];
+  const step=now=>{const p=Math.min(1,(now-t0)/1100),v=Math.round(from+(n-from)*(1-Math.pow(1-p,3)));const st=String(v).padStart(sp.length,"0");sp.forEach((x,i)=>x.textContent=st[i]||"");if(p<1)requestAnimationFrame(step)};requestAnimationFrame(step)}))}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-mc-ph],[data-mc-evs],[data-mc-coach]");if(!b)return;
+  if(b.dataset.mcPh){MC.ph=b.dataset.mcPh}else if(b.hasAttribute("data-mc-evs")){MC.evs=!MC.evs}else{MC.coach=MC.coach===b.dataset.mcCoach?"":b.dataset.mcCoach;return renderCoaching(MC.coachList)}
+  renderComps({ev:COMPS,ms:MILES,txt:COMPS_TXT})});
 function roadStrip(t,first,last){const el=$("rStrip");if(!el)return;
   const W=Math.max(300,Math.min(1240,el.clientWidth||($("event").clientWidth)||700)),H=96,P={l:8,r:8};
   const s=new Date(first.start+"T00:00"),end=new Date(new Date(last.end+"T00:00").getTime()+2*864e5);
@@ -2015,6 +2087,8 @@ function renderReview(j){REVIEWS=(j&&j.reviews||[]).slice().sort((a,b)=>a.week_s
 
 /* shared "done" animation: overlay sweeps in, ring pulses, tick pops (same feel as a finished exercise) */
 function animDone(el){el.classList.remove("done","pop");void el.offsetWidth;el.classList.add("done","pop");
+  if(el.classList.contains("rms")&&!matchMedia("(prefers-reduced-motion: reduce)").matches){for(let i=0;i<10;i++){const a=i/10*Math.PI*2,sp=document.createElement("span");sp.className="mc-spark";
+    sp.style.cssText=`left:27px;top:50%;background:${i%2?"var(--lav)":"var(--gold)"};--dx:${Math.round(Math.cos(a)*36)}px;--dy:${Math.round(Math.sin(a)*36)}px`;el.appendChild(sp);setTimeout(()=>sp.remove(),800)}}
   try{navigator.vibrate&&navigator.vibrate([30,40,60])}catch(e){}setTimeout(()=>el.classList.remove("pop"),700)}
 
 /* ---- per-putt table for the 9–20ft and <10ft drills; entries survive the phone locking or the tab reloading ---- */
