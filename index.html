@@ -315,7 +315,7 @@ h1{font-weight:700;letter-spacing:-.03em}
 .drill.pop{animation:gpop .5s cubic-bezier(.3,1.5,.5,1)}.drill.pop .m{animation:gringpop .5s cubic-bezier(.3,1.6,.5,1)}
 .blk{position:relative;isolation:isolate;overflow:hidden;transition:border-color .3s,box-shadow .3s}
 .blk.alldone::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(143,209,158,.22),rgba(143,209,158,.10));z-index:-1;animation:gsweep .6s cubic-bezier(.3,.8,.3,1) both}
-.blk.alldone{border-color:rgba(143,209,158,.75);box-shadow:0 0 0 2px rgba(143,209,158,.45)}.blk.alldone .bp{color:var(--lav)}
+.blk.alldone{background:#132519;border-color:rgba(143,209,158,.75);box-shadow:0 0 0 2px rgba(143,209,158,.45);color:var(--lav)}.blk.alldone .bp{color:var(--lav)}
 .blk.alldone.still::before{animation:none}.blk.pop{animation:gpop .5s cubic-bezier(.3,1.5,.5,1)}
 @keyframes gsweep{from{transform:scaleX(0);transform-origin:left}to{transform:scaleX(1);transform-origin:left}}
 @media(prefers-reduced-motion:reduce){.drill.pop,.drill.pop .m,.blk.pop{animation:none}.drill::before{transition:none}.blk.alldone::before{animation:none}}
@@ -473,10 +473,10 @@ h1{font-weight:700;letter-spacing:-.03em}
 /* weigh-in */
 .wentry{margin-top:14px}.wentry label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px}
 .wentry .resrow,.blk.w .resrow{display:flex;gap:8px}.wentry input,.blk.w input{flex:1;max-width:220px;font:700 18px Inter,sans-serif;padding:10px 12px;border-radius:12px;border:1px solid var(--line2);background:var(--bg);color:var(--text);min-height:46px}
-.blk.w{display:block;cursor:default;background:#1d2621;border:1px solid rgba(143,209,158,.35)}.blk.w.done{background:#173022}
-.blk.w .bt{color:var(--lav)}.wrow{display:flex;align-items:center;gap:12px;margin-top:6px}
+.blk.w{display:block;cursor:default;background:#2a1f12;border:1px solid rgba(255,184,107,.38)}.blk.w.done{background:#173022}
+.blk.w .bt{color:var(--gold)}.blk.w.done .bt{color:var(--lav)}.wrow{display:flex;align-items:center;gap:12px;margin-top:6px}
 .wtick{width:34px;height:34px;flex:none;border-radius:10px;border:2px solid var(--lav);background:none;color:var(--ink);font:800 17px Inter,sans-serif;cursor:pointer}
-.wtick.on{background:var(--lav)}
+.wtick.on{background:var(--lav)}.blk.w .wtick:not(.on){border-color:var(--gold)}
 
 /* road to the next event */
 .rhead{display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap}.rhead .days2{line-height:1}
@@ -1014,7 +1014,7 @@ function renderDay(){
     // cardio (run / bike) is a planned workout: tickable, and logged as "Gym :: Workout" in Daily To Do
     const cardio=!b.fixed&&CARDIO_RE.test(String(b.title).split(" · ")[0]);
     const drills=(b.drills&&b.drills.length)?b.drills:(cardio?["Gym :: Workout"]:[]);drills.forEach(k=>used.add(nk(k)));
-    const gym=cardio||/gym|1079/i.test(b.title)||drills.some(k=>/^gym/i.test(k));const appt=b.fixed&&!drills.length;const cls=appt?"f":gym?"g":"p";
+    const gym=cardio||/gym|1079/i.test(b.title)||drills.some(k=>/^gym/i.test(k));const appt=b.fixed&&!drills.length;const cls=appt?"f":"p";   // every tickable session is orange until all of it is ticked, then .alldone turns it green
     const parts=String(b.title).split(" · ");const tag=appt?(parts.length>1?parts.slice(1).join(" · "):""):(parts.length>1?parts[0]:"");const title=appt?parts[0]:(parts.length>1?parts.slice(1).join(" · "):b.title);
     const dn=drills.filter(k=>doneKeys.has(nk(k))).length;
     html+=`<div class="tl-row"><div class="tl-t">${esc(b.start||"")}</div><div class="tl-b">
