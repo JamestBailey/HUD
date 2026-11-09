@@ -419,6 +419,57 @@ h1{font-weight:700;letter-spacing:-.03em}
 .gdet ol{padding-left:20px;margin-top:10px}.gdet li{margin:6px 0;color:#d0d0d0;line-height:1.5}
 @media(max-width:1100px){#p-gym .c6{grid-column:span 12}}
 #p-gym .ch{flex-wrap:wrap;gap:8px}
+/* Golf review (cockpit) */
+.gr-tabs{display:flex;gap:4px;overflow-x:auto;background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:4px;margin-bottom:16px;scrollbar-width:none}
+.gr-tabs button{flex:none;display:flex;flex-direction:column;align-items:center;min-width:62px;min-height:46px;padding:6px 12px;border:none;border-radius:10px;background:none;color:var(--muted);font:inherit;cursor:pointer;transition:background .2s,color .2s}
+.gr-tabs button b{font-size:14px;font-weight:800}.gr-tabs button small{font-size:11px;opacity:.75}
+.gr-tabs button.on{background:#2a1f12;color:var(--gold);box-shadow:inset 0 0 0 1px rgba(255,184,107,.45)}
+.gr-top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:16px;margin-bottom:16px}
+.gr-box{background:var(--panel2);border:1px solid var(--line);border-radius:18px;padding:18px 20px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.gr-h{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.08em}.gr-h small{letter-spacing:0;font-weight:500;color:var(--faint)}
+.gr-line{display:flex;gap:10px;align-items:flex-start}.gr-line b{font-size:17px;font-weight:700;line-height:1.35}
+.gr-tag{flex:none;font-size:10px;font-weight:800;letter-spacing:.1em;padding:4px 7px;border-radius:6px;background:#242424;color:var(--muted);white-space:nowrap}
+.gr-tag.f{background:#2a1f12;color:var(--gold)}.gr-tag.s{background:#173022;color:var(--lav)}
+.gr-warn{font-size:13px;color:var(--amber);font-weight:600}
+.gr-split{display:flex;gap:4px;height:48px}
+.gr-split button{flex:0 0 0;min-width:0;overflow:hidden;border:none;border-radius:10px;background:#2f2f2f;color:var(--text);font:inherit;cursor:pointer;transition:flex-basis .8s cubic-bezier(.3,.8,.3,1),background .2s}
+.gr-split button.on{background:var(--gold);color:#111}.gr-split b{font-size:15px;font-weight:800}
+.gr-leg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12.5px;color:var(--muted)}.gr-leg b{color:var(--text)}
+.gr-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:16px}
+.gr-card{display:block;width:100%;text-align:left;font:inherit;color:var(--text);cursor:pointer;background:var(--panel2);border:1px solid var(--line);border-radius:18px;padding:16px 18px;transition:border-color .25s,background .25s,transform .2s}
+.gr-card:hover{transform:translateY(-2px)}.gr-card.on{background:#2a1f12;border-color:var(--gold)}
+.gr-row{display:flex;justify-content:space-between;align-items:center;gap:8px}.gr-nm{font-size:16px;font-weight:800}
+.gr-val{display:flex;align-items:baseline;gap:8px;margin-top:10px}.gr-val span{font-size:28px;font-weight:800;font-variant-numeric:tabular-nums}.gr-val small{font-size:13px;color:var(--muted);font-weight:600}
+.gr-track{height:8px;border-radius:6px;background:#2f2f2f;margin-top:10px;position:relative;overflow:visible}.gr-track.big{height:12px;margin:0;flex:1}
+.gr-fill{height:100%;width:0;border-radius:6px;background:#8a6a45;transition:width .7s cubic-bezier(.3,.8,.3,1)}.gr-fill.on{background:var(--gold)}.gr-fill.pos{background:var(--lav)}.gr-fill.g{background:#6b8f74}
+.gr-track i{position:absolute;top:-3px;bottom:-3px;width:3px;border-radius:2px;background:var(--text);transform:translateX(-1px)}
+.gr-trend{font-size:13px;font-weight:700;margin-top:10px}.up{color:var(--lav)}.down{color:#e08a3c}
+.gr-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.gr-stats div{background:#1b1b1b;border-radius:10px;padding:7px 10px}
+.gr-card.on .gr-stats div{background:#1f170e}.gr-stats span{display:block;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.04em}.gr-stats b{font-size:16px;font-weight:800}
+.gr-rev{margin:12px 0 0;font-size:14px;line-height:1.5;color:#d6d3cc}.gr-rev.big{font-size:15px;margin:12px 0}
+.gr-dh{margin-top:12px;padding-top:10px;border-top:1px solid var(--line);font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--muted)}
+.gr-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;align-items:center}.gr-chips span{font-size:12px;font-weight:700;padding:5px 9px;border-radius:8px;background:#1b1b1b}
+.gr-chips span.o{background:#2a1f12;color:var(--gold);border:1px solid rgba(255,184,107,.38);font-size:13px}.gr-chips span.lab{background:none;padding:0 4px 0 0;font-size:11px;letter-spacing:.08em;color:var(--muted)}
+.gr-sec{background:var(--panel2);border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin-bottom:16px}
+.gr-sh{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px}.gr-sh h3{margin:0;font-size:19px;font-weight:800}.gr-sh small{font-size:12px;color:var(--faint)}
+.gr-scroll{overflow-x:auto}.gr-bands{min-width:620px;display:flex;flex-direction:column;gap:8px}
+.gr-band{display:grid;grid-template-columns:110px minmax(0,2fr) 120px 76px 110px;gap:12px;align-items:center;border-radius:14px;padding:11px 14px;background:#1b1b1b;border:1px solid transparent}
+.gr-band.on{background:#2a1f12;border-color:rgba(255,184,107,.5)}.gr-band.hd{background:none;padding:0 14px;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.06em}
+.gr-band b{font-size:15px;font-weight:800}.gr-fb{font-size:10px;font-weight:800;letter-spacing:.08em;color:var(--gold);margin-top:2px}
+.gr-gir{display:flex;align-items:center;gap:10px}.gr-gir>b{width:42px;text-align:right}
+.gr-r{text-align:right}.gr-r small{display:block;font-size:11px;font-weight:700;color:var(--muted)}.gr-r small.bad{color:#e08a3c}.gr-r.up small{color:var(--lav)}.gr-r.down small{color:#e08a3c}
+.gr-chart{display:flex;gap:4px;position:relative}.gr-chart:before{content:"";position:absolute;left:0;right:0;top:62px;height:1px;background:var(--line2)}
+.gr-col{flex:1 1 0;min-width:38px;border:none;border-radius:10px;background:none;padding:0 0 6px;cursor:pointer;font:inherit;color:var(--muted)}
+.gr-col:hover{background:#242424}.gr-col.on{background:#2a2a2a;box-shadow:inset 0 0 0 1px #4a4a4a}
+.gr-col .u,.gr-col .d{height:62px;display:flex;justify-content:center}.gr-col .u{align-items:flex-end}.gr-col .d{align-items:flex-start}
+.gr-col i{display:block;width:70%;opacity:.75;transition:height .6s cubic-bezier(.3,.8,.3,1)}.gr-col.on i{opacity:1}
+.gr-col .u i{border-radius:6px 6px 0 0}.gr-col .d i{border-radius:0 0 6px 6px}.gr-col i.pos{background:var(--lav)}.gr-col i.neg{background:#e08a3c}
+.gr-col span{display:block;font-size:10.5px;margin-top:6px;white-space:nowrap}
+.gr-hov{display:flex;justify-content:space-between;align-items:center;gap:12px;background:#1b1b1b;border-radius:14px;padding:12px 16px;margin-top:10px}
+.gr-hov small{display:block;font-size:12px;color:var(--muted)}.gr-hov>b{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums}
+@media(max-width:760px){.gr-top{grid-template-columns:1fr}.gr-box,.gr-sec{padding:14px}}
+@media(prefers-reduced-motion:reduce){.gr-fill,.gr-split button,.gr-col i,.gr-card{transition:none}}
+
 @media(max-width:700px){.gstats{grid-template-columns:repeat(3,1fr);gap:6px}.gstats b{font-size:16px}.gtrow,.gthead{grid-template-columns:1fr 46px 58px 54px 30px;gap:4px}}
 
 /* body map */
@@ -584,6 +635,7 @@ h1{font-weight:700;letter-spacing:-.03em}
 
   <main class="panel" id="p-golf">
     <div class="grid">
+      <section class="card c12"><div class="ch"><span class="ct">Golf review · strokes gained</span><span class="cm" id="grMeta"></span></div><div id="greview"><div class="empty">Loading your scoring…</div></div></section>
       <section class="card c12"><div class="ch"><span class="ct">Road to the next event</span><span class="cm" id="evMeta"></span></div><div id="event"></div></section>
       <section class="card c12"><div class="ch"><span class="ct">Coaching focus</span><span class="cm">latest per coach</span></div><div id="coaching"></div></section>
       <section class="card c12"><div class="ch"><span class="ct">Strokes gained · yardage book</span><span class="cm" id="trMeta"></span></div><div id="trend"></div></section>
@@ -693,6 +745,7 @@ const PATHS={
   puttlog:"10 Golf/Planning/Winter Plan 2026/Putting Drill Log.md",
   dresults:"90 System/Data/drill_results.json",
   plan:"90 System/Data/plan.json",
+  rounds:"90 System/Data/rounds.json",
   comps:"10 Golf/Competitions/Schedule.md",
   inbox:"00 Inbox"
 };
@@ -1122,6 +1175,117 @@ function spark(pts){
   return `<svg viewBox="0 0 100 40" preserveAspectRatio="none"><polyline points="${xy.map(a=>a.join(",")).join(" ")}" fill="none" stroke="#c8a96a" stroke-width="1.6" vector-effect="non-scaling-stroke"/>
     <circle cx="${xy.at(-1)[0]}" cy="${xy.at(-1)[1]}" r="2.6" fill="#e0c48a"/></svg>`
 }
+/* ============ Golf review · strokes gained cockpit (90 System/Data/rounds.json, from the Competitive Scoring KPI) ============ */
+const GR={d:null,per:null,sel:"app",hov:null};
+const GR_A=[["ott","Off the tee"],["app","Approach"],["atg","Around the green"],["putt","Putting"]];
+const GR_B=[["200plus",">200 yds","200"],["160_200","160–200 yds","160"],["100_160","100–160 yds","100"],["40_100","40–100 yds","40"]];
+const GR_BANDS_FROM="2026-06";
+const GR_MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const GR_MONL=["January","February","March","April","May","June","July","August","September","October","November","December"];
+async function loadRounds(){return JSON.parse(await FS.text(PATHS.rounds))}
+function grMean(a){a=a.filter(x=>typeof x==="number");return a.length?a.reduce((s,x)=>s+x,0)/a.length:null}
+function grStats(rs,tour){const o={n:rs.length,rounds:rs};
+  GR_A.forEach(([k])=>o[k]=grMean(rs.map(r=>r["sg_"+k])));
+  o.fw=grMean(rs.map(r=>r.fairways));o.drive=grMean(rs.map(r=>r.drive_yds));o.atgProx=grMean(rs.map(r=>r.atg_prox_ft));
+  o.putts=grMean(rs.map(r=>r.putts));o.tp=grMean(rs.map(r=>r.three_putts));
+  const ud=rs.map(r=>r.up_down).filter(Array.isArray);o.ud=ud.length?ud.reduce((s,p)=>s+p[0],0)/Math.max(1,ud.reduce((s,p)=>s+p[1],0)):grMean(rs.map(r=>r.up_down));
+  const rb=rs.filter(r=>(r.month||r.date||"")>=GR_BANDS_FROM); // yardage bands split four ways from June 2026
+  o.bands={};GR_B.forEach(([k])=>{const g=rb.map(r=>r["gir_"+k]).filter(Array.isArray);
+    const b={made:g.reduce((s,p)=>s+p[0],0),att:g.reduce((s,p)=>s+p[1],0),rounds:g.length,prox:grMean(rb.map(r=>r["prox_"+k]))};
+    const t=tour[k];b.score=(b.att>=5&&b.prox)?((b.prox/t.prox-1)+Math.max(-.5,(t.gir-b.made/b.att*100)/t.gir))*b.att/b.rounds:-1;o.bands[k]=b});
+  o.focus=GR_B.map(x=>x[0]).filter(k=>o.bands[k].score>=0).sort((a,b)=>o.bands[b].score-o.bands[a].score)[0]||null;
+  return o}
+function renderRounds(d){
+  const tour=d.tour_bands||{"200plus":{gir:44,prox:50},"160_200":{gir:58,prox:32},"100_160":{gir:70,prox:23},"40_100":{gir:83,prox:17}};
+  const rs=(d.rounds||[]).slice(),months={};
+  rs.forEach(r=>{const m=r.month||(r.date||"").slice(0,7);if(m)(months[m]=months[m]||[]).push(r)});
+  GR.d={tour,season:grStats(rs,tour),last10:grStats(rs.slice(-10),tour),months:{},keys:Object.keys(months).sort(),updated:d.updated};
+  GR.d.keys.forEach(k=>GR.d.months[k]=grStats(months[k],tour));
+  if(!GR.per||(GR.per!=="season"&&GR.per!=="last10"&&!GR.d.months[GR.per]))GR.per=GR.d.keys.at(-1)||"season";
+  grRender()}
+function grFmt(v){return v==null?"–":(v>.004?"+":v<-.004?"−":"")+Math.abs(v).toFixed(2)}
+function grPc(v){return v==null?"–":Math.round(v*100)+"%"}
+function grRender(){const D=GR.d,el=$("greview");if(!D||!el)return;
+  const per=GR.per,isS=per==="season",isL=per==="last10",P=isS?D.season:isL?D.last10:D.months[per],S=D.season,L=D.last10,T=D.tour;
+  const mi=isS||isL?0:+per.slice(5)-1,pername=isS?"this season":isL?"over the last 10":"in "+GR_MONL[mi];
+  const tabs=[["season","Season",S.n],["last10","Last 10",L.n]].concat(D.keys.map(k=>[k,GR_MON[+k.slice(5)-1],D.months[k].n]));
+  const ranked=GR_A.map(a=>a[0]).filter(k=>P[k]!=null).sort((a,b)=>P[a]-P[b]);
+  const name=k=>GR_A.find(a=>a[0]===k)[1];
+  // practice split: season + last 10 blend, min 15% (same rule as the weekly planner)
+  const lost=GR_A.map(([k])=>Math.max(0,-((S[k]??0)+(L[k]??0))/2)),tl=lost.reduce((s,x)=>s+x,0)||1;
+  let sh=lost.map(x=>Math.max(15,x/tl*100));const ss=sh.reduce((s,x)=>s+x,0);sh=sh.map(x=>x/ss*100);
+  const sess={};GR_A.forEach(([k],i)=>sess[k]=Math.round(sh[i]/100*25));
+  const fb=P.focus||S.focus,fbName=fb?GR_B.find(b=>b[0]===fb)[1]:null;
+  const drills={ott:(P.fw!=null&&P.fw<.55)?["10 Shot Drill · Driver","Calibration · Driver","10 Shot Drill · 3W"]:["10 Shot Drill · Driver","Calibration · Driver"],
+    app:fb?[fbName+" · Completion",fbName+" · Strokes Gained","Iron calibration"]:["Iron calibration"],
+    atg:(P.ud!=null&&P.ud<.5)?["Hole out Drill","2 Ways Drill"]:["Phantom Hole Landing","Hole out Drill"],
+    putt:(P.tp!=null&&P.tp>.7)?["Speed Control","Clutch Putts >30ft"]:["<10ft Pace Past","9–20ft Drill"]};
+  const bandsAll=Object.values(P.bands),gm=bandsAll.reduce((s,b)=>s+b.made,0),ga=bandsAll.reduce((s,b)=>s+b.att,0);
+  const stats={ott:[["Fairways",grPc(P.fw)],["Drive",P.drive?Math.round(P.drive)+" yds":"–"]],
+    app:[["GIR",ga?Math.round(gm/ga*100)+"%":"–"],["Greens hit",ga?gm+" / "+ga:"–"]],
+    atg:[["Up & down",grPc(P.ud)],["Proximity",P.atgProx?P.atgProx.toFixed(1)+" ft":"–"]],
+    putt:[["Putts",P.putts?P.putts.toFixed(1):"–"],["3-putts",P.tp!=null?P.tp.toFixed(1):"–"]]};
+  const focusA=ranked[0],strongA=ranked.at(-1);
+  const cards=GR_A.map(([k,nm])=>{const v=P[k];if(v==null)return"";const pos=ranked.indexOf(k),on=k===GR.sel;
+    const ref=isS?L[k]:S[k],better=isS?ref>v:v>ref,diff=Math.abs(v-ref);
+    const tag=pos===0?["NEEDS MOST FOCUS","f"]:pos===ranked.length-1?["STRONGEST","s"]:[(pos+1)+" OF 4",""];
+    const trend=isS?(better?"▲ improving · last 10 ":"▼ slipping · last 10 ")+grFmt(ref):(better?"▲ ":"▼ ")+diff.toFixed(2)+(better?" better":" worse")+" than season ("+grFmt(S[k])+")";
+    const st=stats[k],where=pos===0?"Your biggest leak":pos===ranked.length-1?"Your strongest area":"Mid-table";
+    const rev=`${where} ${pername}: ${v<0?"losing "+Math.abs(v).toFixed(2):"gaining "+v.toFixed(2)} a round to the Tour, ${isS?(better?"and trending better over the last 10.":"and trending worse over the last 10."):(better?"better than your season.":"worse than your season.")} ${st[0][1]==="–"?(k==="app"?"Yardage bands start in June.":""):st[0][0]+" "+st[0][1]+", "+st[1][0].toLowerCase()+" "+st[1][1]+"."}`;
+    return `<button class="gr-card${on?" on":""}" data-gr-sel="${k}" aria-pressed="${on}">
+      <div class="gr-row"><b class="gr-nm">${nm}</b><span class="gr-tag ${tag[1]}">${tag[0]}</span></div>
+      <div class="gr-val"><span data-n="${v}">${grFmt(v)}</span><small>per round</small></div>
+      <div class="gr-track"><div class="gr-fill${v>=0?" pos":on?" on":""}" data-w="${Math.min(100,Math.abs(v)/4*100).toFixed(1)}%"></div></div>
+      <div class="gr-trend ${better?"up":"down"}">${trend}</div>
+      <div class="gr-stats">${st.map(s=>`<div><span>${s[0]}</span><b>${s[1]}</b></div>`).join("")}</div>
+      <p class="gr-rev">${esc(rev)}</p>
+      <div class="gr-dh">LINKED DRILLS · ${sess[k]} OF 25 SESSIONS THIS WEEK</div>
+      <div class="gr-chips">${drills[k].map(x=>`<span>${esc(x)}</span>`).join("")}</div></button>`}).join("");
+  const hasB=ga>0;
+  const bandRows=GR_B.map(([k,nm])=>{const b=P.bands[k],sb=S.bands[k],t=T[k],g=b.att?b.made/b.att:0,sg=sb.att?sb.made/sb.att:0,f=k===fb,d=(g-sg)*100;
+    const vs=isS?(b.att?b.made+" / "+b.att:"–"):(!b.att?"–":(d>=0?"▲ ":"▼ ")+Math.abs(d).toFixed(0)+" pts"+(b.prox&&sb.prox?" · "+(b.prox<=sb.prox?"−":"+")+Math.abs(b.prox-sb.prox).toFixed(1)+" ft":""));
+    return `<div class="gr-band${f?" on":""}"><div><b>${nm}</b>${f?'<div class="gr-fb">FOCUS BAND</div>':""}</div>
+      <div class="gr-gir"><div class="gr-track big"><div class="gr-fill${f?" on":" g"}" data-w="${(g*100).toFixed(1)}%"></div><i style="left:${t.gir}%"></i></div><b>${b.att?Math.round(g*100)+"%":"–"}</b></div>
+      <div class="gr-r"><b>${b.prox?b.prox.toFixed(1)+" ft":"–"}</b><small class="${b.prox&&b.prox/t.prox>1.4?"bad":""}">Tour ${t.prox}${b.prox?" · "+(b.prox>=t.prox?"+":"−")+Math.abs(b.prox-t.prox).toFixed(1)+" ft":" ft"}</small></div>
+      <div class="gr-r"><b>${b.att?((b.att-b.made)/b.rounds).toFixed(1):"–"}</b><small>missed / rd</small></div>
+      <div class="gr-r ${isS?"":d>=0?"up":"down"}"><small>${vs}</small></div></div>`}).join("");
+  const fbB=fb&&P.bands[fb];
+  const bandRev=hasB&&fbB&&fbB.att?`${fbName} costs you the most: ${fbB.prox.toFixed(1)} ft against a Tour average of about ${T[fb].prox} ft, GIR ${Math.round(fbB.made/fbB.att*100)}% vs ${T[fb].gir}%, and you face ${(fbB.att/fbB.rounds).toFixed(1)} of these a round.${isS?"":` Your season for this band: ${Math.round(S.bands[fb].made/S.bands[fb].att*100)}% GIR, ${S.bands[fb].prox.toFixed(1)} ft.`}`:"";
+  const R=P.rounds,hi=Math.min(GR.hov??R.length-1,R.length-1),sc=60/5.5;
+  const cols=R.map((r,i)=>{const v=r["sg_"+GR.sel],h=v==null?0:Math.max(3,Math.min(60,Math.abs(v)*sc)),c=v==null?"na":v>=0?"pos":"neg";
+    const dd=r.date?(+r.date.slice(8))+" "+GR_MON[+r.date.slice(5,7)-1]:(r.month?GR_MON[+r.month.slice(5)-1]:"");
+    return `<button class="gr-col${i===hi?" on":""}" data-gr-hov="${i}" aria-label="${esc(r.event)}, ${grFmt(v)}"><div class="u"><i class="${c}" style="height:${v!=null&&v>=0?h:0}px"></i></div><div class="d"><i class="${c}" style="height:${v!=null&&v<0?h:0}px"></i></div><span>${dd}</span></button>`}).join("");
+  const hr=R[hi],hv=hr?hr["sg_"+GR.sel]:null;
+  el.innerHTML=`
+  <div class="gr-tabs" role="tablist">${tabs.map(([k,l,n])=>`<button role="tab" aria-selected="${k===per}" class="${k===per?"on":""}" data-gr-per="${k}"><b>${l}</b><small>${n} rds</small></button>`).join("")}</div>
+  <div class="gr-top">
+    <div class="gr-box"><div class="gr-h">${isS?"SEASON "+(GR.d.keys[0]||"").slice(0,4):isL?"LAST 10 ROUNDS":GR_MONL[mi].toUpperCase()+" "+per.slice(0,4)} · ${P.n} ROUNDS</div>
+      ${focusA?`<div class="gr-line"><span class="gr-tag f">FOCUS</span><b>${name(focusA)}, losing ${Math.abs(P[focusA]).toFixed(2)} a round</b></div>`:""}
+      ${strongA?`<div class="gr-line"><span class="gr-tag s">STRONG</span><b>${name(strongA)}${P[strongA]>=0?", gaining "+P[strongA].toFixed(2):", losing only "+Math.abs(P[strongA]).toFixed(2)} a round</b></div>`:""}
+      ${P.n<4?`<div class="gr-warn">Only ${P.n} round${P.n===1?"":"s"}: read this as a hint, not a verdict.</div>`:""}</div>
+    <div class="gr-box"><div class="gr-h"><span>WHERE PRACTICE TIME GOES</span><small>season + last 10 · updates when you save the scoring sheet</small></div>
+      <div class="gr-split">${GR_A.map(([k,nm],i)=>`<button class="${k===GR.sel?"on":""}" data-gr-sel="${k}" data-w="${sh[i].toFixed(1)}%" aria-label="${nm} ${Math.round(sh[i])}%"><b>${Math.round(sh[i])}%</b></button>`).join("")}</div>
+      <div class="gr-leg">${GR_A.map(([k,nm],i)=>`<span><b>${nm}</b> ${Math.round(sh[i])}% · ${sess[k]} sessions</span>`).join("")}</div></div>
+  </div>
+  <div class="gr-cards">${cards}</div>
+  <div class="gr-sec"><div class="gr-sh"><h3>Approach to the green · by yardage</h3><small>${isS?"June onwards · vs PGA Tour":"vs PGA Tour and your season (June onwards)"}</small></div>
+    ${hasB?`<div class="gr-scroll"><div class="gr-bands"><div class="gr-band hd"><span>BAND</span><span>GIR · white tick = Tour</span><span class="gr-r">PROXIMITY</span><span class="gr-r">MISSED</span><span class="gr-r">${isS?"GREENS":"VS SEASON"}</span></div>${bandRows}</div></div>
+    <p class="gr-rev big">${esc(bandRev)}</p>
+    ${fb?`<div class="gr-chips"><span class="lab">THIS WEEK AT DRIFFIELD</span><span class="o">${fbName} · Completion Yardage Book</span><span class="o">${fbName} · Strokes Gained Yardage Book</span></div>`:""}
+    <div class="note">Tour benchmark: PGA Tour averages mapped onto your bands. Tour figures are mostly from the fairway on harder courses and yours include every lie, so read the gap as a direction, not an exact score.</div>`
+    :`<div class="empty">Yardage bands start in June. Pick Season, Last 10 or a month from June onwards.</div>`}</div>
+  <div class="gr-sec"><div class="gr-sh"><h3>${name(GR.sel)} · round by round</h3><small>tap a card to switch area · tap a bar for the event</small></div>
+    <div class="gr-scroll"><div class="gr-chart" style="min-width:${Math.max(420,R.length*44)}px">${cols}</div></div>
+    ${hr?`<div class="gr-hov"><div><b>${esc(hr.event)}</b><small>${hr.date?new Date(hr.date).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}):GR_MONL[+(hr.month||"2026-01").slice(5)-1]}</small></div><b class="${hv==null?"":hv>=0?"up":"down"}">${grFmt(hv)}</b></div>`:""}</div>`;
+  $("grMeta").textContent=D.updated?"scoring sheet · "+new Date(D.updated).toLocaleDateString("en-GB",{day:"numeric",month:"short"}):"";
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{el.querySelectorAll("[data-w]").forEach(x=>{if(x.tagName==="BUTTON")x.style.flexBasis="calc("+x.dataset.w+" - 3px)";else x.style.width=x.dataset.w});
+    const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;if(reduce)return;
+    const ns=[...el.querySelectorAll("[data-n]")],t0=performance.now();
+    const step=now=>{const p=Math.min(1,(now-t0)/650),e=1-Math.pow(1-p,3);ns.forEach(x=>x.textContent=grFmt(+x.dataset.n*e));if(p<1)requestAnimationFrame(step)};requestAnimationFrame(step)}))}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-gr-per],[data-gr-sel],[data-gr-hov]");if(!b||!b.closest("#greview"))return;
+  if(b.dataset.grPer){GR.per=b.dataset.grPer;GR.hov=null}else if(b.dataset.grSel){GR.sel=b.dataset.grSel;GR.hov=null}else{GR.hov=+b.dataset.grHov;return grHov()}grRender()});
+function grHov(){grRender()}
+
 function renderTrend(bands){
   if(!bands.length){$("trend").innerHTML='<div class="empty">No Yardage Chart tab found.</div>';return}
   const n=bands.reduce((a,b)=>a+b.pts.length,0);$("trMeta").textContent=`${n} session${n===1?"":"s"} logged`;
@@ -1190,6 +1354,7 @@ async function refresh(){
     safe(loadSpending,renderSpending,"spend","the Spending Tracker"),
     safe(loadPractice,renderPractice,"practice","Daily To Do"),
     safe(loadTrend,renderTrend,"trend","the Drill Spreadsheet"),
+    safe(loadRounds,renderRounds,"greview","the scoring data"),
     safe(loadCoaching,renderCoaching,"coaching","coach folders"),
     safe(loadCalendar,renderCalendar,"cal","your calendar"),
     safe(loadWhoop,renderWhoop,"ready","Whoop data"),
@@ -1232,7 +1397,7 @@ $("relinkBtn").onclick=()=>{$("settings").classList.remove("show");connect()};
 function showTab(t){if(!document.getElementById("p-"+t))t="today";
   document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("on",p.id==="p-"+t));
   document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));
-  if(t==="golf")setTimeout(()=>{try{COMPS.length&&renderComps({ev:COMPS,ms:MILES,txt:COMPS_TXT})}catch(e){}},0);if(t==="gym")setTimeout(()=>{try{G.byEx&&gRenderProg();gRenderWeight()}catch(e){}},0);ls.set("hud_tab",t);if(location.hash!=="#"+t)history.replaceState(null,"","#"+t);window.scrollTo(0,0)}
+  if(t==="golf")setTimeout(()=>{try{grRender()}catch(e){}try{COMPS.length&&renderComps({ev:COMPS,ms:MILES,txt:COMPS_TXT})}catch(e){}},0);if(t==="gym")setTimeout(()=>{try{G.byEx&&gRenderProg();gRenderWeight()}catch(e){}},0);ls.set("hud_tab",t);if(location.hash!=="#"+t)history.replaceState(null,"","#"+t);window.scrollTo(0,0)}
 document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
 document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>showTab(b.dataset.go));
 showTab((location.hash||"").slice(1)||ls.get("hud_tab","today"));
