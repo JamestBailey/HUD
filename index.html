@@ -876,6 +876,9 @@ function resultSpec(k){const [sec,task]=String(k).split("::").map(x=>(x||"").tri
   return null}
 function getResult(date,k){const r=RESULTS[date]||{};const key=Object.keys(r).find(x=>nk(x)===nk(k));return key?r[key]:null}
 function keyArea(k){const sec=k.split("::")[0].trim().toLowerCase();if(/yds/.test(sec))return "Irons";return SECT[sec]||"Other"}
+const CARDIO_RE=/\b(run|running|bike|cycle|cycling|spin|cardio)\b/i;
+function cardioLabel(t){const m=String(t).match(CARDIO_RE);const w=m?m[1].toLowerCase():"cardio";
+  return (/^run/.test(w)?"Run":/bike|cycl|spin/.test(w)?"Bike":"Cardio")+" done · logs as Workout"}
 function keyLabel(k){const [sec,task]=k.split("::").map(x=>x.trim());if(!/yds/i.test(sec))return task;
   const short=task.replace(/\s*Yardage Book\s*/i," ").replace(/\(Distance(?: & Accuracy)?\)/i,"").replace(/\s+/g," ").trim();return `${sec.replace(" - "," – ")} · ${short}`}
 function mergeTicks(raw){if(!raw)return raw;const p=JSON.parse(JSON.stringify(raw,(k,v)=>v));p.days=raw.days.map(d=>Object.assign({},d,{done:d.done.slice()}));p.areas=Object.assign({},raw.areas);p.total=raw.total;
@@ -1008,17 +1011,19 @@ function renderDay(){
   let html=(sel.getDay()===1&&WEIGHTS)?wBlockHtml(DSEL):"";
   blocks.forEach((b,i)=>{
     if(isToday&&i===nextIdx&&curIdx<0)html+=`<div class="nowl"><span>NOW</span><i></i></div>`;
-    const drills=(b.drills||[]);drills.forEach(k=>used.add(nk(k)));
-    const gym=/gym|1079/i.test(b.title)||drills.some(k=>/^gym/i.test(k));const appt=b.fixed&&!drills.length;const cls=appt?"f":gym?"g":"p";
+    // cardio (run / bike) is a planned workout: tickable, and logged as "Gym :: Workout" in Daily To Do
+    const cardio=!b.fixed&&CARDIO_RE.test(String(b.title).split(" · ")[0]);
+    const drills=(b.drills&&b.drills.length)?b.drills:(cardio?["Gym :: Workout"]:[]);drills.forEach(k=>used.add(nk(k)));
+    const gym=cardio||/gym|1079/i.test(b.title)||drills.some(k=>/^gym/i.test(k));const appt=b.fixed&&!drills.length;const cls=appt?"f":gym?"g":"p";
     const parts=String(b.title).split(" · ");const tag=appt?(parts.length>1?parts.slice(1).join(" · "):""):(parts.length>1?parts[0]:"");const title=appt?parts[0]:(parts.length>1?parts.slice(1).join(" · "):b.title);
     const dn=drills.filter(k=>doneKeys.has(nk(k))).length;
     html+=`<div class="tl-row"><div class="tl-t">${esc(b.start||"")}</div><div class="tl-b">
       <button class="blk ${cls} ${drills.length&&dn===drills.length?"alldone":""}" data-i="${i}" data-dk="${esc(drills.map(nk).join("|"))}" aria-expanded="${!!OPEN[i]}"><div class="bt"><span>${esc((tag||(b.fixed?"Fixed":"Session")).toUpperCase())}</span><span>${esc(b.start||"")}${b.end?"–"+esc(b.end):""}</span></div>
-        <div class="bn">${esc(title)}</div>${drills.length?`<div class="bp">${dn} / ${drills.length} drills ${dn===drills.length?"✓":""}</div>`:""}</button>
+        <div class="bn">${esc(title)}</div>${drills.length?`<div class="bp">${cardio?(dn?"Done ✓":"Tap to tick"):`${dn} / ${drills.length} drills ${dn===drills.length?"✓":""}`}</div>`:""}</button>
       ${OPEN[i]?`<div class="bx">${b.why?`<div class="why">${esc(b.why)}</div>`:b.fixed?'<div class="why">From your calendar.</div>':""}
         ${drills.map(k=>{const x=doneKeys.get(nk(k));const on=!!x,lock=on&&!x.hud;const spec=resultSpec(k),res=getResult(DSEL,k)||(spec?resvGet(DSEL,k):null);
           const entry=ENTRY&&ENTRY.date===DSEL&&nk(ENTRY.k)===nk(k);
-          let h=`<button class="drill ${gym?"g":""} ${on?"on":""} ${lock?"lock":""}" data-k="${esc(k)}" ${isFut?"disabled":""}><span class="m">${on?"✓":""}</span><span>${esc(keyLabel(k))}</span>${res?`<small class="rv">${esc(spec?spec.fmt(res.v):res.v)}</small>`:!entry&&!on&&rdAll()[rdKey(DSEL,k)]?'<small class="draft">draft saved</small>':lock?"<small>in Daily To Do</small>":""}</button>`;
+          let h=`<button class="drill ${gym?"g":""} ${on?"on":""} ${lock?"lock":""}" data-k="${esc(k)}" ${isFut?"disabled":""}><span class="m">${on?"✓":""}</span><span>${esc(cardio&&/^gym\s*::\s*workout$/i.test(k)?cardioLabel(b.title):keyLabel(k))}</span>${res?`<small class="rv">${esc(spec?spec.fmt(res.v):res.v)}</small>`:!entry&&!on&&rdAll()[rdKey(DSEL,k)]?'<small class="draft">draft saved</small>':lock?"<small>in Daily To Do</small>":""}</button>`;
           if(lock&&spec&&!res&&!isFut&&!entry)h+=`<button class="addres" data-add="${esc(k)}">+ add ${spec.word}</button>`;
           if(entry){h+=`<div class="resbox">${spec.table?ptHtml(spec):""}${spec.fields.map((f,fi)=>`${f.hint?`<div class="rhint">${esc(f.hint)}</div>`:""}<label for="res_${f.id}">${f.label}</label><div class="resrow">
               ${f.type==="sg"?`<button class="sgn" id="resSign" aria-label="Switch plus or minus">${ENTRY.neg?"−":"+"}</button>`:""}
