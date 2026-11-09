@@ -419,6 +419,49 @@ h1{font-weight:700;letter-spacing:-.03em}
 .gdet ol{padding-left:20px;margin-top:10px}.gdet li{margin:6px 0;color:#d0d0d0;line-height:1.5}
 @media(max-width:1100px){#p-gym .c6{grid-column:span 12}}
 #p-gym .ch{flex-wrap:wrap;gap:8px}
+/* Week · calendar grid */
+.wg-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.wg-stats div{background:var(--panel2);border-radius:14px;padding:12px 14px}.wg-stats span{display:block;font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}.wg-stats b{font-size:24px;font-weight:800}.wg-stats small{color:var(--faint);margin-left:4px}
+.wg-sec{background:var(--panel2);border-radius:16px;padding:14px 16px;margin-bottom:16px;display:flex;flex-direction:column;gap:10px}
+.wg-sh b{display:block;font-size:16px}.wg-sh small{font-size:12.5px;color:var(--muted)}
+.wg-bal{display:grid;grid-template-columns:170px minmax(0,1fr) 92px;grid-template-areas:"n t v" ". x x";gap:4px 14px;align-items:center}
+.wg-bn{grid-area:n;display:flex;align-items:center;gap:8px}.wg-bn i{width:10px;height:10px;border-radius:3px;flex:none}.wg-bn b{font-size:14px}.wg-bn small{font-size:11.5px;color:var(--muted);margin-left:auto}
+.wg-bt{grid-area:t;position:relative;height:10px;border-radius:6px;background:#2f2f2f}.wg-bf{height:100%;width:0;border-radius:6px;transition:width .9s cubic-bezier(.3,.8,.3,1)}
+.wg-bt i{position:absolute;top:-4px;bottom:-4px;width:3px;border-radius:2px;background:var(--text);transform:translateX(-1px)}
+.wg-bv{grid-area:v;text-align:right}.wg-bv b{font-size:15px}.wg-bv small{display:block;font-size:11px;color:var(--muted)}
+.wg-bx{grid-area:x;font-size:12.5px;font-weight:700}.wg-bx.ok{color:var(--lav)}.wg-bx.warn{color:var(--amber)}.wg-bx.bad{color:#e07a5f}
+.wg-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.wg-legend{display:flex;flex-wrap:wrap;gap:6px}
+.wg-chip{display:inline-flex;align-items:center;gap:7px;font:700 12px Inter,sans-serif;color:var(--text);border-radius:10px;padding:7px 10px;min-height:36px;cursor:pointer;border:1px solid var(--line2);background:none;transition:opacity .2s,background .2s}
+.wg-chip i{width:10px;height:10px;border-radius:3px;background:var(--c)}.wg-chip.on{border-color:var(--c);background:var(--panel2)}.wg-chip.dim{opacity:.5}
+.wg-mode{display:flex;gap:3px;background:var(--panel2);border-radius:12px;padding:3px}.wg-mode button{font:700 12.5px Inter,sans-serif;border:none;border-radius:9px;padding:8px 12px;min-height:36px;cursor:pointer;background:none;color:var(--muted)}.wg-mode button.on{background:#2a1f12;color:var(--gold)}
+.wg-scroll{overflow-x:auto}.wg-grid{min-width:760px;display:grid;grid-template-columns:40px repeat(7,minmax(0,1fr));gap:6px}
+.wg-dh{text-align:center;border-radius:12px;padding:7px 4px;background:var(--panel2);border:1px solid transparent}.wg-dh b{display:block;font-size:11.5px;letter-spacing:.08em}.wg-dh span{display:block;font-size:19px;font-weight:800}.wg-dh small{font-size:10.5px;color:var(--muted)}
+.wg-badge{display:block;font-style:normal;font-size:10px;font-weight:800;margin:2px auto 1px;padding:2px 6px;border-radius:6px;background:rgba(255,255,255,.08);width:max-content;max-width:100%}
+.wg-dh.wg-today{background:#2a1f12;color:var(--gold);border-color:rgba(255,184,107,.5)}
+.wg-hours{position:relative}.wg-hours span{position:absolute;right:4px;transform:translateY(-50%);font-size:11px;color:var(--faint)}
+.wg-col{position:relative;border-radius:12px;background:#171717;background-image:repeating-linear-gradient(to bottom,transparent 0 45px,#222 45px 46px)}
+.wg-col.wg-today{background-color:#1f1a14}.wg-col.rest{background:repeating-linear-gradient(135deg,#1b1b1b 0 10px,#202020 10px 20px)}
+.wg-rest{position:absolute;inset:0;display:grid;place-items:center;font-size:12px;font-weight:800;letter-spacing:.1em;color:var(--faint);text-align:center}.wg-rest.small{font-size:11px;letter-spacing:0;font-weight:600;line-height:1.4;padding:6px}
+.wg-blk{position:absolute;left:3px;right:3px;border:none;border-radius:9px;padding:4px 6px;box-sizing:border-box;text-align:left;display:flex;flex-direction:column;gap:1px;overflow:hidden;cursor:pointer;font-family:Inter,sans-serif;color:#111;
+  animation:wgdrop .5s cubic-bezier(.3,.9,.3,1.1) both;transition:transform .2s,opacity .25s,filter .25s,box-shadow .2s}
+.wg-blk:hover{transform:scale(1.03);z-index:3}.wg-blk .t{font-size:10.5px;font-weight:800;opacity:.8}.wg-blk .n{font-size:11.5px;font-weight:800;line-height:1.2}
+.wg-blk .ck{position:absolute;top:4px;right:6px;font-size:12px;font-weight:800}.wg-blk.done{opacity:.5}.wg-blk.fx{color:var(--text)}
+.wg-blk.dim{opacity:.15;filter:saturate(.3)}.wg-blk.on{box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--text);z-index:2}
+@keyframes wgdrop{from{opacity:0;transform:translateY(-10px) scaleY(.6)}to{opacity:1;transform:none}}
+.wg-blk.done{animation-name:wgdropd}@keyframes wgdropd{from{opacity:0;transform:translateY(-10px) scaleY(.6)}to{opacity:.5;transform:none}}
+.wg-now{position:absolute;left:0;right:0;height:2px;background:var(--now);z-index:4}.wg-now:before{content:"";position:absolute;left:-4px;top:-3px;width:8px;height:8px;border-radius:50%;background:var(--now)}
+.wg-det{margin-top:14px;border-radius:16px;padding:14px 16px;background:var(--panel2);border:1px solid var(--c);display:flex;flex-direction:column;gap:8px;animation:fade .25s ease}
+.wg-dt{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.wg-dt b{display:block;font-size:17px;margin-top:3px}.wg-dt small{font-size:12.5px;color:var(--muted)}.wg-tag{font-size:11px;font-weight:800;letter-spacing:.1em;color:var(--c)}
+.wg-why{font-size:14px;color:#d6d3cc;line-height:1.5}.wg-drs{display:flex;flex-wrap:wrap;gap:6px}.wg-drs span{font-size:12px;font-weight:700;padding:5px 9px;border-radius:8px;background:var(--panel)}
+.wg-pills{display:flex;gap:8px;overflow-x:auto;margin-top:14px;padding-bottom:2px}
+.wg-pill{flex:none;display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;font:inherit;color:var(--text);cursor:pointer;border-radius:14px;padding:10px 12px;min-width:104px;min-height:44px;background:var(--panel2);border:1px solid transparent;transition:border-color .2s,background .2s}
+.wg-pill span{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:800;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}.wg-pill b{font-size:15px;white-space:nowrap}
+.wg-pill.on{background:#2a2a2a;border-color:var(--line2)}.wg-pill.ok.on{border-color:var(--lav)}.wg-pill.warn.on{border-color:var(--amber)}.wg-pill.bad.on{border-color:#e07a5f}
+.wg-pd{margin-top:10px;background:var(--panel2);border-radius:12px;padding:11px 14px;font-size:14px;color:#d6d3cc;line-height:1.5}.wg-pd b{display:block;color:var(--text);margin-bottom:2px}
+@media(max-width:700px){.wg-bal{grid-template-columns:1fr 70px;grid-template-areas:"n v" "t t" "x x"}.wg-stats b{font-size:20px}}
+@media(prefers-reduced-motion:reduce){.wg-blk{animation:none}.wg-bf{transition:none}}
+
 /* Prep · Mission control */
 .mc-side{display:flex;flex-direction:column;gap:20px;min-width:0}
 @media(max-width:1100px){#p-prep .c7,#p-prep .c5{grid-column:span 12}}
@@ -1014,31 +1057,82 @@ function renderPractice(p){
   { const all7=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],mx=Math.max(4,...p.days.map(d=>d.n));
     $("sessMini").innerHTML=`<div class="num">${p.total}<small>/ ${target}</small></div><div class="sub2">sessions · gym ${p.areas.Gym}/3</div>
     <div class="bars sm">${all7.map(l=>{const d=p.days.find(x=>x.label===l);return `<i class="${!d||d.date>t?"dim":""}" title="${l}: ${d?d.n:0}" style="height:${d&&d.date<=t?Math.max(4,d.n/mx*100):8}%"></i>`}).join("")}</div>`; }
-  const all=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
-  const line=d=>{const g={};d.done.forEach(x=>(g[x.area]=g[x.area]||[]).push(x));
-    return Object.entries(g).map(([a,xs])=>`<div class="wl"><span class="da">${esc(a)}</span> ${xs.map(x=>esc(x.task)+(x.band?` <small>(${esc(x.band)})</small>`:"")+(x.ticked===false?` <small class="warn">· not ticked</small>`:"")).join(", ")}</div>`).join("")};
-  const sel=PSEL&&p.days.find(d=>ymd(d.date)===PSEL);
-  const dayBlock=d=>{const today=+d.date===+t,fut=d.date>t;
-    let body;
-    if(fut){const pl=PLANS.find(x=>x.date===ymd(d.date));
-      body=pl?`<div class="faint" style="font-size:12px;margin-bottom:2px">Planned${pl.provisional?" (provisional)":""}</div>${(pl.blocks||[]).map(b=>`<div class="wl ${b.fixed?"faint":""}"><span class="da">${esc(b.start||"")}</span> ${esc(b.title)}</div>`).join("")||'<div class="faint">Rest day</div>'}`
-        :'<div class="faint">Still to come. The plan appears here the evening before.</div>'}
-    else body=d.done.length?line(d):`<div class="faint">${today?"Nothing yet. Say what you practised and Claude ticks it.":"Nothing logged"}</div>`;
-    return `<div class="wd ${today?"now":""} ${fut?"fut":""}"><div class="wh"><span>${today?"Today":fmtDay(d.date)}</span><span class="faint">${fut?"":d.n||""}</span></div>${body}</div>`};
-  const list=sel?[sel]:p.days.slice();
-  const rest=p.days.filter(d=>d.date<=t&&!d.n&&!d.done.length).length;
-  $("practice").innerHTML=`<div class="wsum"><div><span>Sessions</span><b>${p.total}</b><small class="faint"> / ${target}</small></div><div><span>Gym</span><b>${p.areas.Gym}</b><small class="faint"> / 3</small></div><div><span>Days off</span><b>${rest}</b><small class="faint"> / 1</small></div></div>
-    <div class="bar" style="margin-top:0"><i style="width:${Math.min(100,p.total/target*100)}%"></i></div>
-    <div class="tgt"><span>${p.total>=target?'<span class="ok">Weekly target hit</span>':`${target-p.total} to go this week`}</span><span>target ${target}</span></div>
-    <div class="days">${all.map(l=>{const d=p.days.find(x=>x.label===l);
-      if(!d)return `<div class="day off"><div class="d">${l}</div><div class="v z">–</div></div>`;
-      const fut=d.date>t,today=+d.date===+t;
-      return `<div class="day pick ${today?"today":""} ${sel===d?"sel":""}" data-d="${ymd(d.date)}" title="Show ${l}"><div class="d">${l}</div><div class="v ${d.n?"":"z"}">${fut?"·":d.n}</div></div>`}).join("")}</div>
-    ${sel?`<div class="wkall"><button class="lnk" id="wkAll">← Whole week</button></div>`:""}
-    <div class="week">${list.map(dayBlock).join("")}</div>`;
-  $("practice").querySelectorAll(".day.pick").forEach(el=>el.onclick=()=>{PSEL=PSEL===el.dataset.d?null:el.dataset.d;renderPractice()});
-  if(sel)$("wkAll").onclick=()=>{PSEL=null;renderPractice()};
+  renderWeekGrid();
 }
+
+
+/* ============ WEEK: calendar grid, colour-coded by priority from scoring ============ */
+const WG={mode:"prio",filt:"",sel:null,rv:null,anim:true};
+const WG_AREA={app:"Approach",ott:"Off the tee",atg:"Around the green",putt:"Putting",play:"Playing",gym:"Gym",cardio:"Cardio",fixed:"Fixed"};
+const WG_ACOL={app:"#ffb86b",ott:"#e07a5f",atg:"#8fd19e",putt:"#b79ce0",play:"#7da0d6",gym:"#6fc5c0",cardio:"#4fb3a9",fixed:"#5a5a5a"};
+const WG_PCOL={high:"#ffb86b",med:"#7da0d6",low:"#9aa0a6",body:"#6fc5c0",fixed:"#4a4a4a"};
+const WG_PNAME={high:"Priority 1 · biggest leaks",med:"Priority 2",low:"Maintain",body:"Body",fixed:"Fixed"};
+function wgArea(k){k=nk(k);if(/^irons|yds ::/.test(k))return"app";if(/^off the tee/.test(k))return"ott";if(/^chipping/.test(k))return"atg";if(/^putting/.test(k))return"putt";if(/^playing/.test(k))return"play";if(/^gym/.test(k))return"gym";return null}
+function wgMins(b){if(!b.start||!b.end)return 0;const f=t=>{const[h,m]=t.split(":").map(Number);return h*60+m};return Math.max(0,f(b.end)-f(b.start))}
+/* split from scoring (season + last 10 blend, 15% floor) — same rule as the planner and the Golf tab */
+function wgScoring(){const D=GR.d;if(!D)return null;const ks=["app","ott","atg","putt"];
+  const lost=ks.map(k=>Math.max(0,-((D.season[k]??0)+(D.last10[k]??0))/2)),tl=lost.reduce((a,x)=>a+x,0)||1;
+  let sh=lost.map(x=>Math.max(15,x/tl*100));const ss=sh.reduce((a,x)=>a+x,0);const tgt={},rank=ks.slice().sort((a,b)=>lost[ks.indexOf(b)]-lost[ks.indexOf(a)]);
+  ks.forEach((k,i)=>tgt[k]=sh[i]/ss*100);const prio={};rank.forEach((k,i)=>prio[k]=i<2?"high":i===2?"med":"low");return {tgt,prio}}
+function wgBlocks(dk){const pl=(PLANDAYS||[]).find(x=>x.date===dk);const pd=(PR&&PR.days||[]).find(d=>ymd(d.date)===dk);
+  const done=new Set((pd?pd.done:[]).filter(x=>x.key).map(x=>x.key));
+  return ((pl&&pl.blocks)||[]).map(b=>{const dr=(b.drills&&b.drills.length)?b.drills:(!b.fixed&&CARDIO_RE.test(String(b.title).split(" · ")[0])?["Gym :: Workout"]:!b.fixed&&HOLES_RE.test(b.title)?["Playing :: Holes"]:[]);
+    const cnt={};dr.forEach(x=>{const a=wgArea(x);if(a)cnt[a]=(cnt[a]||0)+1});
+    let areas=Object.entries(cnt).sort((x,y)=>y[1]-x[1]);let a=b.fixed||!areas.length?"fixed":areas[0][0];
+    if(a==="gym"&&CARDIO_RE.test(String(b.title).split(" · ")[0]))a="cardio";
+    const tot=dr.length||1,share={};areas.forEach(([k,n])=>share[k==="gym"&&a==="cardio"?"cardio":k]=n/tot);
+    return {b,a,a2:areas[1]?areas[1][0]:null,share,m:wgMins(b),done:dr.length>0&&dr.every(x=>done.has(nk(x))),drills:dr}})}
+function renderWeekGrid(){const el=$("practice");if(!el)return;
+  const t=day0(new Date()),tk=ymd(t),dates=weekDates(),sc=wgScoring();
+  const prio=k=>k==="fixed"?"fixed":(k==="gym"||k==="cardio")?"body":k==="play"?"med":sc?sc.prio[k]:(k==="app"||k==="ott"?"high":k==="atg"?"med":"low");
+  const col=x=>WG.mode==="prio"?WG_PCOL[prio(x.a)]:WG_ACOL[x.a],key=x=>WG.mode==="prio"?prio(x.a):x.a;
+  const W=dates.map(d=>({d,k:ymd(d),items:wgBlocks(ymd(d))}));
+  // balance
+  const pm={app:0,ott:0,atg:0,putt:0};W.forEach(w=>w.items.forEach(x=>Object.entries(x.share).forEach(([k,f])=>{if(pm[k]!=null)pm[k]+=x.m*f})));
+  const ptot=Object.values(pm).reduce((a,x)=>a+x,0);
+  const bal=ptot&&sc?["app","ott","atg","putt"].map(k=>{const pct=pm[k]/ptot*100,tg=sc.tgt[k],dh=(pct-tg)/100*ptot/60;
+    const v=Math.abs(pct-tg)<5?["ok","About right"]:pct>tg?["bad",`Too much · about ${dh.toFixed(1)} h more than scoring needs`]:["bad",`Not enough · about ${(-dh).toFixed(1)} h short`];
+    if(k==="app"||k==="ott"){if(pct<tg-5)v[0]="bad";else if(pct>tg+5)v[0]="warn"}else if(pct>tg+5)v[0]="bad";else if(pct<tg-5)v[0]="warn";
+    return `<div class="wg-bal"><div class="wg-bn"><i style="background:${WG_PCOL[prio(k)]}"></i><b>${WG_AREA[k]}</b><small>${(pm[k]/60).toFixed(1)} h planned</small></div>
+      <div class="wg-bt"><div class="wg-bf" data-w="${Math.min(100,pct/50*100).toFixed(1)}%" style="background:${WG_PCOL[prio(k)]}"></div><i style="left:${(tg/50*100).toFixed(1)}%"></i></div>
+      <div class="wg-bv"><b>${Math.round(pct)}%</b><small>needs ~${Math.round(tg)}%</small></div><div class="wg-bx ${v[0]}">${v[1]}</div></div>`}).join(""):"";
+  // grid
+  let h0=8,h1=17;W.forEach(w=>w.items.forEach(x=>{if(x.b.start&&x.b.fixed&&/weigh/i.test(x.b.title))return;if(x.b.start)h0=Math.min(h0,+x.b.start.slice(0,2));if(x.b.end)h1=Math.max(h1,Math.ceil(+x.b.end.slice(0,2)+(+x.b.end.slice(3)>0?1:0)))}));
+  const PX=46,H=(h1-h0)*PX+10,top=s=>{const[h,m]=s.split(":").map(Number);return Math.max(0,(h+m/60-h0)*PX)};
+  const lk=WG.mode==="prio"?["high","med","low","body"]:["app","ott","atg","putt","play","gym","cardio"];
+  const legend=lk.map(k=>{const on=WG.filt===k,c=WG.mode==="prio"?WG_PCOL[k]:WG_ACOL[k];return `<button class="wg-chip${on?" on":""}${WG.filt&&!on?" dim":""}" data-wg-filt="${k}" style="--c:${c}"><i></i>${WG.mode==="prio"?WG_PNAME[k]:WG_AREA[k]}</button>`}).join("");
+  let selX=null,selD=null;
+  const cols=W.map((w,di)=>{const today=w.k===tk,rest=!w.items.filter(x=>x.a!=="fixed").length&&w.d>=t&&(PLANDAYS||[]).some(x=>x.date===w.k),noplan=!(PLANDAYS||[]).some(x=>x.date===w.k);
+    const pmins=w.items.filter(x=>["app","ott","atg","putt"].includes(x.a)).reduce((a,x)=>a+x.m,0);
+    const tiny=w.items.filter(x=>x.a==="fixed"&&x.m<20);
+    const blocks=w.items.filter(x=>x.b.start&&!(x.a==="fixed"&&x.m<20)).map((x,bi)=>{const id=w.k+"#"+bi,on=WG.sel===id;if(on){selX=x;selD=w}
+      const dim=WG.filt&&key(x)!==WG.filt&&!(WG.mode==="area"&&x.a2===WG.filt);
+      const bg=WG.mode==="area"&&x.a2&&x.a!=="fixed"?`linear-gradient(135deg,${WG_ACOL[x.a]} 0 55%,${WG_ACOL[x.a2]} 55% 100%)`:col(x);
+      const h=Math.max(20,x.m/60*PX-3);
+      return `<button class="wg-blk${x.done?" done":""}${dim?" dim":""}${on?" on":""}${x.a==="fixed"?" fx":""}" data-wg-sel="${id}" aria-label="${esc(x.b.title)}, ${w.d.toLocaleDateString("en-GB",{weekday:"short"})} ${esc(x.b.start)}" style="top:${top(x.b.start)}px;height:${h}px;background:${bg};${WG.anim?`animation-delay:${di*55+bi*35}ms`:"animation:none"}">
+        <span class="t">${esc(x.b.start)}</span><span class="n">${esc(String(x.b.title).replace(/^The Oaks · |^Driffield · /,""))}</span>${x.done?'<span class="ck">✓</span>':""}</button>`}).join("");
+    let now="";if(today){const n=new Date(),hh=n.getHours()+n.getMinutes()/60;if(hh>=h0&&hh<=h1)now=`<div class="wg-now" style="top:${(hh-h0)*PX}px"></div>`}
+    return {head:`<div class="wg-dh${today?" wg-today":""}"><b>${w.d.toLocaleDateString("en-GB",{weekday:"short"}).toUpperCase()}</b><span>${w.d.getDate()}</span>${tiny.map(x=>`<em class="wg-badge">${esc(String(x.b.title).replace(/^⚖\s*/,""))} ${esc(x.b.start)}</em>`).join("")}<small>${noplan?"no plan yet":rest?"rest":pmins?(Math.round(pmins/6)/10)+" h practice":w.items.length+" block"+(w.items.length===1?"":"s")}</small></div>`,
+      col:`<div class="wg-col${today?" wg-today":""}${rest?" rest":""}${noplan&&w.d>t?" np":""}" style="height:${H}px">${rest?'<div class="wg-rest">REST</div>':""}${noplan&&w.d>t?'<div class="wg-rest small">plan arrives<br>the evening before</div>':""}${blocks}${now}</div>`}});
+  const hours=[];for(let h=h0;h<=h1;h++)hours.push(`<span style="top:${(h-h0)*PX}px">${pad(h)}</span>`);
+  const pk=selX?prio(selX.a):"high";
+  const det=selX?`<div class="wg-det" style="--c:${WG_PCOL[pk]}"><div class="wg-dt"><div><div class="wg-tag">${WG_PNAME[pk].toUpperCase()}${selX.a!=="fixed"?" · "+WG_AREA[selX.a].toUpperCase()+(selX.a2?" + "+WG_AREA[selX.a2].toUpperCase():""):""}</div>
+      <b>${esc(selX.b.title)}</b><small>${selD.d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"short"})} · ${esc(selX.b.start)}–${esc(selX.b.end||"")}${selX.m?" · "+selX.m+" min":""}</small></div>${selX.done?'<span class="ok">✓ Done</span>':""}</div>
+      ${selX.b.why?`<div class="wg-why">${esc(selX.b.why)}</div>`:""}
+      ${selX.drills.length?`<div class="wg-drs">${selX.drills.map(x=>`<span>${esc(keyLabel(x))}</span>`).join("")}</div>`:""}</div>`:`<div class="note">Tap a block for why it's there and its drills.</div>`;
+  const P=PR,target=+ls.get("hud_target","25")||25;
+  el.innerHTML=`${P?`<div class="wg-stats"><div><span>Sessions</span><b>${P.total}</b><small>/ ${target}</small></div><div><span>Gym</span><b>${P.areas.Gym}</b><small>/ 3</small></div><div><span>Rounds played</span><b>${P.areas.Playing||0}</b><small>this week</small></div></div>`:""}
+    ${bal?`<div class="wg-sec"><div class="wg-sh"><b>Is the week balanced?</b><small>practice hours planned for each area, against the share your scoring says it needs</small></div>${bal}</div>`:""}
+    <div class="wg-top"><div class="wg-legend">${legend}</div><div class="wg-mode" role="group" aria-label="Colour by"><button class="${WG.mode==="prio"?"on":""}" data-wg-mode="prio">Priority</button><button class="${WG.mode==="area"?"on":""}" data-wg-mode="area">Area</button></div></div>
+    <div class="wg-scroll"><div class="wg-grid"><div></div>${cols.map(c=>c.head).join("")}<div class="wg-hours" style="height:${H}px">${hours.join("")}</div>${cols.map(c=>c.col).join("")}</div></div>
+    ${det}`;
+  WG.anim=false;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>el.querySelectorAll("[data-w]").forEach(x=>x.style.width=x.dataset.w)))}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-wg-filt],[data-wg-mode],[data-wg-sel],[data-rv-i]");if(!b)return;
+  if(b.dataset.rvI!=null&&b.closest("#review")){WG.rv=WG.rv===+b.dataset.rvI?null:+b.dataset.rvI;return renderReview({reviews:REVIEWS})}
+  if(!b.closest("#practice"))return;
+  if(b.dataset.wgFilt)WG.filt=WG.filt===b.dataset.wgFilt?"":b.dataset.wgFilt;else if(b.dataset.wgMode){WG.mode=b.dataset.wgMode;WG.filt=""}else WG.sel=WG.sel===b.dataset.wgSel?null:b.dataset.wgSel;
+  renderWeekGrid()});
 
 /* ============ READINESS (Whoop, synced into the vault) ============ */
 async function loadWhoop(){try{return JSON.parse(await FS.text(PATHS.whoop))}catch(e){if(e.name==="NotFoundError"||/not found|missing|could not be found/i.test(e.message))return null;throw e}}
@@ -1247,7 +1341,7 @@ function renderRounds(d){
   GR.d={tour,season:grStats(rs,tour),last10:grStats(rs.slice(-10),tour),months:{},keys:Object.keys(months).sort(),updated:d.updated};
   GR.d.keys.forEach(k=>GR.d.months[k]=grStats(months[k],tour));
   if(!GR.per||(GR.per!=="season"&&GR.per!=="last10"&&!GR.d.months[GR.per]))GR.per=GR.d.keys.at(-1)||"season";
-  grRender()}
+  grRender();try{renderWeekGrid()}catch(e){}}
 function grFmt(v){return v==null?"–":(v>.004?"+":v<-.004?"−":"")+Math.abs(v).toFixed(2)}
 function grPc(v){return v==null?"–":Math.round(v*100)+"%"}
 function grRender(){const D=GR.d,el=$("greview");if(!D||!el)return;
@@ -1451,7 +1545,7 @@ $("relinkBtn").onclick=()=>{$("settings").classList.remove("show");connect()};
 function showTab(t){if(!document.getElementById("p-"+t))t="today";
   document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("on",p.id==="p-"+t));
   document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));
-  if(t==="golf")setTimeout(()=>{try{grRender()}catch(e){}},0);if(t==="prep")setTimeout(()=>{try{MC.rolled=false;COMPS.length&&renderComps({ev:COMPS,ms:MILES,txt:COMPS_TXT})}catch(e){}},0);if(t==="gym")setTimeout(()=>{try{G.byEx&&gRenderProg();gRenderWeight()}catch(e){}},0);ls.set("hud_tab",t);if(location.hash!=="#"+t)history.replaceState(null,"","#"+t);window.scrollTo(0,0)}
+  if(t==="golf")setTimeout(()=>{try{grRender()}catch(e){}},0);if(t==="week")setTimeout(()=>{try{WG.anim=true;renderWeekGrid()}catch(e){}},0);if(t==="prep")setTimeout(()=>{try{MC.rolled=false;COMPS.length&&renderComps({ev:COMPS,ms:MILES,txt:COMPS_TXT})}catch(e){}},0);if(t==="gym")setTimeout(()=>{try{G.byEx&&gRenderProg();gRenderWeight()}catch(e){}},0);ls.set("hud_tab",t);if(location.hash!=="#"+t)history.replaceState(null,"","#"+t);window.scrollTo(0,0)}
 document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
 document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>showTab(b.dataset.go));
 showTab((location.hash||"").slice(1)||ls.get("hud_tab","today"));
@@ -2079,9 +2173,12 @@ function renderReview(j){REVIEWS=(j&&j.reviews||[]).slice().sort((a,b)=>a.week_s
   const r=REVIEWS[Math.min(RVSEL,REVIEWS.length-1)];const ws=new Date(r.week_start+"T00:00"),we=new Date(ws.getTime()+6*864e5);
   $("rvMeta").innerHTML=REVIEWS.length>1?`<select class="gsel" id="rvSel" style="padding:5px 10px;font-size:13px">${REVIEWS.map((x,i)=>`<option value="${i}" ${i===RVSEL?"selected":""}>Week of ${fmtDay(new Date(x.week_start+"T00:00"))}</option>`).join("")}</select>`:`Week of ${fmtDay(ws)}`;
   const dot={good:"ok",watch:"warn",off:"bad"};
+  const its=r.items||[],si=WG.rv!=null&&its[WG.rv]?WG.rv:null;
+  const short=v=>{v=String(v||"");return v.length>22?v.split(/ · | \(/)[0].slice(0,22):v};
   el.innerHTML=`<div class="rvhead">${esc(r.headline||"")}</div>
+    <div class="wg-pills">${its.map((it,i)=>`<button class="wg-pill ${dot[it.status]||""}${si===i?" on":""}" data-rv-i="${i}" aria-pressed="${si===i}"><span><i class="sd ${dot[it.status]||""}"></i>${esc(it.label||it.area||"")}</span><b>${esc(short(it.value))}</b></button>`).join("")}</div>
+    ${si!=null?`<div class="wg-pd"><b>${esc(its[si].value||"")}</b>${its[si].detail?`<div>${esc(its[si].detail)}</div>`:""}</div>`:'<div class="note" style="margin-top:8px">Tap a result for the detail.</div>'}
     ${r.change?`<div class="rvchange"><span>One change for ${RVSEL===0?"this":"the next"} week</span><b>${esc(r.change.what||"")}</b>${r.change.why?`<div>${esc(r.change.why)}</div>`:""}</div>`:""}
-    <div class="rvitems">${(r.items||[]).map(it=>`<div class="rvi"><i class="sd ${dot[it.status]||""}" aria-label="${esc(it.status||"")}"></i><div class="rl">${esc(it.label||it.area||"")}</div><div class="rv">${esc(it.value||"")}</div>${it.detail?`<div class="rx">${esc(it.detail)}</div>`:""}</div>`).join("")}</div>
     <div class="note">${fmtDay(ws)} – ${fmtDay(we)} · written ${r.written?esc(String(r.written).replace("T"," ").slice(0,16)):""} by the Sunday planning run · full note in <i>10 Golf → Planning → Weekly Reviews</i></div>`;
   if($("rvSel"))$("rvSel").onchange=e=>{RVSEL=+e.target.value;renderReview({reviews:REVIEWS})}}
 
