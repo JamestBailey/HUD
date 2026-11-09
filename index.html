@@ -452,8 +452,8 @@ h1{font-weight:700;letter-spacing:-.03em}
 .gr-chips span.o{background:#2a1f12;color:var(--gold);border:1px solid rgba(255,184,107,.38);font-size:13px}.gr-chips span.lab{background:none;padding:0 4px 0 0;font-size:11px;letter-spacing:.08em;color:var(--muted)}
 .gr-sec{background:var(--panel2);border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin-bottom:16px}
 .gr-sh{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px}.gr-sh h3{margin:0;font-size:19px;font-weight:800}.gr-sh small{font-size:12px;color:var(--faint)}
-.gr-scroll{overflow-x:auto}.gr-bands{min-width:620px;display:flex;flex-direction:column;gap:8px}
-.gr-band{display:grid;grid-template-columns:110px minmax(0,2fr) 120px 76px 110px;gap:12px;align-items:center;border-radius:14px;padding:11px 14px;background:#1b1b1b;border:1px solid transparent}
+.gr-scroll{overflow-x:auto}.gr-bands{min-width:700px;display:flex;flex-direction:column;gap:8px}
+.gr-band{display:grid;grid-template-columns:110px minmax(0,2fr) 70px 120px 76px 110px;gap:12px;align-items:center;border-radius:14px;padding:11px 14px;background:#1b1b1b;border:1px solid transparent}
 .gr-band.on{background:#2a1f12;border-color:rgba(255,184,107,.5)}.gr-band.hd{background:none;padding:0 14px;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.06em}
 .gr-band b{font-size:15px;font-weight:800}.gr-fb{font-size:10px;font-weight:800;letter-spacing:.08em;color:var(--gold);margin-top:2px}
 .gr-gir{display:flex;align-items:center;gap:10px}.gr-gir>b{width:42px;text-align:right}
@@ -1245,7 +1245,8 @@ function grRender(){const D=GR.d,el=$("greview");if(!D||!el)return;
   const bandRows=GR_B.map(([k,nm])=>{const b=P.bands[k],sb=S.bands[k],t=T[k],g=b.att?b.made/b.att:0,sg=sb.att?sb.made/sb.att:0,f=k===fb,d=(g-sg)*100;
     const vs=isS?(b.att?b.made+" / "+b.att:"–"):(!b.att?"–":(d>=0?"▲ ":"▼ ")+Math.abs(d).toFixed(0)+" pts"+(b.prox&&sb.prox?" · "+(b.prox<=sb.prox?"−":"+")+Math.abs(b.prox-sb.prox).toFixed(1)+" ft":""));
     return `<div class="gr-band${f?" on":""}"><div><b>${nm}</b>${f?'<div class="gr-fb">FOCUS BAND</div>':""}</div>
-      <div class="gr-gir"><div class="gr-track big"><div class="gr-fill${f?" on":" g"}" data-w="${(g*100).toFixed(1)}%"></div><i style="left:${t.gir}%"></i></div><b>${b.att?Math.round(g*100)+"%":"–"}</b></div>
+      <div class="gr-gir"><div class="gr-track big"><div class="gr-fill${f?" on":" g"}" data-w="${(g*100).toFixed(1)}%"></div><i style="left:${t.gir}%"></i></div></div>
+      <div class="gr-r"><b>${b.att?Math.round(g*100)+"%":"–"}</b><small>Tour ${t.gir}%</small></div>
       <div class="gr-r"><b>${b.prox?b.prox.toFixed(1)+" ft":"–"}</b><small class="${b.prox&&b.prox/t.prox>1.4?"bad":""}">Tour ${t.prox}${b.prox?" · "+(b.prox>=t.prox?"+":"−")+Math.abs(b.prox-t.prox).toFixed(1)+" ft":" ft"}</small></div>
       <div class="gr-r"><b>${b.att?((b.att-b.made)/b.rounds).toFixed(1):"–"}</b><small>missed / rd</small></div>
       <div class="gr-r ${isS?"":d>=0?"up":"down"}"><small>${vs}</small></div></div>`}).join("");
@@ -1269,7 +1270,7 @@ function grRender(){const D=GR.d,el=$("greview");if(!D||!el)return;
   </div>
   <div class="gr-cards">${cards}</div>
   <div class="gr-sec"><div class="gr-sh"><h3>Approach to the green · by yardage</h3><small>${isS?"June onwards · vs PGA Tour":"vs PGA Tour and your season (June onwards)"}</small></div>
-    ${hasB?`<div class="gr-scroll"><div class="gr-bands"><div class="gr-band hd"><span>BAND</span><span>GIR · white tick = Tour</span><span class="gr-r">PROXIMITY</span><span class="gr-r">MISSED</span><span class="gr-r">${isS?"GREENS":"VS SEASON"}</span></div>${bandRows}</div></div>
+    ${hasB?`<div class="gr-scroll"><div class="gr-bands"><div class="gr-band hd"><span>BAND</span><span>GIR · white tick = Tour</span><span class="gr-r">GIR %</span><span class="gr-r">PROXIMITY</span><span class="gr-r">MISSED</span><span class="gr-r">${isS?"GREENS":"VS SEASON"}</span></div>${bandRows}</div></div>
     <p class="gr-rev big">${esc(bandRev)}</p>
     ${fb?`<div class="gr-chips"><span class="lab">THIS WEEK AT DRIFFIELD</span><span class="o">${fbName} · Completion Yardage Book</span><span class="o">${fbName} · Strokes Gained Yardage Book</span></div>`:""}
     <div class="note">Tour benchmark: PGA Tour averages mapped onto your bands. Tour figures are mostly from the fairway on harder courses and yours include every lie, so read the gap as a direction, not an exact score.</div>`
