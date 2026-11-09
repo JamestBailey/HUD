@@ -1043,7 +1043,7 @@ function renderDay(){
    if(prev)$("timeline").querySelectorAll(".drill.on[data-k]").forEach(d=>{if(!prev.has(nk(d.dataset.k)))animDone(d)});
    PREVDONE[DSEL]=now}
   if(sel.getDay()===1&&WEIGHTS){wBindDay(DSEL);if(WJUST===DSEL){WJUST=null;const b=$("timeline").querySelector(".blk.w");if(b)animDone(b)}}
-  $("timeline").querySelectorAll(".blk").forEach(b=>b.onclick=()=>{const i=+b.dataset.i;OPEN[i]=!OPEN[i];renderDay()});
+  $("timeline").querySelectorAll(".blk:not(.w)").forEach(b=>b.onclick=e=>{if(e.target.closest("input,textarea,select"))return;const i=+b.dataset.i;OPEN[i]=!OPEN[i];renderDay()});
   $("timeline").querySelectorAll(".drill:not([disabled])").forEach(b=>b.onclick=()=>{const k=b.dataset.k;const ticked=(TICKS[DSEL]||[]).some(x=>nk(x)===nk(k));
     const dx=doneKeys.get(nk(k)),locked=!!dx&&!dx.hud;
     if((ticked||locked)&&resultSpec(k)){if(ENTRY&&ENTRY.date===DSEL&&nk(ENTRY.k)===nk(k)){if(ENTRY.dirty&&!confirm("Discard your changes? The saved version stays."))return;rdClear(DSEL,k);ENTRY=null}else openSaved(DSEL,k,locked);renderDay();return}
