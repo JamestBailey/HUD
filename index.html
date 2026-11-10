@@ -651,6 +651,7 @@ h1{font-weight:700;letter-spacing:-.03em}
 .phb.y{background:var(--lav);border-color:var(--lav);color:var(--ink)}.phb.n{background:rgba(255,138,101,.16);border-color:rgba(255,138,101,.5);color:#ff8a65}
 .ptsum{display:flex;gap:14px;flex-wrap:wrap;justify-content:space-between;font-size:12px;color:var(--muted);padding:6px 4px 2px;border-top:1px solid var(--line);margin-top:4px}.ptsum b{color:var(--text)}
 .drill small.draft{opacity:1;color:var(--gold);font-weight:700}
+.drill small.stag{opacity:1;color:var(--gold);font-weight:700;padding:3px 8px;border-radius:999px;background:rgba(255,190,90,.12);box-shadow:inset 0 0 0 1px rgba(255,190,90,.35);white-space:nowrap}
 
 .gwkb button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;height:100%;background:none;border:none;padding:0 1px;cursor:pointer;font:inherit;border-radius:8px;position:relative}
 .gwkb button em{font-style:normal;font-size:10px;font-weight:800;color:var(--muted);min-height:12px}
@@ -1241,7 +1242,7 @@ function renderDay(){
       ${OPEN[i]?`<div class="bx">${b.why?`<div class="why">${esc(b.why)}</div>`:b.fixed?'<div class="why">From your calendar.</div>':""}
         ${drills.map(k=>{const x=doneKeys.get(nk(k));const on=!!x,lock=on&&!x.hud;const spec=resultSpec(k),res=getResult(DSEL,k)||(spec?resvGet(DSEL,k):null);
           const entry=ENTRY&&ENTRY.date===DSEL&&nk(ENTRY.k)===nk(k);
-          let h=`<button class="drill ${gym?"g":""} ${on?"on":""} ${lock?"lock":""}" data-k="${esc(k)}" ${isFut?"disabled":""}><span class="m">${on?"✓":""}</span><span>${esc(cardio&&/^gym\s*::\s*workout$/i.test(k)?cardioLabel(b.title):/^playing\s*::\s*holes$/i.test(k)?holesLabel(b.title):keyLabel(k))}</span>${res?`<small class="rv">${esc(spec?spec.fmt(res.v):res.v)}</small>`:!entry&&!on&&rdAll()[rdKey(DSEL,k)]?'<small class="draft">draft saved</small>':lock?"<small>in Daily To Do</small>":""}</button>`;
+          let h=`<button class="drill ${gym?"g":""} ${on?"on":""} ${lock?"lock":""}" data-k="${esc(k)}" ${isFut?"disabled":""}><span class="m">${on?"✓":""}</span><span>${esc(cardio&&/^gym\s*::\s*workout$/i.test(k)?cardioLabel(b.title):/^playing\s*::\s*holes$/i.test(k)?holesLabel(b.title):keyLabel(k))}</span>${res?`<small class="rv">${esc(spec?spec.fmt(res.v):res.v)}</small>`:!entry&&!on&&rdAll()[rdKey(DSEL,k)]?'<small class="draft">draft saved</small>':lock?"<small>in Daily To Do</small>":spec&&!on&&!entry&&!isFut?`<small class="stag">📋 ${spec.table?"table":"score"}</small>`:""}</button>`;
           if(lock&&spec&&!res&&!isFut&&!entry)h+=`<button class="addres" data-add="${esc(k)}">+ add ${spec.word}</button>`;
           if(entry){h+=`<div class="resbox">${spec.table?ptHtml(spec):""}${spec.fields.map((f,fi)=>`${f.hint?`<div class="rhint">${esc(f.hint)}</div>`:""}<label for="res_${f.id}">${f.label}</label><div class="resrow">
               ${f.type==="sg"?`<button class="sgn" id="resSign" aria-label="Switch plus or minus">${ENTRY.neg?"−":"+"}</button>`:""}
