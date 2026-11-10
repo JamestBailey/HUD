@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="booting">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -662,6 +662,11 @@ h1{font-weight:700;letter-spacing:-.03em}
 .gwkd .h{display:flex;justify-content:space-between;align-items:center}.gwkd .h b{font-size:15px}.gwkd .s{font-size:12.5px;color:var(--muted);margin:2px 0 6px}
 .gwkd .r{display:grid;grid-template-columns:62px 1fr;gap:10px;padding:8px 0;border-top:1px solid var(--line);font-size:13px}.gwkd .r>span{color:var(--gold);font-weight:700}
 @keyframes gfade{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+/* ============ boot-up animation: cards come into focus one by one ============ */
+@keyframes bootin{from{opacity:0;filter:blur(var(--bb,14px));transform:translateY(var(--by,14px)) scale(.975)}to{opacity:1;filter:blur(0);transform:none}}
+.boot{animation:bootin var(--bd,.85s) cubic-bezier(.2,.7,.2,1) both;animation-delay:var(--bdl,0ms)}
+.boot-wait,.booting :is(header>div:first-child>*,.hright>*,#tabs):not(.boot):not(.booted),.booting .panel.on :is(.card,.tile,.tday>:not(#timeline),#timeline>*):not(.boot){opacity:0}
+@media(prefers-reduced-motion:reduce){.boot{animation:none}.boot-wait,.booting *{opacity:1!important}}
 </style>
 </head>
 <body>
@@ -1533,6 +1538,7 @@ async function refresh(){
     safe(loadGym,renderGym,"gStart","your gym notes"),
     safe(loadReview,renderReview,"review","the weekly review")]);
   if(G.hist)try{gRenderStart()}catch(e){}
+  try{bootDataReady()}catch(e){}
 }
 function tick(){const d=new Date();$("clock").textContent=`${pad(d.getHours())}:${pad(d.getMinutes())}`;
   const h=d.getHours();$("greet").textContent=`Good ${h<12?"morning":h<18?"afternoon":"evening"}, James`;
@@ -1563,10 +1569,28 @@ $("relinkBtn").onclick=()=>{$("settings").classList.remove("show");connect()};
     $("pickBtn").textContent="Allow access";$("pickBtn").onclick=async()=>{if(await h.requestPermission({mode:"readwrite"})==="granted"){ROOT=h;$("connect").classList.remove("show");refresh()}}}catch(e){}}
   $("connect").classList.add("show");
 })();
+/* ============ boot-up animation ============ */
+/* First load: header + tabs focus in straight away; the cards wait for the first data load (max 1.5s), then focus in one by one, top-left to bottom-right. Tab switch: a quicker version. */
+const BOOT={first:true,sel:".card,.tile,.tday > :not(#timeline),#timeline > *"};
+function bootTargets(panel){if(!panel)return [];return [...panel.querySelectorAll(BOOT.sel)].filter(el=>!el.parentElement.closest(BOOT.sel)&&el.offsetParent!==null)
+  .sort((a,b)=>{const r=a.getBoundingClientRect(),q=b.getBoundingClientRect();return (Math.round(r.top/40)-Math.round(q.top/40))||(r.left-q.left)})}
+function bootRun(els,o){o=o||{};els.forEach((el,i)=>{el.classList.remove("boot","boot-wait");void el.offsetWidth;
+  el.style.setProperty("--bdl",((o.start||0)+i*(o.step||90))+"ms");el.style.setProperty("--bd",o.dur||".85s");el.style.setProperty("--bb",(o.blur??14)+"px");el.style.setProperty("--by",(o.y??14)+"px");
+  el.classList.add("boot");el.addEventListener("animationend",function f(e){if(e.target!==el||e.animationName!=="bootin")return;el.classList.remove("boot");el.classList.add("booted");el.removeEventListener("animationend",f)})})}
+function bootTab(t){const p=document.getElementById("p-"+t);
+  if(BOOT.first){bootTargets(p).forEach(el=>el.classList.add("boot-wait"));return}
+  bootRun(bootTargets(p),{step:55,dur:".55s",blur:8,y:8})}
+function bootDataReady(){if(!BOOT.first)return;BOOT.first=false;clearTimeout(BOOT.timer);
+  requestAnimationFrame(()=>{bootRun(bootTargets(document.querySelector(".panel.on")),{step:90});
+    document.querySelectorAll(".boot-wait").forEach(el=>el.classList.remove("boot-wait"));document.documentElement.classList.remove("booting")})}
+bootRun([...document.querySelectorAll("header > div:first-child > *, .hright > *")],{step:70,blur:10,y:10});
+bootRun([$("tabs")],{start:260,blur:10,y:10});
+BOOT.timer=setTimeout(bootDataReady,1500);
 /* ============ tabs ============ */
 function showTab(t){if(!document.getElementById("p-"+t))t="today";
   document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("on",p.id==="p-"+t));
   document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));
+  try{bootTab(t)}catch(e){}
   if(t==="golf")setTimeout(()=>{try{grRender()}catch(e){}},0);if(t==="week")setTimeout(()=>{try{WG.anim=true;renderWeekGrid()}catch(e){}},0);if(t==="prep")setTimeout(()=>{try{MC.rolled=false;COMPS.length&&renderComps({ev:COMPS,ms:MILES,txt:COMPS_TXT})}catch(e){}},0);if(t==="gym")setTimeout(()=>{try{G.byEx&&gRenderProg();gRenderWeight()}catch(e){}},0);ls.set("hud_tab",t);if(location.hash!=="#"+t)history.replaceState(null,"","#"+t);window.scrollTo(0,0)}
 document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
 document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>showTab(b.dataset.go));
