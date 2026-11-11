@@ -647,6 +647,8 @@ h1{font-weight:700;letter-spacing:-.03em}
 .pth{font-size:10px;font-weight:800;letter-spacing:.03em;white-space:nowrap;text-transform:uppercase;color:var(--faint);padding:2px 0 6px}.pth span{text-align:center}
 .ptr{margin-bottom:6px}.ptr .pn{font-size:12px;font-weight:800;color:var(--faint);text-align:center}
 .ptr input{width:100%;min-width:0;font:700 16px Inter,sans-serif;text-align:center;padding:9px 4px;border-radius:10px;border:1px solid var(--line2);background:#222;color:var(--text);min-height:42px}
+.ptab.sh .pth,.ptab.sh .ptr{grid-template-columns:14px 56px 1.2fr 1fr 1fr 40px;gap:4px}
+.ptab.sh .sst{font-size:11px;font-weight:800;color:var(--muted);line-height:1.15}.ptab.sh .ptr input{font-size:15px;padding:9px 1px;letter-spacing:-.02em}
 .ptr input:focus{outline:2px solid var(--gold);border-color:transparent}
 .phb{min-height:42px;border-radius:10px;border:1px solid var(--line2);background:#222;color:var(--faint);font:800 17px Inter,sans-serif;cursor:pointer;transition:background .2s,color .2s}
 .phb.y{background:var(--lav);border-color:var(--lav);color:var(--ink)}.phb.n{background:rgba(255,138,101,.16);border-color:rgba(255,138,101,.5);color:#ff8a65}
@@ -1142,6 +1144,8 @@ async function loadPractice(){
 const nk=s=>String(s||"").toLowerCase().replace(/\s+/g," ").replace(/[()]/g,"").trim();
 let TICKS={},UNTICKS={},RESULTS={},APPLIED=[],TICKS_LOADED=false;
 async function loadTicks(){try{const j=JSON.parse(await FS.text(PATHS.ticks));TICKS=j.ticks||{};UNTICKS=j.unticks||{};RESULTS=j.results||{};APPLIED=j.applied||[];resvCache()}catch(e){if(!TICKS_LOADED){TICKS={};UNTICKS={};RESULTS={}}}TICKS_LOADED=true}
+/* Off the Tee 10 Shot Drill (Driver / 3W / 2i): shot styles in order, as on James's printed sheet */
+const SHOT_STYLES=["Stock","Draw","Stock","Bullet","Stock","Bomb","Stock","Fairway Finder","Stock","Bullet"];
 /* drills whose score goes into the Drill Spreadsheet */
 function resultSpec(k){const [sec,task]=String(k).split("::").map(x=>(x||"").trim().toLowerCase());
   const att=v=>`${v} attempt${+v===1?"":"s"}`;
@@ -1155,6 +1159,7 @@ function resultSpec(k){const [sec,task]=String(k).split("::").map(x=>(x||"").tri
     if(/^9 - 20ft/.test(task))return {table:{rows:6},fields:[{id:"notes",label:"Notes (optional)",type:"text",ph:"e.g. pushes on misses"}],fmt:v=>`${v.holed}/6 holed · ${v.feel} / ${v.real}`,word:"putts"};
     if(/^<10ft/.test(task))return {table:{rows:10},fields:[],fmt:v=>`${v.holed}/10 holed · ${v.feel} / ${v.real}`,word:"putts"};
   }
+  if(sec==="off the tee"&&/^10 shot drill/.test(task))return {table:{rows:SHOT_STYLES.length,kind:"shot"},fields:[],fmt:v=>`${v.hits}/${SHOT_STYLES.length} ✓`,word:"shots"};
   return null}
 function getResult(date,k){const r=RESULTS[date]||{};const key=Object.keys(r).find(x=>nk(x)===nk(k));return key?r[key]:null}
 function keyArea(k){const sec=k.split("::")[0].trim().toLowerCase();if(/yds/.test(sec))return "Irons";return SECT[sec]||"Other"}
@@ -1384,7 +1389,7 @@ function renderDay(){
               ${f.type==="sg"?`<button class="sgn" id="resSign" aria-label="Switch plus or minus">${ENTRY.neg?"−":"+"}</button>`:""}
               <input id="res_${f.id}" data-f="${f.id}" type="text" inputmode="${f.type==="int"||f.type==="int0"?"numeric":f.type==="text"?"text":"decimal"}" autocomplete="off" placeholder="${esc(f.ph)}" value="${esc((ENTRY.vals||{})[f.id]||"")}">
               ${spec.single&&!ENTRY.readonly?`<button class="rsave" id="resSave">${ENTRY.viewing?"Update":"Save"}</button>`:""}</div>`).join("")}
-            ${spec.single||ENTRY.readonly?"":`<button class="rsave" id="resSave" style="align-self:stretch">${ENTRY.viewing?"Save changes":"Save"+(spec.table?" all putts":"")}</button>`}
+            ${spec.single||ENTRY.readonly?"":`<button class="rsave" id="resSave" style="align-self:stretch">${ENTRY.viewing?"Save changes":"Save"+(spec.table?(spec.table.kind==="shot"?" all shots":" all putts"):"")}</button>`}
             ${ENTRY.readonly?`<div class="rhint">${rdHasData(ENTRY)?"Already copied to the Drill Spreadsheet. View only.":"Score (if any) is in the Drill Spreadsheet."}</div>`:""}
             <div class="resrow2"><span class="rerr" id="resErr"></span>${ENTRY.viewing?`<button class="lnk" id="resUntick">Untick drill</button>`:lock?"":`<button class="lnk" id="resSkip">Tick without a score</button>`}<button class="lnk" id="resCancel">${ENTRY.viewing?"Close":"Cancel"}</button></div></div>`}
           return h}).join("")}
@@ -2369,7 +2374,7 @@ function animDone(el){el.classList.remove("done","pop");void el.offsetWidth;el.c
 const RD="hud_rdrafts";let RD_DONE=false;
 function rdAll(){try{return JSON.parse(ls.get(RD,"{}"))||{}}catch(e){return {}}}
 function rdKey(d,k){return d+"|"+nk(k)}
-function rdHasData(E){if(!E)return false;const v=E.vals||{};return Object.keys(v).some(x=>x==="rows"?(v.rows||[]).some(r=>r&&(r.feel||r.real||r.ft||r.holed!=null)):String(v[x]||"").trim()!=="")}
+function rdHasData(E){if(!E)return false;const v=E.vals||{};return Object.keys(v).some(x=>x==="rows"?(v.rows||[]).some(r=>r&&(r.feel||r.real||r.ft||r.holed!=null||r.yds||r.curve||r.lr||r.ok!=null)):String(v[x]||"").trim()!=="")}
 function rdSave(){if(!ENTRY)return;ENTRY.dirty=true;const a=rdAll(),key=rdKey(ENTRY.date,ENTRY.k);
   if(rdHasData(ENTRY))a[key]={vals:ENTRY.vals,neg:ENTRY.neg,ts:Date.now()};else delete a[key];
   for(const x of Object.keys(a))if(Date.now()-(a[x].ts||0)>14*864e5)delete a[x];   // old drafts expire after 2 weeks
@@ -2409,7 +2414,8 @@ function resvCache(){try{const a=resvAll();let ch=false;   // copy scores loaded
 function resvDel(d,k){const a=resvAll();delete a[rdKey(d,k)];ls.set(RV,JSON.stringify(a))}
 function valsFromV(spec,v){const vals={};let neg=false;
   if(spec.single){const f=spec.fields[0];const n=Number(v);if(f.type==="sg"&&n<0){neg=true;vals[f.id]=String(-n)}else vals[f.id]=String(v??"");return {vals,neg}}
-  if(spec.table){vals.rows=[];(v.putts||[]).forEach(p=>{vals.rows[(p.n||1)-1]={feel:p.feel==null?"":String(p.feel),real:p.real==null?"":String(p.real),ft:p.ft==null?"":String(p.ft),holed:p.holed}})}
+  if(spec.table&&spec.table.kind==="shot"){vals.rows=[];(v.shots||[]).forEach(p=>{vals.rows[(p.n||1)-1]={yds:p.yds==null?"":String(p.yds),curve:p.curve||"",lr:p.lr||"",ok:p.ok}})}
+  else if(spec.table){vals.rows=[];(v.putts||[]).forEach(p=>{vals.rows[(p.n||1)-1]={feel:p.feel==null?"":String(p.feel),real:p.real==null?"":String(p.real),ft:p.ft==null?"":String(p.ft),holed:p.holed}})}
   for(const f of spec.fields)if(v&&v[f.id]!=null)vals[f.id]=String(v[f.id]);
   return {vals,neg}}
 function openSaved(date,k,locked){const spec=resultSpec(k);const c=resvGet(date,k),res=getResult(date,k);
@@ -2420,7 +2426,7 @@ function openSaved(date,k,locked){const spec=resultSpec(k);const c=resvGet(date,
 function rdRestore(dates){if(RD_DONE||ENTRY)return;RD_DONE=true;
   try{const o=JSON.parse(ls.get("hud_ropen","null"));if(!o||!rdAll()[rdKey(o.date,o.k)])return;if(!dates.some(d=>ymd(d)===o.date))return;
     DSEL=o.date;openEntry(o.date,o.k,o.lockedTick?{lockedTick:true}:null);setTimeout(()=>toast("Restored your unsaved entries"),400)}catch(e){}}
-function ptHtml(spec){const n=spec.table.rows,rows=ENTRY.vals.rows||[];const hc=v=>v===true?"y":v===false?"n":"";
+function ptHtml(spec){if(spec.table.kind==="shot")return shHtml(spec);const n=spec.table.rows,rows=ENTRY.vals.rows||[];const hc=v=>v===true?"y":v===false?"n":"";
   return `<div class="ptab" role="table" aria-label="Putt by putt">
     <div class="pth" role="row"><span>#</span><span>Feel %</span><span>Real %</span><span>ft</span><span>Holed</span></div>
     ${Array.from({length:n},(_,i)=>{const r=rows[i]||{};return `<div class="ptr" role="row" data-r="${i}"><span class="pn">${i+1}</span>
@@ -2429,18 +2435,18 @@ function ptHtml(spec){const n=spec.table.rows,rows=ENTRY.vals.rows||[];const hc=
       <input data-c="ft" type="text" inputmode="decimal" autocomplete="off" value="${esc(r.ft||"")}" aria-label="Putt ${i+1} feet">
       <button class="phb ${hc(r.holed)}" data-h="${i}" aria-label="Putt ${i+1} holed">${r.holed===true?"✓":r.holed===false?"✗":"–"}</button></div>`}).join("")}
     <div class="ptsum" id="ptSum"></div></div><div class="rhint" style="margin:-2px 0 8px">Tap <b>Holed</b> to switch ✓ holed → ✗ missed → – blank. Saved on this phone as you type.</div>`}
-function ptSum(spec){const rows=ENTRY.vals.rows||[];const num=x=>{const n=Number(String(x??"").replace(",","."));return String(x??"").trim()!==""&&isFinite(n)?n:null};
+function ptSum(spec){if(spec.table.kind==="shot")return shSum(spec);const rows=ENTRY.vals.rows||[];const num=x=>{const n=Number(String(x??"").replace(",","."));return String(x??"").trim()!==""&&isFinite(n)?n:null};
   const fe=rows.map(r=>r&&num(r.feel)).filter(x=>x!=null),re=rows.map(r=>r&&num(r.real)).filter(x=>x!=null),ho=rows.filter(r=>r&&r.holed===true).length;
   const avg=a=>a.length?(Math.round(a.reduce((x,y)=>x+y,0)/a.length*100)/100):"–";
   const el=$("ptSum");if(el)el.innerHTML=`<span>Holed <b>${ho} / ${spec.table.rows}</b></span><span>Avg feel <b>${avg(fe)}</b></span><span>Avg real <b>${avg(re)}</b></span>`}
-function ptBind(box,spec){const rows=ENTRY.vals.rows=ENTRY.vals.rows||[];const inputs=[...box.querySelectorAll(".ptr input")];
+function ptBind(box,spec){const rows=ENTRY.vals.rows=ENTRY.vals.rows||[];const hf=spec.table.kind==="shot"?"ok":"holed";const inputs=[...box.querySelectorAll(".ptr input")];
   inputs.forEach((i,idx)=>{const r=+i.closest(".ptr").dataset.r,c=i.dataset.c;
-    i.oninput=e=>{(rows[r]=rows[r]||{})[c]=e.target.value.replace(",",".");rdSave();ptSum(spec)};
+    i.oninput=e=>{(rows[r]=rows[r]||{})[c]=c==="curve"||c==="lr"?e.target.value.toUpperCase():e.target.value.replace(",",".");rdSave();ptSum(spec)};
     i.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();const nx=inputs[idx+1];if(nx)nx.focus();else i.blur()}}});
-  box.querySelectorAll("[data-h]").forEach(b=>b.onclick=()=>{const r=+b.dataset.h,o=rows[r]=rows[r]||{};o.holed=o.holed===true?false:o.holed===false?null:true;
-    b.className="phb "+(o.holed===true?"y":o.holed===false?"n":"");b.textContent=o.holed===true?"✓":o.holed===false?"✗":"–";rdSave();ptSum(spec)});
+  box.querySelectorAll("[data-h]").forEach(b=>b.onclick=()=>{const r=+b.dataset.h,o=rows[r]=rows[r]||{};o[hf]=o[hf]===true?false:o[hf]===false?null:true;
+    b.className="phb "+(o[hf]===true?"y":o[hf]===false?"n":"");b.textContent=o[hf]===true?"✓":o[hf]===false?"✗":"–";rdSave();ptSum(spec)});
   ptSum(spec)}
-function ptCollect(spec){const rows=ENTRY.vals.rows||[];const putts=[];
+function ptCollect(spec){if(spec.table.kind==="shot")return shCollect(spec);const rows=ENTRY.vals.rows||[];const putts=[];
   for(let r=0;r<spec.table.rows;r++){const o=rows[r]||{};const num=x=>{const s=String(x??"").trim().replace(",",".");if(s==="")return null;const n=Number(s);return isFinite(n)?n:NaN};
     const p={feel:num(o.feel),real:num(o.real),ft:num(o.ft),holed:o.holed===true?true:o.holed===false?false:null};
     if([p.feel,p.real,p.ft].some(Number.isNaN))return {err:`Putt ${r+1}: numbers only`};
@@ -2451,6 +2457,32 @@ function ptCollect(spec){const rows=ENTRY.vals.rows||[];const putts=[];
   if(!fe.length||!re.length)return {err:"Enter at least one Feel % and one Real %"};
   const avg=a=>Math.round(a.reduce((x,y)=>x+y,0)/a.length*100)/100;
   return {out:{feel:avg(fe),real:avg(re),holed:putts.filter(p=>p.holed===true).length,putts}}}
+/* Off the Tee 10 Shot Drill table: style printed, yardage / curve / yds L-R / ✓✗ filled in */
+const shDir=x=>{const s=String(x??"").trim().toUpperCase().replace(",",".").replace(/\s+/g,"");if(s==="")return null;if(/^0+(\.0+)?$/.test(s))return "0";
+  const m=s.match(/^(\d+(?:\.\d+)?)([LR])$/)||s.match(/^([LR])(\d+(?:\.\d+)?)$/);if(!m)return NaN;const n=/^\d/.test(m[1])?m[1]:m[2],d=/^\d/.test(m[1])?m[2]:m[1];return `${+n}${d}`};
+const shYds=x=>{const s=String(x??"").trim().toLowerCase().replace(/\s*(yds?|yards?)$/,"");if(s==="")return null;const n=Number(s);return isFinite(n)?n:NaN};
+function shHtml(spec){const rows=ENTRY.vals.rows||[];const hc=v=>v===true?"y":v===false?"n":"";
+  return `<div class="ptab sh" role="table" aria-label="Shot by shot">
+    <div class="pth" role="row"><span>#</span><span>Shot</span><span>Yds</span><span>Curve</span><span>Yds L/R</span><span>✓/✗</span></div>
+    ${SHOT_STYLES.map((st,i)=>{const r=rows[i]||{};return `<div class="ptr" role="row" data-r="${i}"><span class="pn">${i+1}</span><span class="sst">${esc(st)}</span>
+      <input data-c="yds" type="text" inputmode="decimal" autocomplete="off" value="${esc(r.yds||"")}" aria-label="Shot ${i+1} yardage">
+      <input data-c="curve" type="text" autocapitalize="characters" autocomplete="off" value="${esc(r.curve||"")}" aria-label="Shot ${i+1} curve">
+      <input data-c="lr" type="text" autocapitalize="characters" autocomplete="off" value="${esc(r.lr||"")}" aria-label="Shot ${i+1} yards left or right">
+      <button class="phb ${hc(r.ok)}" data-h="${i}" aria-label="Shot ${i+1} in or out">${r.ok===true?"✓":r.ok===false?"✗":"–"}</button></div>`}).join("")}
+    <div class="ptsum" id="ptSum"></div></div><div class="rhint" style="margin:-2px 0 8px">Curve and L/R as on your sheet: <b>2R</b>, <b>12.5L</b>, <b>0</b>. Tap <b>✓/✗</b> to switch ✓ → ✗ → – blank. Saved on this phone as you type.</div>`}
+function shSum(spec){const rows=ENTRY.vals.rows||[];const n=SHOT_STYLES.length;const ok=rows.filter(r=>r&&r.ok===true).length;
+  const yd=rows.map(r=>r&&shYds(r.yds)).filter(x=>x!=null&&!isNaN(x));const lr=rows.map(r=>r&&shDir(r.lr)).filter(x=>x!=null&&!Number.isNaN(x)).map(x=>parseFloat(x));
+  const avg=a=>a.length?Math.round(a.reduce((x,y)=>x+y,0)/a.length*10)/10:"–";
+  const el=$("ptSum");if(el)el.innerHTML=`<span>In <b>${ok} / ${n}</b></span><span>Avg yds <b>${avg(yd)}</b></span><span>Avg miss <b>${avg(lr)}</b></span>`}
+function shCollect(spec){const rows=ENTRY.vals.rows||[];const shots=[];
+  for(let r=0;r<SHOT_STYLES.length;r++){const o=rows[r]||{};const p={yds:shYds(o.yds),curve:shDir(o.curve),lr:shDir(o.lr),ok:o.ok===true?true:o.ok===false?false:null};
+    if(Number.isNaN(p.yds))return {err:`Shot ${r+1}: yardage, numbers only`};
+    if(p.yds!=null&&(p.yds<0||p.yds>400))return {err:`Shot ${r+1}: yardage looks wrong`};
+    if(Number.isNaN(p.curve))return {err:`Shot ${r+1}: curve like 2R, 12.5L or 0`};
+    if(Number.isNaN(p.lr))return {err:`Shot ${r+1}: L/R like 6L, 2R or 0`};
+    if(p.yds!=null||p.curve!=null||p.lr!=null||p.ok!=null)shots.push(Object.assign({n:r+1,style:SHOT_STYLES[r]},p))}
+  if(!shots.length)return {err:"Enter at least one shot"};
+  return {out:{hits:shots.filter(p=>p.ok===true).length,shots}}}
 </script>
 </body>
 </html>
