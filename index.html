@@ -711,6 +711,7 @@ h1{font-weight:700;letter-spacing:-.03em}
 .boot{animation:bootin var(--bd,.85s) cubic-bezier(.2,.7,.2,1) both;animation-delay:var(--bdl,0ms)}
 .boot-wait,.booting :is(header>div:first-child>*,.hright>*,#tabs):not(.boot):not(.booted),.booting .panel.on :is(.card,.tile,.tday>:not(#timeline),#timeline>*):not(.boot){opacity:0}
 @media(prefers-reduced-motion:reduce){.boot{animation:none}.boot-wait,.booting *{opacity:1!important}}
+.obbadge{position:fixed;left:50%;transform:translateX(-50%);top:calc(10px + env(safe-area-inset-top));z-index:40;background:#3a2414;color:#ffb86b;border:1px solid rgba(255,184,107,.6);border-radius:999px;padding:8px 14px;font:inherit;font-size:13px;font-weight:700;box-shadow:0 6px 20px rgba(0,0,0,.5);cursor:pointer}
 </style>
 </head>
 <body>
@@ -1143,7 +1144,25 @@ async function loadPractice(){
 /* ---- ticks made on the HUD (90 System/Data/ticks.json), merged on top of Daily To Do ---- */
 const nk=s=>String(s||"").toLowerCase().replace(/\s+/g," ").replace(/[()]/g,"").trim();
 let TICKS={},UNTICKS={},RESULTS={},APPLIED=[],TICKS_LOADED=false;
-async function loadTicks(){try{const j=JSON.parse(await FS.text(PATHS.ticks));TICKS=j.ticks||{};UNTICKS=j.unticks||{};RESULTS=j.results||{};APPLIED=j.applied||[];resvCache()}catch(e){if(!TICKS_LOADED){TICKS={};UNTICKS={};RESULTS={}}}TICKS_LOADED=true}
+async function loadTicks(){if(TSAVING)return;   // a save is in flight: keep what's in memory, don't overwrite it with the vault's older copy
+  try{const j=JSON.parse(await FS.text(PATHS.ticks));TICKS=j.ticks||{};UNTICKS=j.unticks||{};RESULTS=j.results||{};APPLIED=j.applied||[];obMerge();resvCache()}catch(e){if(!TICKS_LOADED){TICKS={};UNTICKS={};RESULTS={};obMerge()}}TICKS_LOADED=true;obBadge();if(obGet()&&!TSAVING){clearTimeout(TRETRY);TRETRY=setTimeout(()=>{if(obGet())saveTicks()},1500)}}
+/* ---- outbox: ticks and scores not yet confirmed saved to the vault (12 Nov 2026 fix) ----
+   Every change is written to this phone first. It is only cleared once GitHub confirms the save, so a failed save
+   (no signal on the range, a clash with the sync job, the app closed mid-save) is retried, never lost on reload. */
+const TOB="hud_tick_outbox";let TSAVING=false,TRETRY=null;
+function obGet(){try{return JSON.parse(ls.get(TOB,"null"))}catch(e){return null}}
+function obSet(o){ls.set(TOB,o?JSON.stringify(o):"null")}
+function obMerge(){const o=obGet();if(!o)return;const ap=new Set(APPLIED);
+  for(const [d,l] of Object.entries(o.ticks||{})){const cur=TICKS[d]||[];for(const k of l)if(!cur.some(x=>nk(x)===nk(k)))cur.push(k);if(cur.length)TICKS[d]=cur}
+  for(const [d,l] of Object.entries(o.unticks||{})){const cur=UNTICKS[d]||[];for(const k of l)if(!cur.some(x=>nk(x)===nk(k)))cur.push(k);if(cur.length)UNTICKS[d]=cur}
+  for(const [d,m] of Object.entries(o.results||{}))for(const [k,r] of Object.entries(m)){if(!r||ap.has(r.id))continue;
+    RESULTS[d]=RESULTS[d]||{};const ex=Object.keys(RESULTS[d]).find(x=>nk(x)===nk(k));if(!ex)RESULTS[d][k]=r}}
+function obBadge(){let b=document.getElementById("obBadge");const o=obGet();
+  if(!o){if(b)b.remove();return}
+  if(!b){b=document.createElement("button");b.id="obBadge";b.className="obbadge";b.onclick=()=>{toast("Retrying save…");saveTicks()};document.body.appendChild(b)}
+  b.textContent="⚠ Ticks not synced yet · tap to retry"}
+function obRetry(){clearTimeout(TRETRY);TRETRY=setTimeout(()=>{if(obGet())saveTicks()},30000)}
+window.addEventListener("online",()=>{if(obGet())saveTicks()});
 /* Off the Tee 10 Shot Drill (Driver / 3W / 2i): shot styles in order, as on James's printed sheet */
 const SHOT_STYLES=["Stock","Draw","Stock","Bullet","Stock","Bomb","Stock","Fairway Finder","Stock","Bullet"];
 /* drills whose score goes into the Drill Spreadsheet */
@@ -1180,13 +1199,16 @@ function mergeTicks(raw){if(!raw)return raw;const p=JSON.parse(JSON.stringify(ra
   return p}
 let TSAVE=Promise.resolve();
 function saveTicks(){
-  TSAVE=TSAVE.then(async()=>{
+  const myTs=Date.now();obSet({ticks:JSON.parse(JSON.stringify(TICKS)),unticks:JSON.parse(JSON.stringify(UNTICKS)),results:JSON.parse(JSON.stringify(RESULTS)),ts:myTs});obBadge();
+  TSAVE=TSAVE.then(async()=>{TSAVING=true;
     // the sync job may have applied and cleared things since we loaded: keep its record, never resend what it wrote
     let cur={};try{cur=JSON.parse(await FS.text(PATHS.ticks))}catch(e){}
     const applied=new Set([...(cur.applied||[]),...APPLIED]);
     for(const d of Object.keys(RESULTS)){for(const k of Object.keys(RESULTS[d]))if(applied.has(RESULTS[d][k].id))delete RESULTS[d][k];if(!Object.keys(RESULTS[d]).length)delete RESULTS[d]}
     const body=JSON.stringify({note:"Drills ticked and scores entered on the Daily HUD. A GitHub job copies them into Daily To Do and the Drill Spreadsheet within a few minutes, then clears them here.",ticks:TICKS,unticks:UNTICKS,results:RESULTS,applied:[...applied].slice(-300),...(cur.failed?{failed:cur.failed}:{})},null,1);
-    await FS.write(PATHS.ticks,body)}).then(()=>toast("Saved · syncing to your spreadsheets")).catch(e=>toast("Couldn't save: "+e.message));return TSAVE}
+    let ok=false;for(let i=0;i<3&&!ok;i++){try{await FS.write(PATHS.ticks,body);ok=true}catch(e){if(i===2||!/409|422|fetch|network|load/i.test(e.message))throw e;await new Promise(r=>setTimeout(r,1500*(i+1)))}}
+    const o=obGet();if(o&&o.ts===myTs)obSet(null)}).then(()=>{TSAVING=false;obBadge();clearTimeout(TRETRY);toast("Saved · syncing to your spreadsheets")})
+    .catch(e=>{TSAVING=false;obBadge();obRetry();toast("Not saved yet — kept on this phone, will retry ("+e.message+")")});return TSAVE}
 async function loadWorkouts(){const out=[];
   try{for(const c of (await FS.list(PATHS.gym)).filter(e=>e.kind==="directory"))
     for(const f of await FS.list(`${PATHS.gym}/${c.name}`)){const m=f.name.match(/^(\d{4}-\d{2}-\d{2}) - Workout - (.+)\.md$/);if(m)out.push({date:m[1],title:m[2],coach:c.name})}}catch(e){}
