@@ -894,12 +894,12 @@ const PATHS={
 };
 
 /* ============ file access (vault folder, or test server) ============ */
-let ROOT=null, GH_MEM=""; const Q=new URLSearchParams(location.search), TEST=Q.get("test");
+let ROOT=null, GH_MEM="", GH_SHA={}; const Q=new URLSearchParams(location.search), TEST=Q.get("test");
 const GH={api:Q.get("api")||"https://api.github.com",repo:"JamestBailey/Second-Brain",branch:"main",
   token(){return ls.get("hud_gh_token","")||GH_MEM},
   url(path,ref=true){return `${GH.api}/repos/${GH.repo}/contents/${path.split("/").filter(Boolean).map(encodeURIComponent).join("/")}${ref?"?ref="+GH.branch:""}`},
-  async req(path,{method="GET",body=null,accept="application/vnd.github+json"}={}){
-    const r=await fetch(GH.url(path,method==="GET"),{method,body,cache:"no-store",headers:{Authorization:"Bearer "+GH.token(),Accept:accept,"X-GitHub-Api-Version":"2022-11-28",...(body?{"Content-Type":"application/json"}:{})}});
+  async req(path,{method="GET",body=null,accept="application/vnd.github+json",bust=false}={}){
+    const r=await fetch(GH.url(path,method==="GET")+(bust?"&t="+Date.now():""),{method,body,cache:"no-store",headers:{Authorization:"Bearer "+GH.token(),Accept:accept,"X-GitHub-Api-Version":"2022-11-28",...(body?{"Content-Type":"application/json"}:{})}});
     if(r.status===401)throw new Error("GitHub didn't accept the token — ⚙ Settings → Change GitHub token");
     if(r.status===404)throw new Error("not found on GitHub: "+path);
     if(!r.ok)throw new Error(`GitHub error ${r.status} (${path})`);return r}};
@@ -915,9 +915,16 @@ const FS={
     if(TEST){const r=await fetch(TEST+encodeURI(path)+"/__list.json");return r.ok?r.json():[]}
     let h=ROOT;for(const p of path.split("/"))h=await h.getDirectoryHandle(p);const out=[];for await(const [n,x] of h.entries())out.push({name:n,kind:x.kind});return out},
   async write(path,text){ if(USE_GH){
-      const put=async()=>{let sha;try{sha=(await (await GH.req(path)).json()).sha}catch(e){if(!/not found/.test(e.message))throw e}
-        await GH.req(path,{method:"PUT",body:JSON.stringify({message:"HUD: "+path.split("/").pop(),content:b64(text),branch:GH.branch,...(sha?{sha}:{})})})};
-      try{await put()}catch(e){if(/409|422/.test(e.message)){await put()}else throw e}return}
+      // 13 Nov 2026 fix: GitHub can hand back the file's previous sha for a few seconds after a commit (ours or the
+      // sync job's), so the PUT is rejected with 409/422. Reuse the sha GitHub gave us on our last save, fetch a fresh
+      // one (cache-busted) on a clash, and back off a few times before giving up.
+      const getSha=async()=>{try{return (await (await GH.req(path,{bust:true})).json()).sha}catch(e){if(/not found/.test(e.message))return undefined;throw e}};
+      let sha=GH_SHA[path]||await getSha();
+      for(let i=0;;i++){
+        try{const r=await GH.req(path,{method:"PUT",body:JSON.stringify({message:"HUD: "+path.split("/").pop(),content:b64(text),branch:GH.branch,...(sha?{sha}:{})})});
+          try{GH_SHA[path]=(await r.json()).content.sha}catch(e){delete GH_SHA[path]}return}
+        catch(e){delete GH_SHA[path];if(!/ 409| 422/.test(e.message)||i>=4)throw e;
+          await new Promise(r=>setTimeout(r,700*(i+1)));sha=await getSha()}}}
     if(TEST){console.log("WRITE",path,text);return}
     const [d,n]=await FS.handle(path,true);const fh=await d.getFileHandle(n,{create:true});const w=await fh.createWritable();await w.write(text);await w.close()}
 };
@@ -1161,7 +1168,6 @@ function obBadge(){let b=document.getElementById("obBadge");const o=obGet();
   if(!o){if(b)b.remove();return}
   if(!b){b=document.createElement("button");b.id="obBadge";b.className="obbadge";b.onclick=()=>{toast("Retrying save…");saveTicks()};document.body.appendChild(b)}
   b.textContent="⚠ Ticks not synced yet · tap to retry"}
-function obRetry(){clearTimeout(TRETRY);TRETRY=setTimeout(()=>{if(obGet())saveTicks()},30000)}
 window.addEventListener("online",()=>{if(obGet())saveTicks()});
 /* Off the Tee 10 Shot Drill (Driver / 3W / 2i): shot styles in order, as on James's printed sheet */
 const SHOT_STYLES=["Stock","Draw","Stock","Bullet","Stock","Bomb","Stock","Fairway Finder","Stock","Bullet"];
@@ -1197,18 +1203,33 @@ function mergeTicks(raw){if(!raw)return raw;const p=JSON.parse(JSON.stringify(ra
     const un=new Set((UNTICKS[ymd(d.date)]||[]).map(nk));
     if(un.size)d.done=d.done.filter(x=>{if(!x.key||!un.has(x.key))return true;d.n--;p.total--;if(p.areas[x.area]!=null)p.areas[x.area]--;return false})}
   return p}
-let TSAVE=Promise.resolve();
+let TSAVE=Promise.resolve(),TDEB=null,TPEND=false,TQUEUED=false,TFAILS=0;
+/* 13 Nov 2026 fix: the outbox is written straight away; the GitHub save waits ~1s so quick ticks go up as one commit,
+   only one save runs at a time (more ticks during a save → one follow-up save), and an unchanged file isn't re-sent. */
 function saveTicks(){
-  const myTs=Date.now();obSet({ticks:JSON.parse(JSON.stringify(TICKS)),unticks:JSON.parse(JSON.stringify(UNTICKS)),results:JSON.parse(JSON.stringify(RESULTS)),ts:myTs});obBadge();
-  TSAVE=TSAVE.then(async()=>{TSAVING=true;
+  obSet({ticks:JSON.parse(JSON.stringify(TICKS)),unticks:JSON.parse(JSON.stringify(UNTICKS)),results:JSON.parse(JSON.stringify(RESULTS)),ts:Date.now()});obBadge();
+  TSAVING=true;TPEND=true;clearTimeout(TDEB);clearTimeout(TRETRY);
+  return new Promise(res=>{TDEB=setTimeout(()=>{TPEND=false;if(TQUEUED){res(TSAVE);return}TQUEUED=true;
+    TSAVE=TSAVE.then(()=>{TQUEUED=false;return tickPush()});res(TSAVE)},900)})}
+async function tickPush(){const o0=obGet(),myTs=o0?o0.ts:0;
+  try{
     // the sync job may have applied and cleared things since we loaded: keep its record, never resend what it wrote
-    let cur={};try{cur=JSON.parse(await FS.text(PATHS.ticks))}catch(e){}
+    let cur={},curTxt="";try{curTxt=await FS.text(PATHS.ticks);cur=JSON.parse(curTxt)}catch(e){}
     const applied=new Set([...(cur.applied||[]),...APPLIED]);
     for(const d of Object.keys(RESULTS)){for(const k of Object.keys(RESULTS[d]))if(applied.has(RESULTS[d][k].id))delete RESULTS[d][k];if(!Object.keys(RESULTS[d]).length)delete RESULTS[d]}
-    const body=JSON.stringify({note:"Drills ticked and scores entered on the Daily HUD. A GitHub job copies them into Daily To Do and the Drill Spreadsheet within a few minutes, then clears them here.",ticks:TICKS,unticks:UNTICKS,results:RESULTS,applied:[...applied].slice(-300),...(cur.failed?{failed:cur.failed}:{})},null,1);
-    let ok=false;for(let i=0;i<3&&!ok;i++){try{await FS.write(PATHS.ticks,body);ok=true}catch(e){if(i===2||!/409|422|fetch|network|load/i.test(e.message))throw e;await new Promise(r=>setTimeout(r,1500*(i+1)))}}
-    const o=obGet();if(o&&o.ts===myTs)obSet(null)}).then(()=>{TSAVING=false;obBadge();clearTimeout(TRETRY);toast("Saved · syncing to your spreadsheets")})
-    .catch(e=>{TSAVING=false;obBadge();obRetry();toast("Not saved yet — kept on this phone, will retry ("+e.message+")")});return TSAVE}
+    const same=(a,b)=>JSON.stringify(a||{})===JSON.stringify(b||{});
+    const appliedList=[...applied].slice(-300);
+    if(!(curTxt&&same(cur.ticks,TICKS)&&same(cur.unticks,UNTICKS)&&same(cur.results,RESULTS))){
+      const body=JSON.stringify({note:"Drills ticked and scores entered on the Daily HUD. A GitHub job copies them into Daily To Do and the Drill Spreadsheet within a few minutes, then clears them here.",ticks:TICKS,unticks:UNTICKS,results:RESULTS,applied:appliedList,...(cur.failed?{failed:cur.failed}:{})},null,1);
+      await FS.write(PATHS.ticks,body)}
+    APPLIED=appliedList;TFAILS=0;
+    const o=obGet();if(o&&o.ts===myTs)obSet(null);
+    TSAVING=TQUEUED||TPEND;obBadge();toast("Saved · syncing to your spreadsheets")}
+  catch(e){TFAILS++;TSAVING=TQUEUED||TPEND;obBadge();
+    const net=/fetch|network|load|offline/i.test(e.message);
+    // retry quickly at first (5s, 15s), then every 30s; only shout about it after the quick retries have failed
+    clearTimeout(TRETRY);TRETRY=setTimeout(()=>{if(obGet())saveTicks()},TFAILS===1?5000:TFAILS===2?15000:30000);
+    if(TFAILS>=3||/token/i.test(e.message))toast(net?"No signal — ticks kept on this phone, they'll sync when you're back online":"Not saved yet — kept on this phone, retrying ("+e.message+")")}}
 async function loadWorkouts(){const out=[];
   try{for(const c of (await FS.list(PATHS.gym)).filter(e=>e.kind==="directory"))
     for(const f of await FS.list(`${PATHS.gym}/${c.name}`)){const m=f.name.match(/^(\d{4}-\d{2}-\d{2}) - Workout - (.+)\.md$/);if(m)out.push({date:m[1],title:m[2],coach:c.name})}}catch(e){}
