@@ -1242,7 +1242,10 @@ function holesLabel(t){const m=String(t).match(/\b(9|18)\s*holes?/i);return (m?m
 const CARDIO_RE=/\b(run|running|bike|cycle|cycling|spin|cardio)\b/i;
 function cardioLabel(t){const m=String(t).match(CARDIO_RE);const w=m?m[1].toLowerCase():"cardio";
   return (/^run/.test(w)?"Run":/bike|cycl|spin/.test(w)?"Bike":"Cardio")+" done · logs as Workout"}
-function keyLabel(k){const [sec,task]=k.split("::").map(x=>x.trim());if(!/yds/i.test(sec))return task;
+/* 📏 marks anything calibration (backswing / downswing length control). Not ⚙, which is Settings on the HUD. */
+const calIco=t=>/calibrat/i.test(t)&&!/^📏/.test(t)?"📏 "+t:t;
+function keyLabel(k){return calIco(keyLabel0(k))}
+function keyLabel0(k){const [sec,task]=k.split("::").map(x=>x.trim());if(!/yds/i.test(sec))return task;
   const short=task.replace(/\s*Yardage Book\s*/i," ").replace(/\(Distance(?: & Accuracy)?\)/i,"").replace(/\s+/g," ").trim();return `${sec.replace(" - "," – ")} · ${short}`}
 function mergeTicks(raw){if(!raw)return raw;const p=JSON.parse(JSON.stringify(raw,(k,v)=>v));p.days=raw.days.map(d=>Object.assign({},d,{done:d.done.slice()}));p.areas=Object.assign({},raw.areas);p.total=raw.total;
   for(const d of p.days){const have=new Set(d.done.map(x=>x.key).filter(Boolean));
@@ -1372,7 +1375,7 @@ function renderWeekGrid(){const el=$("practice");if(!el)return;
   const hours=[];for(let h=h0;h<=h1;h++)hours.push(`<span style="top:${(h-h0)*PX}px">${pad(h)}</span>`);
   const pk=selX?prio(selX.a):"high";
   const det=selX?`<div class="wg-det" style="--c:${WG_PCOL[pk]}"><div class="wg-dt"><div><div class="wg-tag">${WG_PNAME[pk].toUpperCase()}${selX.a!=="fixed"?" · "+WG_AREA[selX.a].toUpperCase()+(selX.a2?" + "+WG_AREA[selX.a2].toUpperCase():""):""}</div>
-      <b>${esc(selX.b.title)}</b><small>${selD.d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"short"})} · ${esc(selX.b.start)}–${esc(selX.b.end||"")}${selX.m?" · "+selX.m+" min":""}</small></div>${selX.done?'<span class="ok">✓ Done</span>':""}</div>
+      <b>${esc(calIco(selX.b.title))}</b><small>${selD.d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"short"})} · ${esc(selX.b.start)}–${esc(selX.b.end||"")}${selX.m?" · "+selX.m+" min":""}</small></div>${selX.done?'<span class="ok">✓ Done</span>':""}</div>
       ${wgInsight(selX)}
       ${selX.drills.length?`<div class="wg-drs">${selX.drills.map(x=>`<span>${esc(keyLabel(x))}</span>`).join("")}</div>`:""}</div>`:`<div class="note">Tap a block for why it's there and its drills.</div>`;
   const P=PR,target=+ls.get("hud_target","25")||25;
@@ -1471,7 +1474,7 @@ function renderDay(){
     const dn=drills.filter(k=>doneKeys.has(nk(k))).length;
     html+=`<div class="tl-row"><div class="tl-t">${esc(b.start||"")}</div><div class="tl-b">
       <button class="blk ${cls} ${drills.length&&dn===drills.length?"alldone":""}" data-i="${i}" data-dk="${esc(drills.map(nk).join("|"))}" aria-expanded="${!!OPEN[i]}"><div class="bt"><span>${esc((tag||(b.fixed?"Fixed":"Session")).toUpperCase())}</span><span>${esc(b.start||"")}${b.end?"–"+esc(b.end):""}</span></div>
-        <div class="bn">${esc(title)}</div>${drills.length?`<div class="bp">${cardio||holes?(dn?"Done ✓":"Tap to tick")+(isPlay&&cnCount(DSEL)?` · 📝 ${cnCount(DSEL)} reminder${cnCount(DSEL)===1?"":"s"}`:""):`${dn} / ${drills.length} drills ${dn===drills.length?"✓":""}`}</div>`:""}</button>
+        <div class="bn">${esc(calIco(title))}</div>${drills.length?`<div class="bp">${cardio||holes?(dn?"Done ✓":"Tap to tick")+(isPlay&&cnCount(DSEL)?` · 📝 ${cnCount(DSEL)} reminder${cnCount(DSEL)===1?"":"s"}`:""):`${dn} / ${drills.length} drills ${dn===drills.length?"✓":""}`}</div>`:""}</button>
       ${OPEN[i]?`<div class="bx">${b.why?`<div class="why">${esc(b.why)}</div>`:b.fixed?'<div class="why">From your calendar.</div>':""}
         ${drills.map(k=>{const x=doneKeys.get(nk(k));const on=!!x,lock=on&&!x.hud;const spec=resultSpec(k),res=getResult(DSEL,k)||(spec?resvGet(DSEL,k):null);
           const entry=ENTRY&&ENTRY.date===DSEL&&nk(ENTRY.k)===nk(k);
