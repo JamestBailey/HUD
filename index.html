@@ -335,6 +335,14 @@ h1{font-weight:700;letter-spacing:-.03em}
 .tabs button.on{background:var(--text);color:var(--ink);box-shadow:none}
 @media(max-width:700px){.dtitle{font-size:26px}.strip{gap:5px}.strip button{border-radius:14px}.tpair{gap:10px}.tside{gap:10px}}
 
+.cn{margin:6px 0 2px;padding:12px;border-radius:14px;background:#17201c;border:1px solid rgba(143,209,158,.4);display:flex;flex-direction:column;gap:8px}
+.cnh{font-size:11px;font-weight:800;letter-spacing:.1em;color:#8fd19e;text-transform:uppercase}
+.cnpins{display:flex;flex-direction:column;gap:6px}.cnpin{display:flex;gap:8px;align-items:flex-start;font-size:15px;font-weight:700;color:#f2f2f2;line-height:1.35}
+.cnpin span{flex:1}.cnun{background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;padding:0 2px;min-width:28px;min-height:28px}
+.cnlast{font-size:14px;color:#d6d6d6;line-height:1.45;white-space:pre-wrap}
+.cn textarea{width:100%;min-height:96px;box-sizing:border-box;border-radius:12px;border:1px solid #3a3a3a;background:#111;color:#f2f2f2;font:15px/1.4 Inter,sans-serif;padding:10px;resize:vertical}
+.cnchk{display:flex;gap:8px;align-items:center;font-size:13px;color:#cfcfcf}.cnchk input{width:20px;height:20px;accent-color:#8fd19e}
+.cn .rsave{background:#8fd19e}
 .resbox{margin:-2px 0 4px;padding:12px;border-radius:14px;background:#262019;border:1px solid rgba(255,184,107,.45);display:flex;flex-direction:column;gap:8px}
 .resbox label{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}
 .resrow{display:flex;gap:8px;margin-bottom:4px}
@@ -885,6 +893,7 @@ const PATHS={
   gym:"20 Gym",
   whoop:"90 System/Data/whoop.json",
   ticks:"90 System/Data/ticks.json",
+  coursenotes:"10 Golf/Course Notes.md",
   puttlog:"10 Golf/Planning/Winter Plan 2026/Putting Drill Log.md",
   dresults:"90 System/Data/drill_results.json",
   plan:"90 System/Data/plan.json",
@@ -1145,7 +1154,7 @@ async function loadPractice(){
     if(i<0){d.n++;areas.Gym++;d.done.push({area:"Gym",task:"Workout",key:WK,auto:true});i=d.done.length-1}
     const e=d.done[i];e.key=WK;e.task=g[0].title;e.band=g[0].coach;
     g.slice(1).forEach(w=>d.done.push({area:"Gym",task:w.title,band:w.coach}))}
-  await loadTicks();await loadPuttLog();await loadDrillLog();
+  await loadTicks();await loadCourseNotes();await loadPuttLog();await loadDrillLog();
   return {days,areas,tasks,total:days.reduce((a,d)=>a+d.n,0)}
 }
 /* ---- ticks made on the HUD (90 System/Data/ticks.json), merged on top of Daily To Do ---- */
@@ -1157,6 +1166,46 @@ async function loadTicks(){if(TSAVING)return;   // a save is in flight: keep wha
    Every change is written to this phone first. It is only cleared once GitHub confirms the save, so a failed save
    (no signal on the range, a clash with the sync job, the app closed mid-save) is retried, never lost on reload. */
 const TOB="hud_tick_outbox";let TSAVING=false,TRETRY=null;
+/* ---- Course notes (10 Golf/Course Notes.md), 13 Nov 2026 ----
+   Written under a Holes session on Today: what felt good / what to remember. 📌 pinned lines show before every
+   round until unpinned; the latest round's note shows before the next round. */
+let CN={pins:[],rounds:[]},CN_LOADED=false;
+function cnParse(t){const out={pins:[],rounds:[]};let sec="",cur=null;
+  for(const line of String(t).split(/\r?\n/)){
+    if(/^##\s/.test(line)){sec=/remind/i.test(line)?"pins":/round/i.test(line)?"rounds":"";cur=null;continue}
+    if(sec==="pins"){const m=line.match(/^\s*[-*]\s+(.+)/);if(m)out.pins.push(m[1].trim());continue}
+    if(sec==="rounds"){const m=line.match(/^###\s+(\d{4}-\d{2}-\d{2})(?:\s*·\s*(.*))?/);
+      if(m){cur={date:m[1],label:(m[2]||"").trim(),text:""};out.rounds.push(cur);continue}
+      if(cur)cur.text+=(cur.text?"\n":"")+line}}
+  out.rounds.forEach(r=>r.text=r.text.trim());out.rounds.sort((a,b)=>b.date.localeCompare(a.date));return out}
+function cnBuild(c){return `---\ntype: course-notes\n---\n> [!abstract] Course notes\n> Written on the Daily HUD under a Holes session. 📌 Reminders show before every round until unpinned; the latest round's notes show before the next one.\n\n## 📌 Reminders\n${c.pins.map(p=>"- "+p).join("\n")||""}\n\n## Rounds\n${c.rounds.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(r=>`### ${r.date}${r.label?" · "+r.label:""}\n${r.text}\n`).join("\n")}`}
+async function loadCourseNotes(){try{CN=cnParse(await FS.text(PATHS.coursenotes))}catch(e){if(!CN_LOADED)CN={pins:[],rounds:[]}}CN_LOADED=true}
+const CND="hud_cn_draft";function cnDraft(d,v){let o={};try{o=JSON.parse(ls.get(CND,"{}"))||{}}catch(e){}if(v===undefined)return o[d];if(v===null)delete o[d];else o[d]=v;ls.set(CND,JSON.stringify(o))}
+async function cnSave(mutate,okMsg){let fresh=CN;try{fresh=cnParse(await FS.text(PATHS.coursenotes))}catch(e){if(!/not found/.test(e.message))throw e;fresh={pins:[],rounds:[]}}
+  mutate(fresh);await FS.write(PATHS.coursenotes,cnBuild(fresh));CN=fresh;toast(okMsg)}
+function cnHtml(date,title,isFut){const last=CN.rounds.find(r=>r.date<date&&r.text),mine=CN.rounds.find(r=>r.date===date);
+  const d=cnDraft(date);const val=d?d.text:(mine?mine.text:"");
+  let h=`<div class="cn">`;
+  if(CN.pins.length)h+=`<div class="cnh">📌 Reminders</div><div class="cnpins">${CN.pins.map((p,i)=>`<div class="cnpin"><span>${esc(p)}</span><button class="cnun" data-pin="${i}" aria-label="Unpin">×</button></div>`).join("")}</div>`;
+  if(last)h+=`<div class="cnh">Last time · ${esc(new Date(last.date+"T12:00").toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"}))}${last.label?" · "+esc(last.label):""}</div><div class="cnlast">${esc(last.text)}</div>`;
+  if(!CN.pins.length&&!last)h+=`<div class="cnh">📝 Course notes</div>`;
+  if(!isFut)h+=`<div class="cnh" style="margin-top:4px">${mine?"Today's note":"What felt good · what to remember"}</div>
+    <textarea id="cnTxt" data-title="${esc(title)}" placeholder="e.g. Commit to loading to the right side, otherwise I get too swipey and lose distance">${esc(val)}</textarea>
+    <label class="cnchk"><input type="checkbox" id="cnPin"> 📌 Pin each line as a reminder for every round</label>
+    <button class="rsave" id="cnSave">${mine?"Update note":"Save note"}</button>`;
+  else h+=`<div class="faint" style="font-size:12px">Write your note here after you've played.</div>`;
+  return h+`</div>`}
+function cnCount(date){return CN.pins.length+(CN.rounds.some(r=>r.date<date&&r.text)?1:0)}
+function cnBind(){const t=$("cnTxt");if(t)t.oninput=()=>cnDraft(DSEL,{text:t.value});
+  if($("cnSave"))$("cnSave").onclick=async()=>{const text=$("cnTxt").value.trim(),pin=$("cnPin").checked,date=DSEL;
+    const label=String($("cnTxt").dataset.title||"").replace(/\s*·\s*/g," · ").trim();if(!text&&!pin){toast("Write a note first");return}
+    $("cnSave").disabled=true;
+    try{await cnSave(c=>{c.rounds=c.rounds.filter(r=>r.date!==date);if(text)c.rounds.push({date,label,text});
+        if(pin)for(const l of text.split(/\n+/).map(x=>x.replace(/^[-*•]\s*/,"").trim()).filter(Boolean))if(!c.pins.some(p=>p.toLowerCase()===l.toLowerCase()))c.pins.push(l)},
+        pin?"Note saved · pinned for every round":"Note saved · it'll show before your next round");cnDraft(date,null);renderDay()}
+    catch(e){$("cnSave").disabled=false;toast("Couldn't save: "+e.message+" (note kept on this phone)")}};
+  $("timeline").querySelectorAll(".cnun").forEach(b=>b.onclick=async()=>{const p=CN.pins[+b.dataset.pin];if(!p||!confirm("Unpin this reminder?\n\n"+p))return;
+    try{await cnSave(c=>{c.pins=c.pins.filter(x=>x!==p)},"Reminder unpinned");renderDay()}catch(e){toast("Couldn't save: "+e.message)}})}
 function obGet(){try{return JSON.parse(ls.get(TOB,"null"))}catch(e){return null}}
 function obSet(o){ls.set(TOB,o?JSON.stringify(o):"null")}
 function obMerge(){const o=obGet();if(!o)return;const ap=new Set(APPLIED);
@@ -1415,14 +1464,14 @@ function renderDay(){
     // cardio (run / bike) is a planned workout: tickable, and logged as "Gym :: Workout" in Daily To Do
     const cardio=!b.fixed&&CARDIO_RE.test(String(b.title).split(" · ")[0]);
     // on-course play (9 / 18 holes) is tickable too, logged as "Playing :: Holes" in Daily To Do
-    const holes=!b.fixed&&HOLES_RE.test(b.title);
+    const holes=!b.fixed&&HOLES_RE.test(b.title);const isPlay=holes||(b.drills||[]).some(k=>/^playing\s*::\s*holes$/i.test(k));
     const drills=(b.drills&&b.drills.length)?b.drills:(cardio?["Gym :: Workout"]:holes?["Playing :: Holes"]:[]);drills.forEach(k=>used.add(nk(k)));
     const gym=cardio||/gym|1079/i.test(b.title)||drills.some(k=>/^gym/i.test(k));const appt=b.fixed&&!drills.length;const cls=appt?"f":"p";   // every tickable session is orange until all of it is ticked, then .alldone turns it green
     const parts=String(b.title).split(" · ");const tag=appt?(parts.length>1?parts.slice(1).join(" · "):""):(parts.length>1?parts[0]:"");const title=appt?parts[0]:(parts.length>1?parts.slice(1).join(" · "):b.title);
     const dn=drills.filter(k=>doneKeys.has(nk(k))).length;
     html+=`<div class="tl-row"><div class="tl-t">${esc(b.start||"")}</div><div class="tl-b">
       <button class="blk ${cls} ${drills.length&&dn===drills.length?"alldone":""}" data-i="${i}" data-dk="${esc(drills.map(nk).join("|"))}" aria-expanded="${!!OPEN[i]}"><div class="bt"><span>${esc((tag||(b.fixed?"Fixed":"Session")).toUpperCase())}</span><span>${esc(b.start||"")}${b.end?"–"+esc(b.end):""}</span></div>
-        <div class="bn">${esc(title)}</div>${drills.length?`<div class="bp">${cardio||holes?(dn?"Done ✓":"Tap to tick"):`${dn} / ${drills.length} drills ${dn===drills.length?"✓":""}`}</div>`:""}</button>
+        <div class="bn">${esc(title)}</div>${drills.length?`<div class="bp">${cardio||holes?(dn?"Done ✓":"Tap to tick")+(isPlay&&cnCount(DSEL)?` · 📝 ${cnCount(DSEL)} reminder${cnCount(DSEL)===1?"":"s"}`:""):`${dn} / ${drills.length} drills ${dn===drills.length?"✓":""}`}</div>`:""}</button>
       ${OPEN[i]?`<div class="bx">${b.why?`<div class="why">${esc(b.why)}</div>`:b.fixed?'<div class="why">From your calendar.</div>':""}
         ${drills.map(k=>{const x=doneKeys.get(nk(k));const on=!!x,lock=on&&!x.hud;const spec=resultSpec(k),res=getResult(DSEL,k)||(spec?resvGet(DSEL,k):null);
           const entry=ENTRY&&ENTRY.date===DSEL&&nk(ENTRY.k)===nk(k);
@@ -1436,6 +1485,7 @@ function renderDay(){
             ${ENTRY.readonly?`<div class="rhint">${rdHasData(ENTRY)?"Already copied to the Drill Spreadsheet. View only.":"Score (if any) is in the Drill Spreadsheet."}</div>`:""}
             <div class="resrow2"><span class="rerr" id="resErr"></span>${ENTRY.viewing?`<button class="lnk" id="resUntick">Untick drill</button>`:lock?"":`<button class="lnk" id="resSkip">Tick without a score</button>`}<button class="lnk" id="resCancel">${ENTRY.viewing?"Close":"Cancel"}</button></div></div>`}
           return h}).join("")}
+        ${isPlay?cnHtml(DSEL,title,isFut):""}
         ${isFut&&drills.length?'<div class="why">Ticks open on the day.</div>':""}</div>`:""}
     </div></div>`});
   if(isToday&&blocks.length&&nextIdx<0&&curIdx<0)html+=`<div class="nowl"><span>NOW</span><i></i></div>`;
@@ -1451,6 +1501,7 @@ function renderDay(){
    if(prev)$("timeline").querySelectorAll(".drill.on[data-k]").forEach(d=>{if(!prev.has(nk(d.dataset.k)))animDone(d)});
    PREVDONE[DSEL]=now}
   if(sel.getDay()===1&&WEIGHTS){wBindDay(DSEL);if(WJUST===DSEL){WJUST=null;const b=$("timeline").querySelector(".blk.w");if(b)animDone(b)}}
+  cnBind();
   $("timeline").querySelectorAll(".blk:not(.w)").forEach(b=>b.onclick=e=>{if(e.target.closest("input,textarea,select"))return;const i=+b.dataset.i;OPEN[i]=!OPEN[i];renderDay()});
   $("timeline").querySelectorAll(".drill:not([disabled])").forEach(b=>b.onclick=()=>{const k=b.dataset.k;const ticked=(TICKS[DSEL]||[]).some(x=>nk(x)===nk(k));
     const dx=doneKeys.get(nk(k)),locked=!!dx&&!dx.hud;
