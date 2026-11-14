@@ -720,45 +720,6 @@ h1{font-weight:700;letter-spacing:-.03em}
 .boot-wait,.booting :is(header>div:first-child>*,.hright>*,#tabs):not(.boot):not(.booted),.booting .panel.on :is(.card,.tile,.tday>:not(#timeline),#timeline>*):not(.boot){opacity:0}
 @media(prefers-reduced-motion:reduce){.boot{animation:none}.boot-wait,.booting *{opacity:1!important}}
 .obbadge{position:fixed;left:50%;transform:translateX(-50%);top:calc(10px + env(safe-area-inset-top));z-index:40;background:#3a2414;color:#ffb86b;border:1px solid rgba(255,184,107,.6);border-radius:999px;padding:8px 14px;font:inherit;font-size:13px;font-weight:700;box-shadow:0 6px 20px rgba(0,0,0,.5);cursor:pointer}
-
-/* ============ wealth: 5-year plan (90 System/Data/wealth.json) ============ */
-#p-wealth .grid{align-items:start}
-@media(max-width:900px){#p-wealth .c6{grid-column:span 12}}
-.wl-hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:28px;align-items:start}
-@media(max-width:900px){.wl-hero{grid-template-columns:1fr;gap:18px}}
-.wl-cap{font-size:11px;color:var(--muted);letter-spacing:.04em}
-.wl-nw{font-size:52px;font-weight:600;letter-spacing:-.035em;line-height:1.05;font-variant-numeric:tabular-nums;margin-top:2px}
-.wl-sub{display:flex;gap:22px;flex-wrap:wrap;margin-top:14px}.wl-sub b{display:block;font-size:20px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
-.wl-delta{font-size:13px;margin-top:12px;color:var(--muted);line-height:1.5}.wl-delta b{font-weight:600}
-.wl-list .rowkv b{font-weight:600;font-variant-numeric:tabular-nums}.wl-list .rowkv.neg b{color:var(--red)}
-.wl-item{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;background:none;border:none;border-top:1px solid var(--line);color:inherit;font:inherit;padding:12px 2px;cursor:pointer;transition:transform .1s ease-out}
-.wl-item:first-child{border-top:none;padding-top:2px}.wl-item:active{transform:scale(.985)}
-.wl-box{flex:0 0 22px;height:22px;border-radius:7px;border:1.5px solid var(--line2);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#111;margin-top:1px;transition:background .15s,border-color .15s}
-.wl-item.done .wl-box{background:var(--green);border-color:var(--green)}
-.wl-item.done .wl-t{color:var(--faint);text-decoration:line-through}
-.wl-body{min-width:0;flex:1}.wl-t{font-size:14px;font-weight:500;line-height:1.35}.wl-d{font-size:12px;color:var(--faint);margin-top:3px;line-height:1.45}
-.wl-due{font-size:11px;font-weight:600;white-space:nowrap;padding-left:8px;color:var(--muted);margin-top:2px}
-.wl-due.over{color:var(--red)}.wl-due.soon{color:var(--amber)}
-.wl-goal{padding:12px 0;border-top:1px solid var(--line)}.wl-goal:first-child{border-top:none;padding-top:0}
-.wl-gh{display:flex;justify-content:space-between;gap:10px;font-size:13px}.wl-gh b{font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
-.wl-goal .bar{margin:8px 0 4px}.wl-goal .bar i{transition:width .6s cubic-bezier(.2,.8,.2,1)}.wl-goal.ok .bar i{background:var(--green)}
-.wl-gs{font-size:12px;color:var(--faint)}
-.wl-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:14px}
-.wl-stat{background:var(--panel2);border-radius:12px;padding:10px 12px;min-width:0}.wl-stat b{display:block;font-size:20px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
-.wl-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.wl-form label{font-size:11px;color:var(--muted);display:flex;flex-direction:column;gap:4px;min-width:0}
-.wl-form input,.wl-odo input{font:600 16px Inter,sans-serif;padding:10px 12px;border-radius:12px;border:1px solid var(--line2);background:var(--bg);color:var(--text);min-height:44px;width:100%;min-width:0}
-.wl-odo{display:flex;gap:8px;margin-top:14px}.wl-odo input{flex:1}
-.wl-date{display:flex;gap:12px;align-items:baseline;padding:10px 0;border-top:1px solid var(--line);font-size:13px}.wl-date:first-child{border-top:none;padding-top:0}
-.wl-date .w{flex:0 0 84px;color:var(--gold);font-weight:600;font-variant-numeric:tabular-nums}.wl-date.past{opacity:.4}
-.wl-date .c{margin-left:auto;color:var(--faint);white-space:nowrap;font-size:12px;padding-left:8px}
-.wl-proj svg{width:100%;height:auto;display:block;overflow:visible}
-.wl-key{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-bottom:8px}.wl-key i{display:inline-block;width:10px;height:3px;border-radius:2px;margin-right:6px;vertical-align:3px}
-.wl-yrs{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;margin-top:12px;text-align:center}
-.wl-yrs div{font-size:11px;color:var(--muted);padding:8px 2px;border-radius:10px;background:var(--panel2)}.wl-yrs b{display:block;font-size:14px;color:var(--text);font-weight:600;font-variant-numeric:tabular-nums}
-.wl-more{background:none;border:none;color:var(--muted);font:inherit;font-size:12px;cursor:pointer;padding:10px 0 0}
-@media(max-width:520px){.wl-nw{font-size:42px}.wl-yrs{grid-template-columns:repeat(3,minmax(0,1fr))}.wl-date .w{flex-basis:74px}}
-@media(prefers-reduced-motion:reduce){.wl-goal .bar i,.wl-item,.wl-box{transition:none}}
 </style>
 </head>
 <body>
@@ -785,7 +746,6 @@ h1{font-weight:700;letter-spacing:-.03em}
     <button data-tab="prep"><span class="ti">✈</span>Prep</button>
     <button data-tab="gym"><span class="ti">◆</span>Gym</button>
     <button data-tab="money"><span class="ti">£</span>Money</button>
-    <button data-tab="wealth"><span class="ti">▲</span>Wealth</button>
   </nav>
 
   <main class="panel on" id="p-today">
@@ -845,19 +805,6 @@ h1{font-weight:700;letter-spacing:-.03em}
   <main class="panel" id="p-money">
     <div class="grid">
       <section class="card c12"><div class="ch"><span class="ct">Finances · this pay cycle</span><span class="cm" id="spMeta"></span></div><div id="spend"></div></section>
-    </div>
-  </main>
-
-  <main class="panel" id="p-wealth">
-    <div class="grid">
-      <section class="card c12"><div class="ch"><span class="ct">Net worth · 5-year plan</span><span class="cm" id="wlMeta"></span></div><div id="wlHero"><div class="empty">Loading…</div></div></section>
-      <section class="card c6"><div class="ch"><span class="ct">Payday routine</span><span class="cm" id="wlPayMeta"></span></div><div id="wlPay"></div></section>
-      <section class="card c6"><div class="ch"><span class="ct">To do</span><span class="cm" id="wlActMeta"></span></div><div id="wlActs"></div></section>
-      <section class="card c6"><div class="ch"><span class="ct">Goals</span><span class="cm" id="wlGoalMeta"></span></div><div id="wlGoals"></div></section>
-      <section class="card c6"><div class="ch"><span class="ct">Car · A3 PCP</span><span class="cm" id="wlCarMeta"></span></div><div id="wlCar"></div></section>
-      <section class="card c12"><div class="ch"><span class="ct">5-year path</span><span class="cm">an illustration, not a forecast</span></div><div id="wlProj"></div></section>
-      <section class="card c6"><div class="ch"><span class="ct">Key dates</span></div><div id="wlDates"></div></section>
-      <section class="card c6"><div class="ch"><span class="ct">Monthly check-in</span><span class="cm" id="wlCiMeta"></span></div><div id="wlCi"></div></section>
     </div>
   </main>
   <div id="cal" hidden></div><span id="calMeta" hidden></span>
@@ -951,7 +898,6 @@ const PATHS={
   dresults:"90 System/Data/drill_results.json",
   plan:"90 System/Data/plan.json",
   rounds:"90 System/Data/rounds.json",
-  wealth:"90 System/Data/wealth.json",
   comps:"10 Golf/Competitions/Schedule.md",
   inbox:"00 Inbox"
 };
@@ -1807,136 +1753,6 @@ function renderCalendar(c){CAL=c&&c.events?c.events:[];renderPlan(PLANDAYS);retu
     +(nxt?`<div class="next"><span class="faint">Coming up · </span>${fmtDay(nxt.s)}${nxt.allDay?"":" "+hm(nxt.s)} — ${esc(nxt.title)}</div>`:"");
 }
 
-/* ============ WEALTH tab: 5-year plan (90 System/Data/wealth.json) ============
-   Built 14 Nov 2026 with James. The HUD writes snapshots (monthly check-in), ticks (to do + payday routine)
-   and odometer readings; plan fields (actions, dates, assumptions) are edited by Claude when James asks.
-   Net worth leaves out the Plan 2 student loan and the car (handed back at the end of the PCP). */
-let WL=null;const WLUI={showDone:false};
-const gbp0=n=>(n<0?"−":"")+"£"+Math.round(Math.abs(n)).toLocaleString("en-GB");
-const wlD=s=>{const [y,m,d]=String(s).split("-").map(Number);return new Date(y,(m||1)-1,d||1)};
-const wlIn=d=>{const n=dayDiff(d,t0());if(n===0)return"today";if(n===1)return"tomorrow";if(n===-1)return"yesterday";
-  const a=Math.abs(n),w=a<60?`${a} days`:a<730?`${Math.round(a/30.4)} months`:`${(a/365).toFixed(1)} years`;return n>0?"in "+w:w+" ago"};
-const wlMon=d=>d.toLocaleDateString("en-GB",{month:"short",year:"2-digit"});
-async function loadWealth(){return JSON.parse(await FS.text(PATHS.wealth))}
-async function wlSave(mutate,msg){let fresh=null;try{fresh=JSON.parse(await FS.text(PATHS.wealth))}catch(e){fresh=JSON.parse(JSON.stringify(WL))}
-  mutate(fresh);fresh.updated=ymd(new Date());
-  try{await FS.write(PATHS.wealth,JSON.stringify(fresh,null,2)+"\n");renderWealth(fresh);if(msg)toast(msg)}catch(e){renderWealth(WL);toast("Couldn't save: "+e.message)}}
-const wlSnaps=w=>(w.snapshots||[]).slice().sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:0);
-function wlNW(s){const pen=+s.pension||0,flex=(+s.htb||0)+(+s.lisa||0)+(+s.easy||0)+(+s.carPot||0),own=+s.owedByParents||0,debt=+s.bankLoan||0;
-  return {paper:pen+flex+own-debt,control:pen+flex-debt,cash:flex-debt}}
-function wlPayday(w){const p=+w.payday||26,t=t0();
-  const last=t.getDate()>=p?new Date(t.getFullYear(),t.getMonth(),p):new Date(t.getFullYear(),t.getMonth()-1,p);
-  return {last,next:new Date(last.getFullYear(),last.getMonth()+1,p)}}
-/* Month-by-month illustration from the first check-in, using w.assumptions (see the JSON). */
-function wlProject(w){const s=wlSnaps(w)[0];if(!s)return [];const A=w.assumptions||{};
-  const s0=wlD(s.date),start=new Date(s0.getFullYear(),s0.getMonth(),1);
-  const ym=v=>{const [y,m]=String(v||"2028-11").split("-").map(Number);return new Date(y,m-1,1)};
-  const clear=ym(A.loanClearedBy),repay=ym(A.parentsRepayBy),pg=Math.pow(1+(A.pensionGrowth||0),1/12)-1,cr=(A.cashRate||0)/12,lr=(A.loanRate||0)/12;
-  let pen=+s.pension||0,flex=(+s.htb||0)+(+s.lisa||0)+(+s.easy||0)+(+s.carPot||0),owed=+s.owedByParents||0,loan=+s.bankLoan||0;
-  const out=[{d:start,paper:pen+flex+owed-loan,cash:flex-loan}];
-  for(let i=1;i<=60;i++){const d=new Date(start.getFullYear(),start.getMonth()+i,1);
-    pen=pen*(1+pg)+(A.pensionPerYear||0)/12;flex=flex*(1+cr);
-    if(d<clear){loan=Math.max(0,loan*(1+lr)-(A.loanPayment||0));flex+=A.monthlySave||0}
-    else{loan=0;flex+=(A.monthlySave||0)+(A.loanPayment||0)}
-    if(owed&&d>=repay){flex+=owed;owed=0}
-    if(i===2||(d.getMonth()===4&&d.getFullYear()>=2027))flex+=A.lisaBonusPerYear||0;   // LISA bonus: Jan 2027, then each May
-    out.push({d,paper:pen+flex+owed-loan,cash:flex-loan})}
-  return out}
-
-function renderWealth(w){WL=w;const S=wlSnaps(w),s=S[S.length-1]||{},nw=wlNW(s),prev=S.length>1?wlNW(S[S.length-2]):null;
-  const P=wlProject(w),sd=s.date?wlD(s.date):t0();
-  const pm=P.find(p=>p.d.getFullYear()===sd.getFullYear()&&p.d.getMonth()===sd.getMonth());
-  $("wlMeta").textContent=s.date?"last check-in "+fmtDay(sd):"";
-  const vsPlan=pm&&S.length>1?nw.paper-pm.paper:null;
-  const rows=[["Pension",s.pension],["Help to Buy ISA",s.htb],["LISA",s.lisa],["Easy access",s.easy],["Car pot",s.carPot],["Owed by Mum & Dad",s.owedByParents],["Bank loan (for Mum & Dad)",-(s.bankLoan||0)]];
-  $("wlHero").innerHTML=`<div class="wl-hero"><div>
-      <div class="wl-cap">On paper</div><div class="wl-nw">${gbp0(nw.paper)}</div>
-      <div class="wl-sub"><div><b>${gbp0(nw.control)}</b><span class="wl-cap">Only what you control</span></div><div><b class="${nw.cash<0?"bad":""}">${gbp0(nw.cash)}</b><span class="wl-cap">Excl. pension</span></div></div>
-      <div class="wl-delta">${prev?`<b class="${nw.paper>=prev.paper?"ok":"bad"}">${nw.paper>=prev.paper?"+":"−"}${gbp0(Math.abs(nw.paper-prev.paper)).replace("−","")}</b> since the last check-in · `:""}${vsPlan!=null?`<b class="${vsPlan>=0?"ok":"warn"}">${vsPlan>=0?"ahead of":"behind"} plan by ${gbp0(Math.abs(vsPlan))}</b>`:"Do a check-in each payday to see if you're on plan."}</div>
-      <div class="note">Student loan (£51k, Plan 2) left out: it's repaid through payroll above £29,385 and written off after 30 years. The car is left out too (plan: hand it back).</div>
-    </div><div class="wl-list">${rows.map(([k,v])=>`<div class="rowkv ${v<0?"neg":""}"><span>${k}</span><b>${gbp0(v||0)}</b></div>`).join("")}</div></div>`;
-  wlRenderPay(w);wlRenderActs(w);wlRenderGoals(w,s);wlRenderCar(w,s);wlRenderProj(w,P,S);wlRenderDates(w);wlRenderCheckin(w,s);
-}
-function wlRenderPay(w){const {last,next}=wlPayday(w),key=ymd(last),done=(w.routineDone||{})[key]||[],t=t0();
-  const items=(w.routine||[]).filter(r=>!r.from||wlD(r.from)<=t);
-  $("wlPayMeta").textContent=`next ${fmtDay(next)} · ${wlIn(next)}`;
-  const n=items.filter(r=>done.includes(r.id)).length;
-  $("wlPay").innerHTML=`<div class="wl-gs" style="margin-bottom:8px">This pay cycle (from ${fmtDay(last)}) · ${n}/${items.length} done</div>`+items.map(r=>{const on=done.includes(r.id);
-    return `<button class="wl-item ${on?"done":""}" data-wl-rt="${esc(r.id)}"><span class="wl-box">${on?"✓":""}</span><span class="wl-body"><span class="wl-t">${esc(r.title)}</span></span></button>`}).join("")}
-function wlRenderActs(w){const t=t0(),A=w.actions||[],open=A.filter(a=>!a.done).sort((a,b)=>a.due<b.due?-1:1),done=A.filter(a=>a.done).sort((a,b)=>a.done<b.done?1:-1);
-  const over=open.filter(a=>wlD(a.due)<t).length;
-  $("wlActMeta").textContent=open.length?`${open.length} open${over?` · ${over} overdue`:""}`:"all done";
-  const row=a=>{const d=wlD(a.due),n=dayDiff(d,t),cls=a.done?"":n<0?"over":n<=7?"soon":"";
-    return `<button class="wl-item ${a.done?"done":""}" data-wl-act="${esc(a.id)}"><span class="wl-box">${a.done?"✓":""}</span><span class="wl-body"><span class="wl-t">${esc(a.title)}</span>${a.detail&&!a.done?`<div class="wl-d">${esc(a.detail)}</div>`:""}</span><span class="wl-due ${cls}">${a.done?"done "+wlD(a.done).toLocaleDateString("en-GB",{day:"numeric",month:"short"}):n<0?"overdue":d.toLocaleDateString("en-GB",{day:"numeric",month:"short"})}</span></button>`};
-  $("wlActs").innerHTML=(open.length?open.map(row).join(""):'<div class="empty">Nothing left on the list.</div>')
-    +(done.length?`<button class="wl-more" id="wlMore">${WLUI.showDone?"Hide":"Show"} done (${done.length})</button>${WLUI.showDone?done.map(row).join(""):""}`:"");
-  const m=$("wlMore");if(m)m.onclick=()=>{WLUI.showDone=!WLUI.showDone;wlRenderActs(WL)}}
-function wlRenderGoals(w,s){const G=w.goals||{},t=t0();
-  const ty=t>=new Date(t.getFullYear(),3,6)?t.getFullYear():t.getFullYear()-1,yrs=ty-2026+1,lisaT=Math.max(1,yrs)*(G.lisaYear||4000)*1.25;
-  const g=(label,val,target,sub,okWhen)=>{const p=Math.max(0,Math.min(100,target?val/target*100:0)),ok=okWhen!=null?okWhen:p>=100;
-    return `<div class="wl-goal ${ok?"ok":""}"><div class="wl-gh"><span>${label}</span><b>${gbp0(val)} <span class="faint">/ ${gbp0(target)}</span></b></div><div class="bar"><i style="width:${p}%"></i></div><div class="wl-gs">${sub}</div></div>`};
-  const owed=+s.owedByParents||0,loan=+s.bankLoan||0,easy=+s.easy||0;
-  $("wlGoalMeta").textContent=`tax year ${ty}/${String(ty+1).slice(2)}`;
-  $("wlGoals").innerHTML=
-    g("LISA",+s.lisa||0,lisaT,`£${(G.lisaYear||4000).toLocaleString("en-GB")} in each tax year + 25% bonus. This year's deadline: 5 Apr ${ty+1}.`)
-   +g("Emergency floor (easy access)",easy,G.emergencyFloor||3000,easy>=(G.emergencyFloor||3000)?`✓ Covered: ${(easy/(w.fixedMonthly||837)).toFixed(1)} months of fixed costs.`:"Below the floor: top this up before anything else.",easy>=(G.emergencyFloor||3000))
-   +g("Car pot",+s.carPot||0,G.carPot||1000,"£85/month. Pays tax, service, tyres, brakes and excess mileage.")
-   +g("Mum & Dad repay the £11k",(G.owedByParents||11000)-owed,G.owedByParents||11000,owed?"Lump sum, within ~2 years.":"✓ Repaid.")
-   +g("Bank loan cleared",(G.bankLoan||15000)-loan,G.bankLoan||15000,loan?`${gbp0(loan)} left · £388.70/month until Mum & Dad clear it.`:"✓ Cleared — that's £388.70/month freed up.")}
-function wlRenderCar(w,s){const c=w.car||{},R=(c.readings||[]).slice().sort((a,b)=>a.date<b.date?-1:1),r=R[R.length-1];if(!r){$("wlCar").innerHTML='<div class="empty">No odometer readings yet.</div>';return}
-  const st=wlD(c.start),en=wlD(c.end),rd=wlD(r.date),months=(en.getFullYear()-st.getFullYear())*12+en.getMonth()-st.getMonth();
-  const allowTotal=Math.round((c.annual||13000)*months/12),days=Math.max(1,dayDiff(rd,st)),driven=r.miles-(c.startMiles||0),pace=driven/days*365;
-  const left=Math.max(0,dayDiff(en,rd)),proj=Math.round(r.miles+pace/365*left),excess=Math.max(0,proj-allowTotal-(c.startMiles||0)),cost=excess*(c.ppm||0.084);
-  const allowNow=Math.round((c.annual||13000)*days/365),perMonth=Math.max(0,(allowTotal+(c.startMiles||0)-r.miles)/Math.max(1,left/30.4));
-  const eq=(+s.carValue||0)-(+s.carSettlement||0);
-  $("wlCarMeta").textContent=`${r.miles.toLocaleString("en-GB")} mi · ${fmtDay(rd)}`;
-  $("wlCar").innerHTML=`<div class="wl-stats">
-      <div class="wl-stat"><span class="wl-cap">Your pace</span><b class="${pace>(c.annual||13000)?"warn":"ok"}">${Math.round(pace).toLocaleString("en-GB")}</b><span class="wl-cap">miles/yr · limit ${(c.annual||13000).toLocaleString("en-GB")}</span></div>
-      <div class="wl-stat"><span class="wl-cap">Excess at hand-back</span><b class="${cost>0?"bad":"ok"}">${gbp0(cost)}</b><span class="wl-cap">${excess.toLocaleString("en-GB")} mi × ${((c.ppm||0.084)*100).toFixed(1)}p${c.ppmConfirmed?"":" (typical)"}</span></div>
-      <div class="wl-stat"><span class="wl-cap">To stay in the limit</span><b>${Math.round(perMonth).toLocaleString("en-GB")}</b><span class="wl-cap">miles/month from now</span></div>
-      <div class="wl-stat"><span class="wl-cap">Equity today</span><b class="${eq<0?"bad":"ok"}">${gbp0(eq)}</b><span class="wl-cap">value − settlement</span></div></div>
-    <div class="rowkv"><span>Allowance used</span><b>${(r.miles-(c.startMiles||0)).toLocaleString("en-GB")} of ${allowNow.toLocaleString("en-GB")} so far</b></div>
-    <div class="rowkv"><span>Projected at ${en.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"})} (at your pace)</span><b>${proj.toLocaleString("en-GB")} of ${allowTotal.toLocaleString("en-GB")}</b></div>
-    <div class="rowkv"><span>Final payment to keep it</span><b>${gbp0(c.finalPayment||0)}</b></div>
-    <div class="wl-odo"><input type="number" inputmode="numeric" id="wlOdo" placeholder="Odometer today" min="0"><button class="btn primary" id="wlOdoBtn">Log</button></div>`;
-  $("wlOdoBtn").onclick=()=>{const v=Math.round(+$("wlOdo").value);if(!v||v<r.miles){toast(v?"That's lower than the last reading":"Type the odometer reading first");return}
-    const d=ymd(new Date());wlSave(x=>{x.car=x.car||{};x.car.readings=(x.car.readings||[]).filter(q=>q.date!==d);x.car.readings.push({date:d,miles:v})},"Mileage logged")}}
-function wlRenderProj(w,P,S){if(!P.length){$("wlProj").innerHTML='<div class="empty">Needs a first check-in.</div>';return}
-  const W=Math.max(300,Math.min(1300,$("wlProj").clientWidth||700)),H=W<500?200:240,pl=40,pr=18,pt=10,pb=26,max=Math.max(...P.map(p=>p.paper),...S.map(s=>wlNW(s).paper))*1.08,min=Math.min(0,...P.map(p=>p.cash));
-  const x=i=>pl+(W-pl-pr)*i/(P.length-1),y=v=>pt+(H-pt-pb)*(1-(v-min)/(max-min||1));
-  const path=k=>P.map((p,i)=>`${i?"L":"M"}${x(i).toFixed(1)},${y(p[k]).toFixed(1)}`).join("");
-  const step=Math.pow(10,Math.floor(Math.log10(max||1)))*(max>200000?1:max>60000?.5:.2),ticks=[];for(let v=Math.ceil(min/step)*step;v<=max;v+=step)ticks.push(v);
-  const t0m=P[0].d,idx=d=>(d.getFullYear()-t0m.getFullYear())*12+d.getMonth()-t0m.getMonth()+(d.getDate()-1)/30.4;
-  const dots=S.map(s=>{const i=idx(wlD(s.date));return i>=0&&i<=60?`<circle cx="${x(i).toFixed(1)}" cy="${y(wlNW(s).paper).toFixed(1)}" r="4.5" fill="#f2f0eb" stroke="#111" stroke-width="2"><title>${esc(s.date)}: ${gbp0(wlNW(s).paper)}</title></circle>`:""}).join("");
-  const today=idx(t0());
-  $("wlProj").innerHTML=`<div class="wl-key"><span><i style="background:var(--gold)"></i>Net worth on paper</span><span><i style="background:var(--green)"></i>Excl. pension</span><span><i style="background:#f2f0eb;height:8px;width:8px;border-radius:50%"></i>Your check-ins</span></div>
-   <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Five-year net worth illustration">
-    ${ticks.map(v=>`<line x1="${pl}" x2="${W-pr}" y1="${y(v)}" y2="${y(v)}" stroke="#2a2a2a"/><text x="${pl-8}" y="${y(v)+4}" fill="#7a7a7a" font-size="11" text-anchor="end">${v>=1000||v<=-1000?(v/1000)+"k":v}</text>`).join("")}
-    ${P.map((p,i)=>i%12===0?`<text x="${x(i)}" y="${H-6}" fill="#7a7a7a" font-size="11" text-anchor="${i===0?"start":i===P.length-1?"end":"middle"}">${W<500?"’"+String(p.d.getFullYear()).slice(2):wlMon(p.d)}</text>`:"").join("")}
-    ${today>0&&today<60?`<line x1="${x(today)}" x2="${x(today)}" y1="${pt}" y2="${H-pb}" stroke="#ff6b5a" stroke-dasharray="3 4" opacity=".6"/>`:""}
-    <path d="${path("cash")}" fill="none" stroke="#6fbf8a" stroke-width="2.5" stroke-linejoin="round"/>
-    <path d="${path("paper")}" fill="none" stroke="#ffb86b" stroke-width="3" stroke-linejoin="round"/>${dots}</svg>
-   <div class="wl-yrs">${P.filter((p,i)=>i%12===0).map(p=>`<div>${wlMon(p.d)}<b>${gbp0(p.paper)}</b><span class="faint">${gbp0(p.cash)} excl.</span></div>`).join("")}</div>
-   <div class="note">Assumes: ~£162/month saved now, £388.70/month more once the loan is cleared (${esc((w.assumptions||{}).loanClearedBy||"")}), Mum & Dad repay the £11k by then, £1,000 LISA bonus a year, pension +£4,500/yr growing 5%, cash 4%. No pay rises, no golf income. Change any of these by asking Claude.</div>`}
-function wlRenderDates(w){const t=t0(),D=(w.dates||[]).slice().sort((a,b)=>a.date<b.date?-1:1);
-  $("wlDates").innerHTML=D.map(d=>{const dd=wlD(d.date),past=dd<t;return `<div class="wl-date ${past?"past":""}"><span class="w">${dd.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"2-digit"})}</span><span>${esc(d.title)}${d.detail?`<div class="wl-d">${esc(d.detail)}</div>`:""}</span><span class="c">${wlIn(dd)}</span></div>`}).join("")}
-function wlRenderCheckin(w,s){const F=[["pension","Pension"],["htb","Help to Buy ISA"],["lisa","LISA"],["easy","Easy access"],["carPot","Car pot"],["owedByParents","Owed by Mum & Dad"],["bankLoan","Bank loan balance"],["carValue","Car value"],["carSettlement","Car settlement figure"]];
-  const mk=ymd(new Date()).slice(0,7),doneThis=wlSnaps(w).some(x=>x.date.slice(0,7)===mk);
-  $("wlCiMeta").textContent=doneThis?"✓ done this month":"due this payday";
-  $("wlCi").innerHTML=`<div class="wl-gs" style="margin-bottom:12px">Update from your banking apps on payday. Saving replaces this month's check-in.</div>
-    <div class="wl-form">${F.map(([k,l])=>`<label>${l}<input type="number" inputmode="decimal" step="any" data-wl-f="${k}" value="${s[k]!=null?s[k]:""}"></label>`).join("")}</div>
-    <div class="mrow"><button class="btn primary" id="wlCiBtn">Save check-in</button></div>`;
-  $("wlCiBtn").onclick=()=>{const snap={date:ymd(new Date())};let bad=false;
-    document.querySelectorAll("[data-wl-f]").forEach(i=>{const v=i.value.trim();if(v===""){snap[i.dataset.wlF]=0;return}const n=+v;if(!isFinite(n)||n<0)bad=true;snap[i.dataset.wlF]=n});
-    if(bad){toast("Use positive numbers only");return}
-    wlSave(x=>{x.snapshots=(x.snapshots||[]).filter(q=>q.date.slice(0,7)!==mk);x.snapshots.push(snap);
-      const {last}=wlPayday(x),k=ymd(last);x.routineDone=x.routineDone||{};const a=x.routineDone[k]||[];if(!a.includes("checkin"))a.push("checkin");x.routineDone[k]=a},"Check-in saved")}}
-/* taps: to-do items and payday routine (respond on press; saved straight to the vault) */
-$("p-wealth").addEventListener("click",e=>{const a=e.target.closest("[data-wl-act]"),r=e.target.closest("[data-wl-rt]");
-  if(a){const id=a.dataset.wlAct;a.classList.toggle("done");wlSave(x=>{const it=(x.actions||[]).find(q=>q.id===id);if(it)it.done=it.done?null:ymd(new Date())},"")}
-  else if(r){const id=r.dataset.wlRt;r.classList.toggle("done");const k=ymd(wlPayday(WL).last);
-    wlSave(x=>{x.routineDone=x.routineDone||{};const arr=x.routineDone[k]||[];const i=arr.indexOf(id);if(i>=0)arr.splice(i,1);else arr.push(id);x.routineDone[k]=arr},"")}});
-
 /* ============ load everything ============ */
 async function safe(fn,render,el,label){try{render(await fn())}catch(e){$(el).innerHTML=`<div class="empty">Couldn't read ${label}.</div><div class="note">${esc(e.message)}</div>`}}
 async function refresh(){
@@ -1944,7 +1760,6 @@ async function refresh(){
   $("vdot").className="dot ok";
   await Promise.all([
     safe(loadSpending,renderSpending,"spend","the Spending Tracker"),
-    safe(loadWealth,renderWealth,"wlHero","your wealth plan"),
     safe(loadPractice,renderPractice,"practice","Daily To Do"),
     safe(async()=>{const b=await loadTrend();b.focus=await loadTrendFocus();return b},renderTrend,"trend","the Drill Spreadsheet"),
     safe(loadRounds,renderRounds,"greview","the scoring data"),
@@ -2009,7 +1824,7 @@ function showTab(t){if(!document.getElementById("p-"+t))t="today";
   document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("on",p.id==="p-"+t));
   document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));
   try{bootTab(t)}catch(e){}
-  if(t==="golf")setTimeout(()=>{try{grRender()}catch(e){}},0);if(t==="week")setTimeout(()=>{try{WG.anim=true;renderWeekGrid()}catch(e){}},0);if(t==="prep")setTimeout(()=>{try{MC.rolled=false;COMPS.length&&renderComps({ev:COMPS,ms:MILES,txt:COMPS_TXT})}catch(e){}},0);if(t==="gym")setTimeout(()=>{try{G.byEx&&gRenderProg();gRenderWeight()}catch(e){}},0);if(t==="money")setTimeout(()=>{try{cityGrow(true);mnCatsGrow()}catch(e){}},0);if(t==="wealth")setTimeout(()=>{try{WL&&wlRenderProj(WL,wlProject(WL),wlSnaps(WL))}catch(e){}},0);ls.set("hud_tab",t);if(location.hash!=="#"+t)history.replaceState(null,"","#"+t);window.scrollTo(0,0)}
+  if(t==="golf")setTimeout(()=>{try{grRender()}catch(e){}},0);if(t==="week")setTimeout(()=>{try{WG.anim=true;renderWeekGrid()}catch(e){}},0);if(t==="prep")setTimeout(()=>{try{MC.rolled=false;COMPS.length&&renderComps({ev:COMPS,ms:MILES,txt:COMPS_TXT})}catch(e){}},0);if(t==="gym")setTimeout(()=>{try{G.byEx&&gRenderProg();gRenderWeight()}catch(e){}},0);if(t==="money")setTimeout(()=>{try{cityGrow(true);mnCatsGrow()}catch(e){}},0);ls.set("hud_tab",t);if(location.hash!=="#"+t)history.replaceState(null,"","#"+t);window.scrollTo(0,0)}
 document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
 document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>showTab(b.dataset.go));
 showTab((location.hash||"").slice(1)||ls.get("hud_tab","today"));
