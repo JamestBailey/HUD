@@ -340,7 +340,7 @@ h1{font-weight:700;letter-spacing:-.03em}
 .cnpins{display:flex;flex-direction:column;gap:6px}.cnpin{display:flex;gap:8px;align-items:flex-start;font-size:15px;font-weight:700;color:#f2f2f2;line-height:1.35}
 .cnpin span{flex:1}.cnun{background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;padding:0 2px;min-width:28px;min-height:28px}
 .cnlast{font-size:14px;color:#d6d6d6;line-height:1.45;white-space:pre-wrap}
-.cn textarea{width:100%;min-height:96px;box-sizing:border-box;border-radius:12px;border:1px solid #3a3a3a;background:#111;color:#f2f2f2;font:15px/1.4 Inter,sans-serif;padding:10px;resize:vertical}
+.cn textarea{width:100%;min-height:96px;box-sizing:border-box;border-radius:12px;border:1px solid #3a3a3a;background:#111;color:#f2f2f2;font:16px/1.4 Inter,sans-serif;padding:10px;resize:vertical}
 .cnchk{display:flex;gap:8px;align-items:center;font-size:13px;color:#cfcfcf}.cnchk input{width:20px;height:20px;accent-color:#8fd19e}
 .cn .rsave{background:#8fd19e}
 .resbox{margin:-2px 0 4px;padding:12px;border-radius:14px;background:#262019;border:1px solid rgba(255,184,107,.45);display:flex;flex-direction:column;gap:8px}
@@ -656,7 +656,7 @@ h1{font-weight:700;letter-spacing:-.03em}
 .ptr{margin-bottom:6px}.ptr .pn{font-size:12px;font-weight:800;color:var(--faint);text-align:center}
 .ptr input{width:100%;min-width:0;font:700 16px Inter,sans-serif;text-align:center;padding:9px 4px;border-radius:10px;border:1px solid var(--line2);background:#222;color:var(--text);min-height:42px}
 .ptab.sh .pth,.ptab.sh .ptr{grid-template-columns:14px 56px 1.2fr 1fr 1fr 40px;gap:4px}
-.ptab.sh .sst{font-size:11px;font-weight:800;color:var(--muted);line-height:1.15}.ptab.sh .ptr input{font-size:15px;padding:9px 1px;letter-spacing:-.02em}
+.ptab.sh .sst{font-size:11px;font-weight:800;color:var(--muted);line-height:1.15}.ptab.sh .ptr input{font-size:16px;padding:9px 1px;letter-spacing:-.03em}
 .ptr input:focus{outline:2px solid var(--gold);border-color:transparent}
 .phb{min-height:42px;border-radius:10px;border:1px solid var(--line2);background:#222;color:var(--faint);font:800 17px Inter,sans-serif;cursor:pointer;transition:background .2s,color .2s}
 .phb.y{background:var(--lav);border-color:var(--lav);color:var(--ink)}.phb.n{background:rgba(255,138,101,.16);border-color:rgba(255,138,101,.5);color:#ff8a65}
@@ -1431,7 +1431,14 @@ function renderPlan(days){
 /* ============ TODAY: timeline ============ */
 let DSEL=null,OPEN={},READY=null,PREVDONE={};
 function weekDates(){const t=day0(new Date());const mon=new Date(t.getFullYear(),t.getMonth(),t.getDate()-((t.getDay()+6)%7));return Array.from({length:7},(_,i)=>new Date(mon.getFullYear(),mon.getMonth(),mon.getDate()+i))}
+/* Don't redraw Today while you're typing in one of its boxes (a background refresh — every 5 min, or when you come back to the app — used to wipe the box you were in). The redraw waits until you leave the box. */
+let DAY_PEND=false;
+function typingInDay(){const a=document.activeElement;return !!a&&a.matches("input:not([type=checkbox]):not([type=radio]),textarea")&&!!a.closest("#timeline")}
+document.addEventListener("focusout",e=>{if(!DAY_PEND||!e.target.closest||!e.target.closest("#timeline"))return;
+  setTimeout(()=>{if(DAY_PEND&&!typingInDay()){DAY_PEND=false;renderDay()}},350)},true);
 function renderDay(){
+  if(typingInDay()){DAY_PEND=true;return}
+  DAY_PEND=false;
   if(!$("timeline"))return;
   const t=day0(new Date()),tk=ymd(t);const dates=weekDates();if(!DSEL)DSEL=tk;rdRestore(dates);
   const sel=new Date(DSEL+"T00:00");const isToday=DSEL===tk,isFut=sel>t;
@@ -1517,7 +1524,7 @@ function renderDay(){
     $("resCancel").onclick=()=>{ENTRY=null;renderDay()};
     $("resUntick").onclick=()=>{if(!confirm("Untick this drill? It's cleared in Daily To Do too."))return;const k=ENTRY.k;ENTRY=null;toggleTick(DSEL,k)}}
   if(ENTRY&&$("resSave")){const spec=resultSpec(ENTRY.k);const box=$("timeline").querySelector(".resbox");
-    box.querySelectorAll("input[data-f]").forEach(i=>{i.oninput=e=>{ENTRY.vals[i.dataset.f]=e.target.value;rdSave()};i.onkeydown=e=>{if(e.key==="Enter")$("resSave").click()}});
+    box.querySelectorAll("input[data-f]").forEach(i=>{i.oninput=e=>{ENTRY.vals[i.dataset.f]=e.target.value;rdSave()};i.onkeydown=e=>{if(e.key==="Enter"){i.blur();$("resSave").click()}}});
     if(spec.table)ptBind(box,spec);
     if($("resSign"))$("resSign").onclick=()=>{ENTRY.neg=!ENTRY.neg;rdSave();renderDay()};
     $("resCancel").onclick=()=>{if(ENTRY.viewing?ENTRY.dirty&&!confirm("Discard your changes? The saved version stays."):rdHasData(ENTRY)&&!confirm("Discard what you've entered for this drill?"))return;rdClear(ENTRY.date,ENTRY.k);ENTRY=null;renderDay()};
@@ -2332,7 +2339,7 @@ function gRenderWeight(){const el=$("gWeight");if(!el)return;const W=WEIGHTS||[]
     tip.innerHTML=`<b>${fmtDay(new Date(w.date+"T00:00"))}</b> · ${gFmtKg(w.kg)} kg`;tip.style.left=x(w.date)*sc+"px";tip.style.top=y(w.kg)*sc+"px";tip.style.opacity=1};
     rc.addEventListener("mouseenter",show);rc.addEventListener("touchstart",show,{passive:true});rc.addEventListener("mouseleave",()=>tip.style.opacity=0)});
   wBind(mon)}
-function wBind(mon){const i=$("wIn"),b=$("wSave");if(!i||!b)return;i.onkeydown=e=>{if(e.key==="Enter")b.click()};
+function wBind(mon){const i=$("wIn"),b=$("wSave");if(!i||!b)return;i.onkeydown=e=>{if(e.key==="Enter"){i.blur();b.click()}};
   b.onclick=async()=>{const kg=wParse(i.value);if(!kg){$("wErr").textContent="Enter your weight in kg, e.g. 68.4";return}
     if(!ready()){toast("Connect your vault first (⚙)");return}b.disabled=true;
     try{await wSave(mon,kg);toast(`Weigh-in saved: ${gFmtKg(kg)} kg`);gRenderWeight();renderDay()}catch(e){$("wErr").textContent="Couldn't save: "+e.message}finally{b.disabled=false}}}
@@ -2345,7 +2352,7 @@ function wBlockHtml(date){const w=wFor(date),fut=date>ymd(new Date()),open=WENTR
     ${w&&!open&&!fut?`<button class="lnk" id="wEdit" style="margin-top:6px">Edit</button>`:""}</div></div></div>`}
 function wBindDay(date){const i=$("wInDay"),b=$("wSaveDay");if($("wEdit"))$("wEdit").onclick=()=>{WENTRY=date;renderDay();setTimeout(()=>$("wInDay")&&$("wInDay").focus(),30)};
   if($("wTick"))$("wTick").onclick=()=>{if(i)i.focus();else{WENTRY=date;renderDay();setTimeout(()=>$("wInDay")&&$("wInDay").focus(),30)}};
-  if(!i||!b)return;i.onkeydown=e=>{if(e.key==="Enter")b.click()};
+  if(!i||!b)return;i.onkeydown=e=>{if(e.key==="Enter"){i.blur();b.click()}};
   b.onclick=async()=>{const kg=wParse(i.value);if(!kg){$("wErrDay").textContent="Enter your weight in kg, e.g. 68.4";return}
     if(!ready()){toast("Connect your vault first (⚙)");return}b.disabled=true;
     try{const first=!wFor(date);await wSave(date,kg);WENTRY=null;WJUST=first?date:null;toast(`Weigh-in saved: ${gFmtKg(kg)} kg`);renderDay();gRenderWeight()}catch(e){$("wErrDay").textContent="Couldn't save: "+e.message;b.disabled=false}}}
