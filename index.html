@@ -1183,7 +1183,11 @@ async function loadCourseNotes(){try{CN=cnParse(await FS.text(PATHS.coursenotes)
 const CND="hud_cn_draft";function cnDraft(d,v){let o={};try{o=JSON.parse(ls.get(CND,"{}"))||{}}catch(e){}if(v===undefined)return o[d];if(v===null)delete o[d];else o[d]=v;ls.set(CND,JSON.stringify(o))}
 async function cnSave(mutate,okMsg){let fresh=CN;try{fresh=cnParse(await FS.text(PATHS.coursenotes))}catch(e){if(!/not found/.test(e.message))throw e;fresh={pins:[],rounds:[]}}
   mutate(fresh);await FS.write(PATHS.coursenotes,cnBuild(fresh));CN=fresh;toast(okMsg)}
-function cnHtml(date,title,isFut){const last=CN.rounds.find(r=>r.date<date&&r.text),mine=CN.rounds.find(r=>r.date===date);
+/* the latest round's lines that aren't already a 📌 reminder (no point showing the same paragraph twice) */
+const cnNorm=l=>String(l).replace(/^\s*[-*•]\s*/,"").trim().toLowerCase();
+function cnLast(date){const last=CN.rounds.find(r=>r.date<date&&r.text);if(!last)return null;const pins=new Set(CN.pins.map(cnNorm));
+  const text=last.text.split(/\n+/).filter(l=>l.trim()&&!pins.has(cnNorm(l))).join("\n").trim();return text?Object.assign({},last,{text}):null}
+function cnHtml(date,title,isFut){const last=cnLast(date),mine=CN.rounds.find(r=>r.date===date);
   const d=cnDraft(date);const val=d?d.text:(mine?mine.text:"");
   let h=`<div class="cn">`;
   if(CN.pins.length)h+=`<div class="cnh">📌 Reminders</div><div class="cnpins">${CN.pins.map((p,i)=>`<div class="cnpin"><span>${esc(p)}</span><button class="cnun" data-pin="${i}" aria-label="Unpin">×</button></div>`).join("")}</div>`;
@@ -1195,7 +1199,7 @@ function cnHtml(date,title,isFut){const last=CN.rounds.find(r=>r.date<date&&r.te
     <button class="rsave" id="cnSave">${mine?"Update note":"Save note"}</button>`;
   else h+=`<div class="faint" style="font-size:12px">Write your note here after you've played.</div>`;
   return h+`</div>`}
-function cnCount(date){return CN.pins.length+(CN.rounds.some(r=>r.date<date&&r.text)?1:0)}
+function cnCount(date){return CN.pins.length+(cnLast(date)?1:0)}
 function cnBind(){const t=$("cnTxt");if(t)t.oninput=()=>cnDraft(DSEL,{text:t.value});
   if($("cnSave"))$("cnSave").onclick=async()=>{const text=$("cnTxt").value.trim(),pin=$("cnPin").checked,date=DSEL;
     const label=String($("cnTxt").dataset.title||"").replace(/\s*·\s*/g," · ").trim();if(!text&&!pin){toast("Write a note first");return}
@@ -1221,7 +1225,15 @@ window.addEventListener("online",()=>{if(obGet())saveTicks()});
 /* Off the Tee 10 Shot Drill (Driver / 3W / 2i): shot styles in order, as on James's printed sheet */
 const SHOT_STYLES=["Stock","Draw","Stock","Bullet","Stock","Bomb","Stock","Fairway Finder","Stock","Bullet"];
 /* drills whose score goes into the Drill Spreadsheet */
-function resultSpec(k){const [sec,task]=String(k).split("::").map(x=>(x||"").trim().toLowerCase());
+/* 9 holes on the plan that day → strokes gained by area (Upgame, vs PGA Tour) → Drill Spreadsheet → 9 Hole Practice */
+function holes9(d){const p=(PLANDAYS||[]).find(x=>x.date===d);return !!p&&(p.blocks||[]).some(b=>!b.fixed&&/\b9\s*holes?\b/i.test(b.title))}
+const sgF=v=>v==null?"":(+v>0?"+":"")+v;
+const SG9={fields:[{id:"ott",label:"Off the tee",type:"sgm",ph:"e.g. 0.4"},{id:"app",label:"Approach",type:"sgm",ph:"e.g. 1.2"},
+  {id:"atg",label:"Around the green",type:"sgm",ph:"e.g. 0.3"},{id:"putt",label:"Putting",type:"sgm",ph:"e.g. 0.5"},
+  {id:"total",label:"Total vs PGA Tour",type:"sgm",opt:true,ph:"blank = the four added up"}],
+  hint:"Strokes gained vs PGA Tour from Upgame. Tap ± for minus.",fmt:v=>`SG ${sgF(v.total)} vs Tour`,word:"strokes gained",sumTotal:true};
+function resultSpec(k,d){const [sec,task]=String(k).split("::").map(x=>(x||"").trim().toLowerCase());
+  if(sec==="playing"&&task==="holes")return holes9(d||DSEL)?SG9:null;
   const att=v=>`${v} attempt${+v===1?"":"s"}`;
   if(/yds/.test(sec)){
     if(/^completion yardage book/.test(task))return {single:true,fields:[{id:"v",label:"Attempts to complete",type:"int",ph:"e.g. 14"}],fmt:att,word:"attempts"};
@@ -1450,7 +1462,8 @@ function renderDay(){
     const ev=CAL.filter(e=>!e.allDay&&+day0(e.s)===+t&&!/^◆/.test(e.title)&&!/weigh/i.test(e.title)).map(e=>({start:hm(e.s),end:hm(e.e),title:e.title,fixed:true}));
     const have=new Set((plan&&plan.blocks||[]).map(b=>b.start));const extra=ev.filter(e=>!have.has(e.start));
     if(extra.length)plan=Object.assign({date:DSEL},plan||{},{blocks:((plan&&plan.blocks)||[]).concat(extra).sort((a,b)=>(a.start||"")<(b.start||"")?-1:1)})}
-  const blocks=(plan&&plan.blocks)||[];
+  const wBox=sel.getDay()===1&&!!WEIGHTS;   // Monday weigh-in box shows → hide the plain calendar copy of the weigh-in
+  const blocks=((plan&&plan.blocks)||[]).filter(b=>!(wBox&&b.fixed&&!(b.drills||[]).length&&/weigh/i.test(b.title)));
   if(ENTRY&&ENTRY.date===DSEL)blocks.forEach((b,i)=>{if((b.drills||[]).some(x=>nk(x)===nk(ENTRY.k)))OPEN[i]=true});
   // strip
   const L=["MON","TUE","WED","THU","FRI","SAT","SUN"];
@@ -1468,7 +1481,7 @@ function renderDay(){
   const curIdx=isToday?blocks.findIndex(b=>mins(b.start)<=nowM&&mins(b.end||b.start)>nowM):-1;
   if(!Object.keys(OPEN).length&&isToday){const o=curIdx>=0?curIdx:nextIdx;if(o>=0&&(blocks[o].drills||[]).length)OPEN[o]=true}
   const used=new Set();
-  let html=(sel.getDay()===1&&WEIGHTS)?wBlockHtml(DSEL):"";
+  let html=wBox?wBlockHtml(DSEL):"";
   blocks.forEach((b,i)=>{
     if(isToday&&i===nextIdx&&curIdx<0)html+=`<div class="nowl"><span>NOW</span><i></i></div>`;
     // cardio (run / bike) is a planned workout: tickable, and logged as "Gym :: Workout" in Daily To Do
@@ -1481,14 +1494,14 @@ function renderDay(){
     const dn=drills.filter(k=>doneKeys.has(nk(k))).length;
     html+=`<div class="tl-row"><div class="tl-t">${esc(b.start||"")}</div><div class="tl-b">
       <button class="blk ${cls} ${drills.length&&dn===drills.length?"alldone":""}" data-i="${i}" data-dk="${esc(drills.map(nk).join("|"))}" aria-expanded="${!!OPEN[i]}"><div class="bt"><span>${esc((tag||(b.fixed?"Fixed":"Session")).toUpperCase())}</span><span>${esc(b.start||"")}${b.end?"–"+esc(b.end):""}</span></div>
-        <div class="bn">${esc(calIco(title))}</div>${drills.length?`<div class="bp">${cardio||holes?(dn?"Done ✓":"Tap to tick")+(isPlay&&cnCount(DSEL)?` · 📝 ${cnCount(DSEL)} reminder${cnCount(DSEL)===1?"":"s"}`:""):`${dn} / ${drills.length} drills ${dn===drills.length?"✓":""}`}</div>`:""}</button>
+        <div class="bn">${esc(calIco(title))}</div>${drills.length?`<div class="bp">${cardio||holes?(dn?"Done ✓":holes&&holes9(DSEL)?"Tap to log strokes gained":"Tap to tick")+(isPlay&&cnCount(DSEL)?` · 📝 ${cnCount(DSEL)} reminder${cnCount(DSEL)===1?"":"s"}`:""):`${dn} / ${drills.length} drills ${dn===drills.length?"✓":""}`}</div>`:""}</button>
       ${OPEN[i]?`<div class="bx">${b.why?`<div class="why">${esc(b.why)}</div>`:b.fixed?'<div class="why">From your calendar.</div>':""}
         ${drills.map(k=>{const x=doneKeys.get(nk(k));const on=!!x,lock=on&&!x.hud;const spec=resultSpec(k),res=getResult(DSEL,k)||(spec?resvGet(DSEL,k):null);
           const entry=ENTRY&&ENTRY.date===DSEL&&nk(ENTRY.k)===nk(k);
           let h=`<button class="drill ${gym?"g":""} ${on?"on":""} ${lock?"lock":""}" data-k="${esc(k)}" ${isFut?"disabled":""}><span class="m">${on?"✓":""}</span><span>${esc(cardio&&/^gym\s*::\s*workout$/i.test(k)?cardioLabel(b.title):/^playing\s*::\s*holes$/i.test(k)?holesLabel(b.title):keyLabel(k))}</span>${res?`<small class="rv">${esc(spec?spec.fmt(res.v):res.v)}</small>`:!entry&&!on&&rdAll()[rdKey(DSEL,k)]?'<small class="draft">draft saved</small>':lock?"<small>in Daily To Do</small>":spec&&!on&&!entry&&!isFut?`<small class="stag">📋 ${spec.table?"table":"score"}</small>`:""}</button>`;
           if(lock&&spec&&!res&&!isFut&&!entry)h+=`<button class="addres" data-add="${esc(k)}">+ add ${spec.word}</button>`;
-          if(entry){h+=`<div class="resbox">${spec.table?ptHtml(spec):""}${spec.fields.map((f,fi)=>`${f.hint?`<div class="rhint">${esc(f.hint)}</div>`:""}<label for="res_${f.id}">${f.label}</label><div class="resrow">
-              ${f.type==="sg"?`<button class="sgn" id="resSign" aria-label="Switch plus or minus">${ENTRY.neg?"−":"+"}</button>`:""}
+          if(entry){h+=`<div class="resbox">${spec.table?ptHtml(spec):""}${spec.hint?`<div class="rhint">${esc(spec.hint)}</div>`:""}${spec.fields.map((f,fi)=>`${f.hint?`<div class="rhint">${esc(f.hint)}</div>`:""}<label for="res_${f.id}">${f.label}</label><div class="resrow">
+              ${f.type==="sg"?`<button class="sgn" id="resSign" aria-label="Switch plus or minus">${ENTRY.neg?"−":"+"}</button>`:""}${f.type==="sgm"?`<button class="sgn" data-sgm="${f.id}" aria-label="Switch ${esc(f.label)} plus or minus">${/^[-−]/.test((ENTRY.vals||{})[f.id]||"")?"−":"±"}</button>`:""}
               <input id="res_${f.id}" data-f="${f.id}" type="text" inputmode="${f.type==="int"||f.type==="int0"?"numeric":f.type==="text"?"text":"decimal"}" autocomplete="off" placeholder="${esc(f.ph)}" value="${esc((ENTRY.vals||{})[f.id]||"")}">
               ${spec.single&&!ENTRY.readonly?`<button class="rsave" id="resSave">${ENTRY.viewing?"Update":"Save"}</button>`:""}</div>`).join("")}
             ${spec.single||ENTRY.readonly?"":`<button class="rsave" id="resSave" style="align-self:stretch">${ENTRY.viewing?"Save changes":"Save"+(spec.table?(spec.table.kind==="shot"?" all shots":" all putts"):"")}</button>`}
@@ -1527,6 +1540,8 @@ function renderDay(){
     box.querySelectorAll("input[data-f]").forEach(i=>{i.oninput=e=>{ENTRY.vals[i.dataset.f]=e.target.value;rdSave()};i.onkeydown=e=>{if(e.key==="Enter"){i.blur();$("resSave").click()}}});
     if(spec.table)ptBind(box,spec);
     if($("resSign"))$("resSign").onclick=()=>{ENTRY.neg=!ENTRY.neg;rdSave();renderDay()};
+    box.querySelectorAll("[data-sgm]").forEach(b=>b.onclick=()=>{const i=box.querySelector(`[data-f="${b.dataset.sgm}"]`);let v=i.value.trim().replace(/^\+/,"");
+      v=/^[-−]/.test(v)?v.slice(1):"−"+v;i.value=v;ENTRY.vals[b.dataset.sgm]=v;rdSave();b.textContent=/^[-−]/.test(v)?"−":"±";i.focus()});
     $("resCancel").onclick=()=>{if(ENTRY.viewing?ENTRY.dirty&&!confirm("Discard your changes? The saved version stays."):rdHasData(ENTRY)&&!confirm("Discard what you've entered for this drill?"))return;rdClear(ENTRY.date,ENTRY.k);ENTRY=null;renderDay()};
     if($("resUntick"))$("resUntick").onclick=()=>{if(!confirm("Untick this drill? Its saved score will be removed."))return;const k=ENTRY.k;rdClear(ENTRY.date,k);resvDel(DSEL,k);ENTRY=null;toggleTick(DSEL,k)};
     if($("resSkip"))$("resSkip").onclick=()=>{const k=ENTRY.k;rdClear(ENTRY.date,k);ENTRY=null;toggleTick(DSEL,k)};
@@ -1536,6 +1551,10 @@ function renderDay(){
       for(const f of spec.fields){let raw=String((box.querySelector(`[data-f="${f.id}"]`)||{}).value||"").trim();
         if(f.type==="text"){if(raw)out[f.id]=raw.slice(0,200);continue}
         raw=raw.replace(/,(?=\d)/g,".");
+        if(f.type==="sgm"){if(raw===""&&f.opt)continue;let ng=false;raw=raw.replace(/^\+/,"");if(/^[-−]/.test(raw)){ng=true;raw=raw.slice(1)}
+          const n=Number(raw);if(raw===""||!isFinite(n)){err=`${f.label}: enter a number`;break}
+          if(Math.abs(n)>20){err=`${f.label}: that looks too big for 9 holes`;break}
+          out[f.id]=Math.round((ng?-n:n)*100)/100;continue}
         if(f.type==="avg"){const nums=raw.split(/[\s;\/]+/).filter(Boolean).map(Number);
           if(!nums.length||nums.some(n=>!isFinite(n)||n<0||n>20)){err=`${f.label}: enter the average, or each reading separated by spaces`;break}
           out[f.id]=Math.round(nums.reduce((a,b)=>a+b,0)/nums.length*100)/100;continue}
@@ -1546,6 +1565,7 @@ function renderDay(){
         if(f.type==="int0"&&(!Number.isInteger(n)||n<0||n>f.max)){err=`${f.label}: a whole number from 0 to ${f.max}`;break}
         if(f.type==="sg"&&Math.abs(n)>50){err="That looks too big for strokes gained";break}
         out[f.id]=f.type==="sg"?Math.round((neg?-n:n)*100)/100:n}
+      if(!err&&spec.sumTotal&&out.total==null)out.total=Math.round(["ott","app","atg","putt"].reduce((a,x)=>a+out[x],0)*100)/100;
       if(err){$("resErr").textContent=err;return}
       const v=spec.single?out.v:out;const k=ENTRY.k,date=DSEL;
       RESULTS[date]=RESULTS[date]||{};Object.keys(RESULTS[date]).forEach(x=>{if(nk(x)===nk(k))delete RESULTS[date][x]});
@@ -2513,7 +2533,7 @@ function resvSet(d,k,o){const a=resvAll();a[rdKey(d,k)]=Object.assign(o,{ts:Date
   ls.set(RV,JSON.stringify(a))}
 function resvCache(){try{const a=resvAll();let ch=false;   // copy scores loaded from the vault, so they stay viewable here after the sync job clears them
   for(const d of Object.keys(RESULTS||{}))for(const k of Object.keys(RESULTS[d]||{})){const key=rdKey(d,k),r=RESULTS[d][k];
-    if(!a[key]||JSON.stringify(a[key].v)!==JSON.stringify(r.v)){const spec=resultSpec(k);if(!spec)continue;const o=valsFromV(spec,r.v);a[key]={v:r.v,vals:o.vals,neg:o.neg,ts:Date.now()};ch=true}}
+    if(!a[key]||JSON.stringify(a[key].v)!==JSON.stringify(r.v)){const spec=resultSpec(k,d);if(!spec)continue;const o=valsFromV(spec,r.v);a[key]={v:r.v,vals:o.vals,neg:o.neg,ts:Date.now()};ch=true}}
   if(ch)ls.set(RV,JSON.stringify(a))}catch(e){}}
 function resvDel(d,k){const a=resvAll();delete a[rdKey(d,k)];ls.set(RV,JSON.stringify(a))}
 function valsFromV(spec,v){const vals={};let neg=false;
